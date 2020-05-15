@@ -334,15 +334,19 @@ def gff_to_gbk(genome_fasta, prot_fasta, annot_table, gff_file, species_name, gb
     species_informations = create_taxonomic_data(species_name)
 
     # Read a tsv file containing GO terms, Interpro and EC associated with gene name.
-    mapping_data = pa.read_csv(annot_table, sep='\t')
+    mapping_data = pa.read_csv(annot_table, sep='\t', comment='#', header=None, dtype = str)
     mapping_data.replace(np.nan, '', inplace=True)
 
-    gene_column, go_column, ec_column, ipr_column = find_column_of_interest(mapping_data)
+    # gene_column, go_column, ec_column, ipr_column = find_column_of_interest(mapping_data)
+    gene_column = 0
+    go_column = 6
+    ec_column = 7
+    ipr_column = np.nan
 
     mapping_data.set_index(gene_column, inplace=True)
     # Dictionary with gene id as key and GO terms/Interpro/EC as value.
     annot_GOs = mapping_data[go_column].to_dict()
-    annot_IPRs = mapping_data[ipr_column].to_dict()
+    annot_IPRs = {} # mapping_data[ipr_column].to_dict()
     annot_ECs = mapping_data[ec_column].to_dict()
 
     # Query Gene Ontology to extract namespaces and alternative IDs.
