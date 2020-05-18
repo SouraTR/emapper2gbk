@@ -62,13 +62,16 @@ def merging_mini_gff(gff_folder):
 
     return gff_merged_path
 
-def create_GO_dataframes():
+def create_GO_dataframes(gobasic_file = None):
     """
     Use pronto to query the Gene Ontology and to create the Ontology.
     Create a dataframe which contains for all GO terms their GO namespaces (molecular_function, ..).
     Create a second dataframe containing alternative ID for some GO terms (deprecated ones).
     """
-    go_ontology = pronto.Ontology('http://purl.obolibrary.org/obo/go/go-basic.obo')
+    if gobasic_file:
+        go_ontology = pronto.Ontology(gobasic_file)
+    else:
+        go_ontology = pronto.Ontology('http://purl.obolibrary.org/obo/go/go-basic.obo')
 
     # For each GO terms look to the namespaces associated with them.
     go_namespaces = {}
@@ -281,7 +284,7 @@ def search_and_add_pseudogene(gff_database, gene, record, df_exons, gene_protein
         record.features.append(new_feature_cds)
     return record
 
-def gff_to_gbk(genome_fasta, prot_fasta, annot_table, gff_file, species_name, gbk_out):
+def gff_to_gbk(genome_fasta, prot_fasta, annot_table, gff_file, species_name, gbk_out, gobasic=None):
     """
     From a genome fasta (containing each contigs of the genome),
     a protein fasta (containing each protein sequence),
@@ -350,7 +353,7 @@ def gff_to_gbk(genome_fasta, prot_fasta, annot_table, gff_file, species_name, gb
     annot_ECs = mapping_data[ec_column].to_dict()
 
     # Query Gene Ontology to extract namespaces and alternative IDs.
-    df_go_namespace, df_go_alternative = create_GO_dataframes()
+    df_go_namespace, df_go_alternative = create_GO_dataframes(gobasic)
     # Dictionary GO id as term and GO namespace as value.
     df_go_namespace.set_index('GO', inplace=True)
     go_namespaces = df_go_namespace['namespace'].to_dict()
@@ -389,10 +392,12 @@ def gff_to_gbk(genome_fasta, prot_fasta, annot_table, gff_file, species_name, gb
     # Then iterate through gene and throug RNA linked with the gene.
     # Then look if protein informations are available.
     for contig_id in sorted(contig_seqs):
+        print("contig " + contig_id)
         # Data for each contig.
         record = contig_info(contig_id, contig_seqs[contig_id], species_informations)
         for gene in gff_database.features_of_type('gene'):
             gene_contig = gene.chrom
+            print("gene_contig " + gene_contig)
             if gene_contig == contig_id:
                 id_gene = gene.id
                 start_position = gene.start -1
@@ -446,7 +451,7 @@ def gff_to_gbk(genome_fasta, prot_fasta, annot_table, gff_file, species_name, gb
 
                     new_feature_cds.qualifiers['translation'] = gene_protein_seq[mrna_id]
                     new_feature_cds.qualifiers['locus_tag'] = id_gene
-
+                    print("mrna" + mrna_id)
                     # Add GO annotation according to the namespace.
                     if mrna_id in annot_GOs:
                         gene_gos = re.split(';|,', annot_GOs[mrna_id])
@@ -492,7 +497,7 @@ def gff_to_gbk(genome_fasta, prot_fasta, annot_table, gff_file, species_name, gb
     # Create Genbank with the list of SeqRecord.
     SeqIO.write(seq_objects, gbk_out, 'genbank')
 
-def main(genome_fasta, prot_fasta, annot_table, gff_file_folder, species_name, gbk_out):
+def main(genome_fasta, prot_fasta, annot_table, gff_file_folder, species_name, gbk_out, gobasic_file=None):
 
     # Check if gff is a file or is multiple files in a folder.
     # If it's multiple files, it wil merge them in one.
@@ -501,20 +506,7 @@ def main(genome_fasta, prot_fasta, annot_table, gff_file_folder, species_name, g
     if not os.path.isfile(gff_file_folder):
         gff_file = merging_mini_gff(gff_file_folder)
 
-    gff_to_gbk(genome_fasta, prot_fasta, annot_table, gff_file, species_name, gbk_out)
-
-def run():
-    parser = argparse.ArgumentParser(prog = "gbk_creator_from_gff.py")
-    parser.add_argument("-fg", "--fgen", dest = "genome_fasta", metavar = "FILE", help = "contig fasta file", required = True)
-    parser.add_argument("-fp", "--fprot", dest = "prot_fasta", metavar = "FILE", help = "protein fasta file", required = True)
-    parser.add_argument("-a", "--annot", dest = "annot_table", metavar = "FILE", help = "annotation tsv file", required = True)
-    parser.add_argument("-g", "--gff", dest = "gff_file_folder", metavar = "FILE or FOLDER", help = "gff file or folder containing multiple gff", required = True)
-    parser.add_argument("-s", "--speciesname", dest = "species_name", metavar = "STRING", help = "species scientific name", required = True)
-    parser.add_argument("-o", "--output", dest = "gbk_out", metavar = "FILE", help = "output file", default = "mygbk.gbk")
-    args = parser.parse_args()
-
-    main(genome_fasta=args.genome_fasta, prot_fasta=args.prot_fasta, annot_table=args.annot_table,
-                gff_file_folder=args.gff_file_folder, species_name=args.species_name, gbk_out=args.gbk_out)
+    gff_to_gbk(genome_fasta, prot_fasta, annot_table, gff_file, species_name, gbk_out, gobasic_file)
 
 if __name__ == '__main__':
-	run()
+	main()

@@ -45,7 +45,7 @@ def cli():
         "-g",
         "--gff",
         help="gff file",
-        required=True,
+        required=False,
         type=str)
 
     parser.add_argument(
@@ -78,7 +78,8 @@ def cli():
 
     args = parser.parse_args()
 
-    gbk_creation(args.fastagenome, args.fastaprot, args.annotation, args.gff, args.name, args.output)
+    gbk_creation(args.fastagenome, args.fastaprot, args.annotation, args.gff, args.name, args.output, args.gobasic)
+        
 
 if __name__ == "__main__":
     sys.exit(cli())  
