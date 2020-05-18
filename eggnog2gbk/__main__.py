@@ -217,8 +217,9 @@ def cli():
                 sys.exit(1)
         if not directory_mode:
             gbk_creation(genome=args.fastagenome, proteome=args.fastaprot, annot=args.annotation, gff=args.gff, org=args.name, gbk=args.out, gobasic=args.gobasic)
+            #TODO fix the code in case we have a gff
         else:
-            #TODO code metagenomic part
+            #TODO code genomic part with directories
             logger.critical(f"genomic subcommand with directories as input is not coded yet")
 
     elif args.cmd == "metagenomic":
