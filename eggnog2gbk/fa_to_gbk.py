@@ -1,25 +1,6 @@
 #!/usr/bin/env python3
 # coding: utf8
-
-"""
-Description:
-Using fasta files (scaffold/chromosme/contig file, protein file), gff file, annotation tsv file and the species name
-this script writes a genbank file.
-The annotation tsv file contains association between gene and annotation (EC number, GO term, Interpro)
-to add information to the genbank.
-The species name needs to be compatible with the taxonomy of the EBI.
-Informations need a good formating:
-gene ID should be correctly written (like XXX_001 and no XXX_1 if you got more thant 100 genes).
-Currently when there is multiple GO terms/InterPro/EC the script split them when they are separated by ";" or by "," like GO:0006979;GO:0020037;GO:0004601,
-if you use another separator add to the re.split(',|;').
-For the gff file ensure that the element start position is at least 1.
-If it's 0 gffutils will return an error (source : https://github.com/daler/gffutils/issues/104).
-Other informations can be added by adding a dictionary with gene ID as key and the information
-as value and adapt the condition used for the others annotations (EC, Interpro, Go term).
-Usage:
-gbk_creator_from_gff.py -fg <Genome fasta file> -fp <Protein Fasta file> -a <Annotation TSV file> -g <GFF file> -s <Species name> -o <GBK Output file name>
-"""
-
+import sys
 import argparse
 import datetime
 import gffutils
@@ -30,96 +11,28 @@ import pronto
 import re
 import requests
 import shutil
-
 from Bio import SeqFeature as sf
 from Bio import SeqIO
 from Bio.Alphabet import IUPAC
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from collections import OrderedDict
+from eggnog2gbk.utils import is_valid_file, create_GO_dataframes
 
 
-def merging_mini_gff(gff_folder):
-    """
-    Merge multiple gff files into one.
-    Return the path to the merged file.
-    """
-    mini_gff_path = os.path.dirname(os.path.realpath(os.listdir(gff_folder)[0])) + "/" + gff_folder + "/"
-    gff_merged_path = mini_gff_path + 'merged_gff.gff'
+"""
+Description:
+Using fasta files (scaffold/chromosme/contig file, protein file), annotation tsv file from eggnog and the species name
+this script writes a genbank file with EC number and Go annotations.
+The species name needs to be compatible with the taxonomy of the EBI.
+Informations need a good formating:
+gene ID should be correctly written (like XXX_001 and no XXX_1 if you got more thant 100 genes).
+Currently when there is multiple GO terms/EC the script split them when they are separated by ";" or by "," like GO:0006979;GO:0020037;GO:0004601,
+if you use another separator add to the re.split(',|;').
+Other informations can be added by adding a dictionary with gene ID as key and the information
+as value and adapt the condition used for the others annotations (EC, Go term).
+"""
 
-    with open(gff_merged_path, 'w') as gff_file_merged:
-        gff_files = os.listdir(gff_folder)
-        gff_files.remove('merged_gff.gff')
-        for mini_gff in gff_files:
-            with open(mini_gff_path + mini_gff, 'rb') as mini_gff_file:
-                shutil.copyfileobj(mini_gff_file, gff_file_merged)
-
-    return gff_merged_path
-
-def create_GO_dataframes(gobasic_file = None):
-    """
-    Use pronto to query the Gene Ontology and to create the Ontology.
-    Create a dataframe which contains for all GO terms their GO namespaces (molecular_function, ..).
-    Create a second dataframe containing alternative ID for some GO terms (deprecated ones).
-    """
-    if gobasic_file:
-        go_ontology = pronto.Ontology(gobasic_file)
-    else:
-        go_ontology = pronto.Ontology('http://purl.obolibrary.org/obo/go/go-basic.obo')
-
-    # For each GO terms look to the namespaces associated with them.
-    go_namespaces = {}
-    for go_term in go_ontology:
-        if 'GO:' in go_term:
-            go_namespaces[go_term] = go_ontology[go_term].name
-    df_go_namespace = pa.DataFrame.from_dict(go_namespaces, orient='index')
-    df_go_namespace.reset_index(inplace=True)
-    df_go_namespace.columns = ['GO', 'namespace']
-
-    # For each GO terms look if there is an alternative ID fo them.
-    go_alt_ids = {}
-    for go_term in go_ontology:
-        if go_ontology[go_term].alternate_ids != frozenset():
-            for go_alt in go_ontology[go_term].alternate_ids:
-                go_alt_ids[go_alt] = go_term
-    df_go_alternative = pa.DataFrame.from_dict(go_alt_ids, orient='index')
-    df_go_alternative.reset_index(inplace=True)
-    df_go_alternative.columns = ['GO', 'alternative_GO']
-    
-    return df_go_namespace, df_go_alternative
-
-def create_taxonomic_data(species_name):
-    """
-    Query the EBI with the species name to create a dictionary containing taxon id,
-    taxonomy and some other informations.
-    """
-    species_informations = {}
-    species_name_url = species_name.replace(' ', '%20')
-
-    if species_name == "bacteria":
-        species_informations = {'db_xref': 'taxon:2', 'scientificName': 'Bacteria', 'commonName': 'eubacteria', 'formalName': 'false', 'rank': 'superkingdom', 'data_file_division': 'PRO', 'geneticCode': '11', 'submittable': 'false', 'description': 'bacteria genome', 'organism': 'bacteria', 'keywords': ['bacteria']} 
-    else:
-        url = 'https://www.ebi.ac.uk/ena/data/taxonomy/v1/taxon/scientific-name/' + species_name_url
-        response = requests.get(url)
-        temp_species_informations = response.json()[0]
-        print(temp_species_informations)
-        for temp_species_information in temp_species_informations:
-            print(temp_species_information)
-            print(temp_species_informations[temp_species_information])
-            if temp_species_information == 'lineage':
-                species_informations['taxonomy'] = temp_species_informations[temp_species_information].split('; ')[:-1]
-            elif temp_species_information == 'division':
-                species_informations['data_file_division'] = temp_species_informations[temp_species_information]
-            elif temp_species_information == 'taxId':
-                species_informations['db_xref'] = 'taxon:' + str(temp_species_informations[temp_species_information])
-            else:
-                species_informations[temp_species_information] = temp_species_informations[temp_species_information]
-
-    compatible_species_name = species_name.replace('/', '_')
-    species_informations['description'] = compatible_species_name + ' genome'
-    species_informations['organism'] = compatible_species_name
-    species_informations['keywords'] = [compatible_species_name]
-    return species_informations
 
 def find_column_of_interest(df):
     '''
@@ -398,10 +311,11 @@ def faa_to_gbk(genome_fasta, prot_fasta, annot_table, species_name, gbk_out, gob
     for contig_id in sorted(contig_seqs):
         # Data for each contig.
         record = contig_info(contig_id, contig_seqs[contig_id], species_informations)
-        # for gene in gff_database.features_of_type('gene'):
-        #     gene_contig = gene.chrom
-        #     if gene_contig == contig_id:
-        id_gene = contig_id + "_0001"
+        # if id is numeric, change it
+        if contig_id.isnumeric():
+            id_gene = f("gene_{contig_id}")
+        else:
+            id_gene = contig_id
         start_position = 1
         end_position = len(contig_seqs[contig_id])
         strand = 0
@@ -415,39 +329,8 @@ def faa_to_gbk(genome_fasta, prot_fasta, annot_table, species_name, gbk_out, gob
         # Add gene information to contig record.
         record.features.append(new_feature_gene)
 
-        # # Search and add RNAs.
-        # gene_informations = [gene, id_gene, start_position, end_position, strand]
-        # record = search_and_add_RNA(gff_database, gene_informations, record, 'mRNA')
-
-        # record = search_and_add_RNA(gff_database, gene_informations, record,'tRNA')
-
-        # record = search_and_add_RNA(gff_database, gene_informations, record, 'ncRNA')
-
-        # record = search_and_add_RNA(gff_database, gene_informations, record, 'lncRNA')
-
-        # # Search for pseudogene and add them.
-        # record = search_and_add_pseudogene(gff_database, gene, record, df_exons, gene_protein_seq)
-
-        # Create CDS using exons, if no exon use gene information
         location_exons = []
 
-        # Use parent mRNA in gff to find CDS.
-        # With this we take the isoform of gene.
-        # for mrna in gff_database.children(gene, featuretype="mRNA", order_by='start'):
-        #     mrna_id = mrna.id
-        #     # Select exon corresponding to the gene.
-        #     # Then iterate for each exon and extract information.
-        #     df_temp = df_exons[df_exons['gene_id'] == mrna_id]
-        #     for _, row in df_temp.iterrows():
-        #         new_feature_location_exons = sf.FeatureLocation(row['start'],
-        #                                                         row['end'],
-        #                                                         row['strand'])
-        #         location_exons.append(new_feature_location_exons)
-        #     if location_exons and len(location_exons)>=2:
-        #         exon_compound_locations = sf.CompoundLocation(location_exons, operator='join')
-
-        #         new_feature_cds = sf.SeqFeature(exon_compound_locations, type='CDS')
-        #     else:
         new_feature_cds = sf.SeqFeature(sf.FeatureLocation(start_position,
                                                                 end_position,
                                                                 # strand),
@@ -482,13 +365,6 @@ def faa_to_gbk(genome_fasta, prot_fasta, annot_table, species_name, gbk_out, gob
                 new_feature_cds.qualifiers['go_component'] = go_components
                 new_feature_cds.qualifiers['go_function'] = go_functions
                 new_feature_cds.qualifiers['go_process'] = go_process
-                # quit()
-
-            # # Add InterPro annotation.
-            # if mrna_id in annot_IPRs:
-            #     gene_iprs = re.split(';|,', annot_IPRs[mrna_id])
-            #     if gene_iprs != [""]:
-            #         new_feature_cds.qualifiers['db_xref'] = ["InterPro:"+interpro for interpro in gene_iprs]
 
             # Add EC annotation.
         if contig_id in annot_ECs.keys():
@@ -505,7 +381,15 @@ def faa_to_gbk(genome_fasta, prot_fasta, annot_table, species_name, gbk_out, gob
     SeqIO.write(seq_objects, gbk_out, 'genbank')
 
 def main(genome_fasta, prot_fasta, annot_table, species_name, gbk_out, gobasic_file = None):
-    faa_to_gbk(genome_fasta, prot_fasta, annot_table, species_name, gbk_out, gobasic_file)
+    # check validity of inputs
+    for elem in [genome_fasta, prot_fasta, annot_table]:
+        if not is_valid_file(elem):
+            print(f"{elem} is not a valid path file.")
+            sys.exit(1)
+    if gobasic_file:
+        if not is_valid_file(gobasic_file):
+            print(f"{gobasic_file} is not a valid path file.")
+            sys.exit(1)
 
-if __name__ == '__main__':
-	main()
+
+    faa_to_gbk(genome_fasta, prot_fasta, annot_table, species_name, gbk_out, gobasic_file)

@@ -78,7 +78,7 @@ def cli():
 
     args = parser.parse_args()
 
-    gbk_creation(args.fastagenome, args.fastaprot, args.annotation, args.gff, args.name, args.output, args.gobasic)
+    gbk_creation(genome=args.fastagenome, proteome=args.fastaprot, annot=args.annotation, gff=args.gff, org=args.name, gbk=args.output, gobasic=args.gobasic)
         
 
 if __name__ == "__main__":
