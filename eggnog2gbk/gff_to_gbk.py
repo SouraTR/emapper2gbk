@@ -20,6 +20,7 @@ If it's 0 gffutils will return an error (source : https://github.com/daler/gffut
 
 Other informations can be added by adding a dictionary with gene ID as key and the information
 as value and adapt the condition used for the others annotations (EC, Go term).
+
 """
 
 import argparse
@@ -28,9 +29,7 @@ import gffutils
 import numpy as np
 import os
 import pandas as pa
-import pronto
 import re
-import requests
 import shutil
 
 from Bio import SeqFeature as sf
@@ -38,7 +37,8 @@ from Bio import SeqIO
 from Bio.Alphabet import IUPAC
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
-from collections import OrderedDict, create_GO_dataframes, create_taxonomic_data
+from collections import OrderedDict
+from eggnog2gbk.utils import is_valid_file, create_GO_dataframes, read_annotation, create_taxonomic_data
 
 
 def merging_mini_gff(gff_folder):
@@ -57,44 +57,6 @@ def merging_mini_gff(gff_folder):
                 shutil.copyfileobj(mini_gff_file, gff_file_merged)
 
     return gff_merged_path
-
-def find_column_of_interest(df):
-    '''
-    Gene column is supposed to be the first one.
-    Detect columns containing GO number, EC number and Interpro ID.
-    To do this, regular expression are used, for each types of data.
-    The occurrence of each regular expression is counted.
-    Then the column containing the maximum of occurrence for a type of data is associated with it by returning it's name.
-    '''
-    columns = df.columns.tolist()
-    gene_column = columns[0]
-
-    go_number_expression = r"[FPC]?:?GO[:_][\d]{7}"
-    ec_expression = r"[Ee]?[Cc]?:?[\d]{1}[\.]{1}[\d]{,2}[\.]{,1}[\d]{,2}[\.]{,1}[\d]{,3}"
-    ipr_expression = r"IPR[\d]{6}"
-    go_number_columns = {}
-    ec_columns = {}
-    ipr_columns = {}
-
-    for column in columns:
-        df[column] = df[column].astype(str)
-        go_number_columns[column] = len(df[df[column].str.match(go_number_expression)])
-        ec_columns[column] = len(df[df[column].str.match(ec_expression)])
-        ipr_columns[column] = len(df[df[column].str.match(ipr_expression)])
-
-    if go_number_columns:
-        go_number_column = max(go_number_columns, key=go_number_columns.get)
-        go_column = go_number_column
-    if ec_columns != []:
-        ec_column = max(ec_columns, key=ec_columns.get)
-    else:
-        ec_column = np.nan
-    if ipr_columns != []:
-        ipr_column = max(ipr_columns, key=ipr_columns.get)
-    else:
-        ipr_column = np.nan
-
-    return gene_column, go_column, ec_column, ipr_column
 
 def contig_info(contig_id, contig_seq, species_informations):
     """
@@ -271,21 +233,8 @@ def gff_to_gbk(genome_fasta, prot_fasta, annot_table, gff_file, species_name, gb
     # Create a taxonomy dictionary querying the EBI.
     species_informations = create_taxonomic_data(species_name)
 
-    # Read a tsv file containing GO terms, Interpro and EC associated with gene name.
-    mapping_data = pa.read_csv(annot_table, sep='\t', comment='#', header=None, dtype = str)
-    mapping_data.replace(np.nan, '', inplace=True)
-
-    # gene_column, go_column, ec_column, ipr_column = find_column_of_interest(mapping_data)
-    gene_column = 0
-    go_column = 6
-    ec_column = 7
-    ipr_column = np.nan
-
-    mapping_data.set_index(gene_column, inplace=True)
-    # Dictionary with gene id as key and GO terms/Interpro/EC as value.
-    annot_GOs = mapping_data[go_column].to_dict()
-    annot_IPRs = {} # mapping_data[ipr_column].to_dict()
-    annot_ECs = mapping_data[ec_column].to_dict()
+    # Read the ggnog tsv file containing GO terms and EC associated with gene name.
+    annotation_data = read_annotation(annot_table)
 
     # Query Gene Ontology to extract namespaces and alternative IDs.
     df_go_namespace, df_go_alternative = create_GO_dataframes(gobasic)
@@ -388,8 +337,8 @@ def gff_to_gbk(genome_fasta, prot_fasta, annot_table, gff_file, species_name, gb
                     new_feature_cds.qualifiers['locus_tag'] = id_gene
                     print("mrna" + mrna_id)
                     # Add GO annotation according to the namespace.
-                    if mrna_id in annot_GOs:
-                        gene_gos = re.split(';|,', annot_GOs[mrna_id])
+                    if mrna_id in annotation_data.keys():
+                        gene_gos = re.split(';|,', annotation_data[mrna_id]['GOs'])
                         if gene_gos != [""]:
                             go_components = []
                             go_functions = []
@@ -412,15 +361,9 @@ def gff_to_gbk(genome_fasta, prot_fasta, annot_table, gff_file, species_name, gb
                             new_feature_cds.qualifiers['go_function'] = go_functions
                             new_feature_cds.qualifiers['go_process'] = go_process
 
-                    # Add InterPro annotation.
-                    if mrna_id in annot_IPRs:
-                        gene_iprs = re.split(';|,', annot_IPRs[mrna_id])
-                        if gene_iprs != [""]:
-                            new_feature_cds.qualifiers['db_xref'] = ["InterPro:"+interpro for interpro in gene_iprs]
-
                     # Add EC annotation.
-                    if mrna_id in annot_ECs:
-                        gene_ecs = re.split(';|,', annot_ECs[mrna_id])
+                    if mrna_id in annotation_data.keys():
+                        gene_ecs = re.split(';|,', annotation_data[mrna_id]['EC'])
                         if gene_ecs != [""]:
                             new_feature_cds.qualifiers['EC_number'] = [ec.replace('ec:', '') for ec in gene_ecs]
 

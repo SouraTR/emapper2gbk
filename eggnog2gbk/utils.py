@@ -1,8 +1,14 @@
 import sys
 import os
+import pandas as pa
+import csv
+import itertools
+import numpy as np
+import pronto
+import requests
 
 def is_valid_path(filepath):
-    """Return True if filepath is valid
+    """Return True if filepath is valid.
     
     Args:
         filepath (str): path to file
@@ -22,7 +28,7 @@ def is_valid_path(filepath):
 
 
 def is_valid_file(filepath):
-    """Return True if filepath exists
+    """Return True if filepath exists.
 
     Args:
         filepath (str): path to file
@@ -38,7 +44,7 @@ def is_valid_file(filepath):
 
 
 def is_valid_dir(dirpath):
-    """Return True if directory exists or can be created (then create it)
+    """Return True if directory exists or can be created (then create it).
     
     Args:
         dirpath (str): path of directory
@@ -119,3 +125,35 @@ def create_taxonomic_data(species_name):
     species_informations['organism'] = compatible_species_name
     species_informations['keywords'] = [compatible_species_name]
     return species_informations
+
+def read_annotation(eggnog_outfile:str):
+    """Read an eggno-mapper annotation file and retrieve EC numbers and GO terms by genes.
+
+    Args:
+        eggnog_outfile (str): path to eggnog-mapper annotation file
+
+    Returns:
+        dict: dict of genes and their annotations as {gene1:{EC:'..,..', GOs:'..,..,'}}
+    """
+    # read eggnog-mapper annotation file
+    # warning1: column names are commented
+    # warning2: there are less column names than actual columns
+    annotation_data = pa.read_csv(eggnog_outfile, sep='\t', comment='#', header=None, dtype = str)
+    annotation_data.replace(np.nan, '', inplace=True)
+    # retrieve headers name at line 4
+    colnames_linenb = 3
+    with open(eggnog_outfile, 'r') as f:
+        headers_row = next(itertools.islice(csv.reader(f), colnames_linenb, None))[0].lstrip("#").strip().split('\t')
+    # fill headers with unknowns up to columns number
+    i = 1
+    while len(headers_row) < len(annotation_data.columns):
+        headers_row.append(f"unknown_{i}")
+        i += 1
+
+    # assign the headers:
+    annotation_data.columns = headers_row
+
+    # now create the dict
+    emapper_dict = annotation_data.set_index('query_name')[['GOs','EC']].to_dict('index') # annotation_data.groupby("query_name")[["GOs","EC"]].apply(lambda x: dict(x.values)).to_dict()
+
+    return emapper_dict

@@ -3,21 +3,16 @@
 import sys
 import argparse
 import datetime
-import gffutils
-import numpy as np
 import os
-import pandas as pa
-import pronto
 import re
-import requests
 import shutil
+from collections import OrderedDict
 from Bio import SeqFeature as sf
 from Bio import SeqIO
 from Bio.Alphabet import IUPAC
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
-from collections import OrderedDict
-from eggnog2gbk.utils import is_valid_file, create_GO_dataframes
+from eggnog2gbk.utils import is_valid_file, create_GO_dataframes, read_annotation, create_taxonomic_data
 
 
 """
@@ -32,49 +27,6 @@ if you use another separator add to the re.split(',|;').
 Other informations can be added by adding a dictionary with gene ID as key and the information
 as value and adapt the condition used for the others annotations (EC, Go term).
 """
-
-
-def find_column_of_interest(df):
-    '''
-    Gene column is supposed to be the first one.
-    Detect columns containing GO number, EC number and Interpro ID.
-    To do this, regular expression are used, for each types of data.
-    The occurrence of each regular expression is counted.
-    Then the column containing the maximum of occurrence for a type of data is associated with it by returning its name.
-    '''
-    # columns = df.columns.tolist()
-    # gene_column = columns[0]
-
-    # go_number_expression = r"[FPC]?:?GO[:_][\d]{7}"
-    # ec_expression = r"[Ee]?[Cc]?:?[\d]{1}[\.]{1}[\d]{,2}[\.]{,1}[\d]{,2}[\.]{,1}[\d]{,3}"
-    # ipr_expression = r"IPR[\d]{6}"
-    # go_number_columns = {}
-    # ec_columns = {}
-    # ipr_columns = {}
-
-    # for column in columns:
-    #     df[column] = df[column].astype(str)
-    #     go_number_columns[column] = len(df[df[column].str.match(go_number_expression)])
-    #     ec_columns[column] = len(df[df[column].str.match(ec_expression)])
-    #     ipr_columns[column] = len(df[df[column].str.match(ipr_expression)])
-
-    # if go_number_columns:
-    #     go_number_column = max(go_number_columns, key=go_number_columns.get)
-    #     go_column = go_number_column
-    # if ec_columns != []:
-    #     ec_column = max(ec_columns, key=ec_columns.get)
-    # else:
-    #     ec_column = np.nan
-    # if ipr_columns != []:
-    #     ipr_column = max(ipr_columns, key=ipr_columns.get)
-    # else:
-    #     ipr_column = np.nan
-    #TODO careful, I bypassed the column detection
-    go_column = "GOs"
-    ec_column = "EC"
-    gene_column = "query_name"
-    ipr_column = np.nan
-    return gene_column, go_column, ec_column, ipr_column
 
 def contig_info(contig_id, contig_seq, species_informations):
     """
@@ -208,31 +160,6 @@ def faa_to_gbk(genome_fasta, prot_fasta, annot_table, species_name, gbk_out, gob
     a contig information table (containing species name, taxon ID, ..)
     create a genbank file.
     """
-
-    # print('Creating GFF database (gffutils)')
-    # # Create the gff database file.
-    # # gffutils use sqlite3 file-based database to access data inside GFF.
-    # # ':memory:' ask gffutils to keep database in memory instead of writting in a file.
-    # gff_database = gffutils.create_db(gff_file, ':memory:', force=True, keep_order=True, merge_strategy='merge', sort_attribute_values=True)
-
-    # # Length of your gene ID.
-    # # Catch it in the GFF database.
-    # # It's pretty dumb as we go into a loop for one information.
-    # # But I don't find another way to catch the length of gene_id.
-    # length_gene_id = 0
-
-    # for gene in gff_database.features_of_type('gene'):
-    #     length_gene_id = len(gene.id.replace('gene:', ''))
-    #     break
-
-    # # Get the longest contig ID to check if all contig IDs have the
-    # # same length, if not add 0 (at the supposed position of the number).
-    # longest_contig_id = ""
-
-    # for contig_for_length_id in gff_database.features_of_type('sequence_assembly'):
-    #     if len(longest_contig_id) < len(contig_for_length_id.id):
-    #         longest_contig_id = contig_for_length_id.id
-
     print('Formatting fasta and annotation file')
     # Dictionary with scaffold/chromosome id as key and sequence as value.
     contig_seqs = OrderedDict()
@@ -251,23 +178,8 @@ def faa_to_gbk(genome_fasta, prot_fasta, annot_table, species_name, gbk_out, gob
     # Create a taxonomy dictionary querying the EBI.
     species_informations = create_taxonomic_data(species_name)
 
-    # Read a tsv file containing GO terms, Interpro and EC associated with gene name.
-    mapping_data = pa.read_csv(annot_table, sep='\t', comment='#', header=None, dtype = str)
-    mapping_data.replace(np.nan, '', inplace=True)
-
-    #gene_column, go_column, ec_column, ipr_column = find_column_of_interest(mapping_data)
-    gene_column = 0
-    go_column = 6
-    ec_column = 7
-    ipr_column = np.nan
-    # print(mapping_data[[6]].values.tolist())
-
-    mapping_data.set_index(gene_column, inplace=True)
-    # Dictionary with gene id as key and GO terms/Interpro/EC as value.
-    annot_GOs = mapping_data[go_column].to_dict()
-    # annot_IPRs = mapping_data[ipr_column].to_dict()
-    annot_ECs = mapping_data[ec_column].to_dict()
-    # print(annot_ECs)
+    # Read the ggnog tsv file containing GO terms and EC associated with gene name.
+    annotation_data = read_annotation(annot_table)
 
     # Query Gene Ontology to extract namespaces and alternative IDs.
     df_go_namespace, df_go_alternative = create_GO_dataframes(gobasic)
@@ -279,28 +191,7 @@ def faa_to_gbk(genome_fasta, prot_fasta, annot_table, species_name, gbk_out, gob
     df_go_alternative.set_index('GO', inplace=True)
     go_alternatives = df_go_alternative['alternative_GO'].to_dict()
 
-    # # Create a dataframe containing each exon with informations (gene, start, end and strand)
-    # df_exons = pa.DataFrame(columns=['exon_id', 'gene_id', 'start', 'end', 'strand'])
-
-    # print('Searching for exons')
-
-    # temporary_datas = []
-
-    # # Search for all exons in gff database and extract start position (have to minus one to get the right position)
-    # # the end position, the strand (have to change from str to int) and the gene ID.
-    # # Then add it to a list of dictionary that will be added to the dataframe.
-    # for exon in gff_database.features_of_type('exon'):
-    #     start_position = exon.start - 1
-    #     end_position = exon.end
-    #     strand = strand_change(exon.strand)
-
-    #     gene_id = exon.id.replace('exon:', '')[:-2]
-    #     temporary_datas.append({'exon_id': exon.id, 'gene_id': gene_id,
-    #                         'start': start_position, 'end':end_position, 'strand': strand})
-
-    # df_exons = df_exons.append(temporary_datas)
-
-    # # All SeqRecord objects will be stored in a list and then give to the SeqIO writer to create the genbank.
+    # All SeqRecord objects will be stored in a list and then give to the SeqIO writer to create the genbank.
     seq_objects = []
 
     print('Assembling Genbank informations')
@@ -342,8 +233,8 @@ def faa_to_gbk(genome_fasta, prot_fasta, annot_table, species_name, gbk_out, gob
 
         # Add GO annotation according to the namespace.
         # print(contig_id)
-        if contig_id in annot_GOs.keys():
-            gene_gos = re.split(';|,', annot_GOs[contig_id])
+        if contig_id in annotation_data.keys():
+            gene_gos = re.split(';|,', annotation_data[contig_id]['GOs'])
             if gene_gos != [""]:
                 go_components = []
                 go_functions = []
@@ -367,8 +258,8 @@ def faa_to_gbk(genome_fasta, prot_fasta, annot_table, species_name, gbk_out, gob
                 new_feature_cds.qualifiers['go_process'] = go_process
 
             # Add EC annotation.
-        if contig_id in annot_ECs.keys():
-            gene_ecs = re.split(';|,', annot_ECs[contig_id])
+        if contig_id in annotation_data.keys():
+            gene_ecs = re.split(';|,', annotation_data[contig_id]['EC'])
             if gene_ecs != [""]:
                 new_feature_cds.qualifiers['EC_number'] = [ec.replace('ec:', '') for ec in gene_ecs]
 
