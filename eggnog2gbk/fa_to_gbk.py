@@ -6,6 +6,8 @@ import datetime
 import os
 import re
 import shutil
+import logging
+from typing import Union
 from collections import OrderedDict
 from Bio import SeqFeature as sf
 from Bio import SeqIO
@@ -14,6 +16,7 @@ from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from eggnog2gbk.utils import is_valid_file, create_GO_dataframes, read_annotation, create_taxonomic_data
 
+logger = logging.getLogger(__name__)
 
 """
 Description:
@@ -73,85 +76,7 @@ def contig_info(contig_id, contig_seq, species_informations):
 
     return record
 
-def strand_change(input_strand):
-    """
-    The input is strand in str ('-', '+') modify it to be a strand in int (-1, +1) to 
-    be compatible with SeqIO strand reading.
-    """
-    if isinstance(input_strand, str):
-        if input_strand == '-':
-            new_strand = -1
-        elif input_strand == '+':
-            new_strand = +1
-        if input_strand == '.':
-            new_strand = None
-        elif input_strand == '?':
-            new_strand = 0
-    elif isinstance(input_strand, int):
-        if input_strand == -1:
-            new_strand = input_strand
-        elif input_strand == +1:
-            new_strand = input_strand
-
-    return new_strand
-
-def search_and_add_RNA(gff_database, gene_informations, record, type_RNA):
-    """
-    Search in the gff_database if the gene have RNA of the (type_RNA).
-    For the RNA it will add a feature to the contig record of the genbank.
-    Then it returns the contig record.
-    gene_informations contain:
-        [0] -> gene feature
-        [1] -> gene ID cleaned
-        [2] -> gene start position
-        [3] -> gene end postion
-        [4] -> gene strand modified (str -> int)
-    """
-    for rna in gff_database.children(gene_informations[0], featuretype=type_RNA, order_by='start'):
-        new_feature_RNA = sf.SeqFeature(sf.FeatureLocation(gene_informations[2],
-                                                            gene_informations[3],
-                                                            gene_informations[4]),
-                                                            type=type_RNA)
-        new_feature_RNA.qualifiers['locus_tag'] = gene_informations[1]
-        record.features.append(new_feature_RNA)
-    return record
-
-def search_and_add_pseudogene(gff_database, gene, record, df_exons, gene_protein_seq):
-    """
-    Search in the gff_database if the gene is a pseudogene.
-    Add it to the record.
-    """
-    location_exons = []
-
-    for pseudogene in gff_database.children(gene, featuretype="pseudogene", order_by='start'):
-        # Select exon corresponding to the gene.
-        # Then iterate for each exon and extract information.
-        df_temp = df_exons[df_exons['gene_id'] == pseudogene.id]
-        for _, row in df_temp.iterrows():
-            new_feature_location_exons = sf.FeatureLocation(row['start'],
-                                                            row['end'],
-                                                            row['strand'])
-            location_exons.append(new_feature_location_exons)
-        if location_exons and len(location_exons)>=2:
-            exon_compound_locations = sf.CompoundLocation(location_exons, operator='join')
-
-            new_feature_cds = sf.SeqFeature(exon_compound_locations, type='CDS')
-        else:
-            start_position = gene.start -1
-            end_position = gene.end
-            strand = strand_change(gene.strand)
-            new_feature_cds = sf.SeqFeature(sf.FeatureLocation(start_position,
-                                                                end_position,
-                                                                strand),
-                                                            type="CDS")
-
-        new_feature_cds.qualifiers['translation'] = gene_protein_seq[pseudogene.id]
-        new_feature_cds.qualifiers['locus_tag'] = gene.id + "_0002"
-        new_feature_cds.qualifiers['pseudo'] = None
-        record.features.append(new_feature_cds)
-    return record
-
-def faa_to_gbk(genome_fasta, prot_fasta, annot_table, species_name, gbk_out, gobasic=None):
+def faa_to_gbk(genome_fasta:str, prot_fasta:str, annotation_data:Union[str, dict], species_name:str, gbk_out:str, gobasic:str=None):
     """
     From a genome fasta (containing each contigs of the genome),
     a protein fasta (containing each protein sequence),
@@ -160,7 +85,7 @@ def faa_to_gbk(genome_fasta, prot_fasta, annot_table, species_name, gbk_out, gob
     a contig information table (containing species name, taxon ID, ..)
     create a genbank file.
     """
-    print('Formatting fasta and annotation file')
+    logger.info('Formatting fasta and annotation file')
     # Dictionary with scaffold/chromosome id as key and sequence as value.
     contig_seqs = OrderedDict()
 
@@ -179,7 +104,9 @@ def faa_to_gbk(genome_fasta, prot_fasta, annot_table, species_name, gbk_out, gob
     species_informations = create_taxonomic_data(species_name)
 
     # Read the ggnog tsv file containing GO terms and EC associated with gene name.
-    annotation_data = read_annotation(annot_table)
+    # if metagenomic mode, annotation is already read and given as a dict
+    if not type(annotation_data) is dict:
+        annotation_data = read_annotation(annotation_data)
 
     # Query Gene Ontology to extract namespaces and alternative IDs.
     df_go_namespace, df_go_alternative = create_GO_dataframes(gobasic)
@@ -194,17 +121,15 @@ def faa_to_gbk(genome_fasta, prot_fasta, annot_table, species_name, gbk_out, gob
     # All SeqRecord objects will be stored in a list and then give to the SeqIO writer to create the genbank.
     seq_objects = []
 
-    print('Assembling Genbank informations')
+    logger.info('Assembling Genbank informations')
 
-    # Iterate through each contig.
-    # Then iterate through gene and throug RNA linked with the gene.
-    # Then look if protein informations are available.
+    # Iterate through each contig/gene.
     for contig_id in sorted(contig_seqs):
         # Data for each contig.
         record = contig_info(contig_id, contig_seqs[contig_id], species_informations)
         # if id is numeric, change it
         if contig_id.isnumeric():
-            id_gene = f("gene_{contig_id}")
+            id_gene = f"gene_{contig_id}"
         else:
             id_gene = contig_id
         start_position = 1
@@ -219,8 +144,6 @@ def faa_to_gbk(genome_fasta, prot_fasta, annot_table, species_name, gbk_out, gob
         # print(new_feature_gene.qualifiers['locus_tag'] )
         # Add gene information to contig record.
         record.features.append(new_feature_gene)
-
-        location_exons = []
 
         new_feature_cds = sf.SeqFeature(sf.FeatureLocation(start_position,
                                                                 end_position,
@@ -273,13 +196,13 @@ def faa_to_gbk(genome_fasta, prot_fasta, annot_table, species_name, gbk_out, gob
 
 def main(genome_fasta, prot_fasta, annot_table, species_name, gbk_out, gobasic_file = None):
     # check validity of inputs
-    for elem in [genome_fasta, prot_fasta, annot_table]:
+    for elem in [genome_fasta, prot_fasta]:
         if not is_valid_file(elem):
-            print(f"{elem} is not a valid path file.")
+            logger.critical(f"{elem} is not a valid path file.")
             sys.exit(1)
     if gobasic_file:
         if not is_valid_file(gobasic_file):
-            print(f"{gobasic_file} is not a valid path file.")
+            logger.critical(f"{gobasic_file} is not a valid path file.")
             sys.exit(1)
 
 

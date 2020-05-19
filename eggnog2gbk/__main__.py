@@ -156,7 +156,7 @@ def cli():
         "metagenomic",
         help="metagenomic mode : 1 annot, n faa, n fna --> n gbk",
         parents=[
-            parent_parser_fna, parent_parser_faa, parent_parser_gff, parent_parser_o,
+            parent_parser_fna, parent_parser_faa, parent_parser_gff, parent_parser_o, parent_parser_namef, parent_parser_name,
             parent_parser_ann, parent_parser_c, parent_parser_go, parent_parser_q
         ],
         description=
@@ -211,7 +211,7 @@ def cli():
     elif args.name:
         orgnames = args.name
     else:
-        orgnames == "bacteria"
+        orgnames = "bacteria"
         logger.warning("The default organism name 'bacteria' is used.")
 
     if args.cmd == "genomic":
@@ -235,18 +235,15 @@ def cli():
             logger.error("Tabulated file for organisms name should not be used for single runs of genomic mode. Will use the --name argument or the default 'bacteria' name if None")
             orgnames = args.name
 
-        gbk_creation(genome=args.fastagenome, proteome=args.fastaprot, annot=args.annotation, gff=args.gff, org=orgnames, gbk=args.out, gobasic=args.gobasic, dirmode=directory_mode, cpu=args.cpu)
+        gbk_creation(genome=args.fastagenome, proteome=args.fastaprot, annot=args.annotation, gff=args.gff, org=orgnames, gbk=args.out, gobasic=args.gobasic, dirmode=directory_mode, cpu=args.cpu, metagenomic_mode=False)
         #TODO fix the code in case we have a gff
-        #TODO code genomic part with directories
 
     elif args.cmd == "metagenomic":
         # fna, faa, gbk must all dirs and annotation must be a single file
-        if not os.path.isdir(args.faa) or not os.path.isdir(args.faa) or not os.path.isdir(args.faa) or not is_valid_dir(args.out) or not is_valid_file(args.ann): 
+        if not os.path.isdir(args.fastagenome) or not os.path.isdir(args.fastaprot) or not is_valid_dir(args.out) or not is_valid_file(args.annotation): 
             logger.critical(f"In metagenomic mode, proteomes, genomes, output must be directories and annotation must be a single file")
             sys.exit(1)
-        #TODO code metagenomic part
-        logger.critical(f"metagenomic pipeline is not coded yet")
-        sys.exit(1)
+        gbk_creation(genome=args.fastagenome, proteome=args.fastaprot, annot=args.annotation, gff=args.gff, org=orgnames, gbk=args.out, gobasic=args.gobasic, dirmode=True, metagenomic_mode=True, cpu=args.cpu)
         
     logger.info("--- Total runtime %.2f seconds ---" % (time.time() - start_time))
 

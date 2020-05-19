@@ -63,6 +63,7 @@ ANNOTATIONS_BY_GENOME = {'gene1781':{'go_component':['GO:0005575'],
 def gbk_no_gff_test():
     """Test genomic mode without gff as input.
     """
+    print("*** Test genomic mode without gff as input ***")
     gbk_test = 'test_no_gff.gbk'
     gbk_creation(genome=FNA_INPUT,
                 proteome=FAA_INPUT,
@@ -80,6 +81,7 @@ def gbk_no_gff_test():
 def gbk_from_gff_test():
     """Test genomic mode with a gff as input.
     """
+    print("*** Test genomic mode with gff as input ***")
     gbk_test = 'test_gff.gbk'
 
     gbk_creation(genome=FNA_INPUT,
@@ -143,6 +145,7 @@ def compare_two_gbks(expected_gbk:str, tested_gbk:str):
 def gbk_from_dir_test():
     """Test genomic mode with directories.
     """
+    print("*** Test genomic mode with input directories without gff ***")
     gbk_dir_test = 'gbk_g/'
     os.makedirs(gbk_dir_test)
     gbk_creation(genome=FNA_DIR,
@@ -154,8 +157,40 @@ def gbk_from_dir_test():
                 gobasic='go-basic.obo',
                 dirmode=True)
 
-    for gbk in os.listdir(gbk_dir_test):
-        loaded_gbk = SeqIO.to_dict(SeqIO.parse(f"{gbk_dir_test}/{gbk}", "genbank"))
+    check_gbks_from_dir(gbk_dir_test)
+
+    shutil.rmtree(gbk_dir_test)
+    return
+
+def gbk_metagenomic_mode_test():
+    """Test metagenomic mode.
+    """
+    print("*** Test metagenomic mode ***")
+    gbk_dir_test = 'gbk_mg/'
+    os.makedirs(gbk_dir_test)
+    gbk_creation(genome=FNA_DIR,
+                proteome=FAA_DIR,
+                annot=ANNOT_INPUT,
+                org=ORG_FILE,
+                gff=None,
+                gbk=gbk_dir_test,
+                gobasic='go-basic.obo',
+                dirmode=True,
+                metagenomic_mode=True)
+
+    check_gbks_from_dir(gbk_dir_test)
+
+    shutil.rmtree(gbk_dir_test)
+    return
+
+def check_gbks_from_dir(gbk_dir):
+    """Check if annotations in each gbk file are consistent with the expected ones.
+
+    Args:
+        gbk_dir (str): path to gbk directory
+    """
+    for gbk in os.listdir(gbk_dir):
+        loaded_gbk = SeqIO.to_dict(SeqIO.parse(f"{gbk_dir}/{gbk}", "genbank"))
         annotations = {i:None 
                         for i in loaded_gbk.keys()}
         for gene in annotations: 
@@ -165,22 +200,13 @@ def gbk_from_dir_test():
                     # check annotations
                     for ann in ANNOTATIONS_TYPES:
                         if ann in annotations[gene]:
-                            print(set(annotations[gene][ann]), set(ANNOTATIONS_BY_GENOME[gene][ann]))
+                            # print(set(annotations[gene][ann]), set(ANNOTATIONS_BY_GENOME[gene][ann]))
                             assert set(annotations[gene][ann]) == set(ANNOTATIONS_BY_GENOME[gene][ann])
-
-    shutil.rmtree(gbk_dir_test)
     return
 
-def gbk_metagenomic_mode_test():
-    """Test metagenomic mode.
-    """
-    gbk_dir_test = 'gbk_mg/'
-    #TODO
-    shutil.rmtree(gbk_dir_test)
-    return
     
 if __name__ == "__main__":
     gbk_no_gff_test()
     # gbk_from_gff_test()
-    # gbk_from_dir_test()
-    # gbk_metagenomic_mode_test()
+    gbk_from_dir_test()
+    gbk_metagenomic_mode_test()

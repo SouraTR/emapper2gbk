@@ -6,11 +6,11 @@ import sys
 from multiprocessing import Pool
 from eggnog2gbk import gff_to_gbk
 from eggnog2gbk import fa_to_gbk
-from eggnog2gbk.utils import get_basename, is_valid_file, get_extension
+from eggnog2gbk.utils import get_basename, is_valid_file, get_extension, read_annotation
 
 logger = logging.getLogger(__name__)
 
-def gbk_creation(genome:str, proteome:str, annot:str, org:str, gbk:str, gobasic:str, dirmode:bool=False, cpu:int=1, gff:str=None):
+def gbk_creation(genome:str, proteome:str, annot:str, org:str, gbk:str, gobasic:str, dirmode:bool=False, cpu:int=1, metagenomic_mode:bool=False, gff:str=None):
     """Create gbk files from genomic information and eggnog-mapper annotation outputs.
 
     Args:
@@ -21,6 +21,7 @@ def gbk_creation(genome:str, proteome:str, annot:str, org:str, gbk:str, gobasic:
         gbk (str): output file or directory
         gobasic (str): path to go-basic.obo file
         dirmode (bool, optional): directory mode (instead of single file). Defaults to False.
+        dirmode (bool, optional): metagenomic mode. Defaults to False.
         cpu (int, optional): number of cpu, used for multi process in directory mode. Defaults to 1.
         gff (str, optional): gff file or dir. Defaults to None.
     """
@@ -30,8 +31,6 @@ def gbk_creation(genome:str, proteome:str, annot:str, org:str, gbk:str, gobasic:
         else:
             fa_to_gbk.main(genome, proteome, annot, org, gbk, gobasic)
     else:
-        logger.info("this is dirmode")
-        
         gbk_pool = Pool(processes=cpu)
 
         all_genomes = set([get_basename(i) for i in os.listdir(genome)])
@@ -47,7 +46,7 @@ def gbk_creation(genome:str, proteome:str, annot:str, org:str, gbk:str, gobasic:
                 reader = csv.reader(csvfile, dialect)
                 org_mapping = {i[0]:i[1] for i in reader}
         else:
-            org_mapping = {org for i in all_genomes}
+            org_mapping = {i:org for i in all_genomes}
 
         # check that all data is here
         try:
@@ -71,16 +70,17 @@ def gbk_creation(genome:str, proteome:str, annot:str, org:str, gbk:str, gobasic:
         except AssertionError:
             logger.critical(f"Proteomes dir {proteome} must contain only '.faa' files")
             sys.exit(1)
-        try:
-            assert set([get_basename(i) for i in os.listdir(annot)]) == all_genomes
-        except AssertionError:
-            logger.critical(f"Genomes names in {genome} do not match the names in {annot}.")
-            sys.exit(1)
-        try:
-            assert all(ext == 'tsv' for ext in [get_extension(i) for i in os.listdir(annot)])
-        except AssertionError:
-            logger.critical(f"Annotations dir {annot} must contain only '.tsv' files")
-            sys.exit(1)
+        if os.path.isdir(annot):
+            try:
+                assert set([get_basename(i) for i in os.listdir(annot)]) == all_genomes
+            except AssertionError:
+                logger.critical(f"Genomes names in {genome} do not match the names in {annot}.")
+                sys.exit(1)
+            try:
+                assert all(ext == 'tsv' for ext in [get_extension(i) for i in os.listdir(annot)])
+            except AssertionError:
+                logger.critical(f"Annotations dir {annot} must contain only '.tsv' files")
+                sys.exit(1)
         if gff:
             try:
                 assert set([get_basename(i) for i in os.listdir(gff)]) == all_genomes
@@ -106,12 +106,25 @@ def gbk_creation(genome:str, proteome:str, annot:str, org:str, gbk:str, gobasic:
                         'gobasic':gobasic}
                         )
             gbk_pool.map(run_gff_to_gbk, multiprocess_data)
-        else:
+        elif not gff and not metagenomic_mode:
             for genome_id in all_genomes:
                     multiprocess_data.append(
                         {'genome':f"{genome}/{genome_id}.fna",
                         'proteome':f"{proteome}/{genome_id}.faa",
                         'annot':f"{annot}/{genome_id}.tsv",
+                        'org':org_mapping[genome_id],
+                        'gbk':f"{gbk}/{genome_id}.gbk",
+                        'gobasic':gobasic}
+                        )
+            gbk_pool.map(run_fa_to_gbk, multiprocess_data)
+        else:
+            # read annotation of gene catalogue
+            annot_genecat = read_annotation(annot)
+            for genome_id in all_genomes:
+                    multiprocess_data.append(
+                        {'genome':f"{genome}/{genome_id}.fna",
+                        'proteome':f"{proteome}/{genome_id}.faa",
+                        'annot':annot_genecat,
                         'org':org_mapping[genome_id],
                         'gbk':f"{gbk}/{genome_id}.gbk",
                         'gobasic':gobasic}
