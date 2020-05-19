@@ -60,7 +60,7 @@ ANNOTATIONS_BY_GENOME = {'gene1781':{'go_component':['GO:0005575'],
                                     }
                         }
 
-def gbk_no_gff_test():
+def test_gbk_no_gff_test():
     """Test genomic mode without gff as input.
     """
     print("*** Test genomic mode without gff as input ***")
@@ -78,7 +78,7 @@ def gbk_no_gff_test():
     return
 
 
-def gbk_from_gff_test():
+def test_gbk_from_gff_test():
     """Test genomic mode with a gff as input.
     """
     print("*** Test genomic mode with gff as input ***")
@@ -142,7 +142,7 @@ def compare_two_gbks(expected_gbk:str, tested_gbk:str):
                 assert set(annotations_expected[gene][qualifier]) == set(annotations_test[gene][qualifier])
     return
 
-def gbk_from_dir_test():
+def test_gbk_from_dir_test():
     """Test genomic mode with directories.
     """
     print("*** Test genomic mode with input directories without gff ***")
@@ -162,7 +162,7 @@ def gbk_from_dir_test():
     shutil.rmtree(gbk_dir_test)
     return
 
-def gbk_metagenomic_mode_test():
+def test_gbk_metagenomic_mode():
     """Test metagenomic mode.
     """
     print("*** Test metagenomic mode ***")
@@ -206,7 +206,7 @@ def check_gbks_from_dir(gbk_dir):
 
     
 if __name__ == "__main__":
-    gbk_no_gff_test()
-    # gbk_from_gff_test()
-    gbk_from_dir_test()
-    gbk_metagenomic_mode_test()
+    test_gbk_no_gff()
+    # test_gbk_from_gff()
+    test_gbk_from_dir()
+    test_gbk_metagenomic_mode()
