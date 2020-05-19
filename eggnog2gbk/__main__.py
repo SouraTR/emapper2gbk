@@ -65,7 +65,7 @@ def cli():
     parent_parser_c.add_argument(
         "-c",
         "--cpu",
-        help="cpu number for multi-process",
+        help="cpu number for metagenomic mode or genome mode using input directories",
         required=False,
         type=int,
         default=1
@@ -117,6 +117,7 @@ def cli():
         "--gobasic",
         help="go ontology, will be downloaded if not provided",
         required=False,
+        default=None,
         type=str
     )
     parent_parser_name = argparse.ArgumentParser(add_help=False)
@@ -125,7 +126,7 @@ def cli():
         "--name",
         help="organism/genome name in quotes",
         required=False,
-        default="Bacteria",
+        # default="Bacteria",
         type=str
     )
     parent_parser_namef = argparse.ArgumentParser(add_help=False)
@@ -193,11 +194,25 @@ def cli():
     if args.quiet:
         console_handler.setLevel(logging.WARNING)
     logger.addHandler(console_handler)
+
+    # check go-basic file
     if args.gobasic and not is_valid_file(args.gobasic):
         logger.critical(f"Go-basic file path is incorrect")
         sys.exit(1)
 
     args = parser.parse_args()
+
+    # check the given names
+    if args.namefile and args.name:
+        logger.warning("You should either use a --name or --namefile, not both. Will consider the file only.")
+        orgnames = args.namefile
+    elif args.namefile:
+        orgnames = args.namefile
+    elif args.name:
+        orgnames = args.name
+    else:
+        orgnames == "bacteria"
+        logger.warning("The default organism name 'bacteria' is used.")
 
     if args.cmd == "genomic":
         # fna, faa, [gff], gbk, ann must all be files or dirs, not mix of both
@@ -215,12 +230,14 @@ def cli():
             elif not directory_mode and not is_valid_path(args.out):
                 logger.critical(f"Output file path cannot be accessed")
                 sys.exit(1)
-        if not directory_mode:
-            gbk_creation(genome=args.fastagenome, proteome=args.fastaprot, annot=args.annotation, gff=args.gff, org=args.name, gbk=args.out, gobasic=args.gobasic)
-            #TODO fix the code in case we have a gff
-        else:
-            #TODO code genomic part with directories
-            logger.critical(f"genomic subcommand with directories as input is not coded yet")
+        # check names #2 
+        if args.namefile and not directory_mode:
+            logger.error("Tabulated file for organisms name should not be used for single runs of genomic mode. Will use the --name argument or the default 'bacteria' name if None")
+            orgnames = args.name
+
+        gbk_creation(genome=args.fastagenome, proteome=args.fastaprot, annot=args.annotation, gff=args.gff, org=orgnames, gbk=args.out, gobasic=args.gobasic, dirmode=directory_mode, cpu=args.cpu)
+        #TODO fix the code in case we have a gff
+        #TODO code genomic part with directories
 
     elif args.cmd == "metagenomic":
         # fna, faa, gbk must all dirs and annotation must be a single file

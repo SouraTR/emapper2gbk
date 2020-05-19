@@ -7,6 +7,39 @@ import numpy as np
 import pronto
 import requests
 
+def get_basename(filepath):
+    """Return the basename of given filepath.
+    
+    Args:
+        filepath (str): path to a file
+    
+    Returns:
+        str: basename
+
+    >>> basename('~/an/interesting/file.txt')
+    'file
+    """
+    return os.path.splitext(os.path.basename(filepath))[0]
+
+
+def get_extension(filepath):
+    """Get the extension of a filepath
+    
+    Args:
+        filepath (str): path to a file
+    
+    Returns:
+        str: extention of the file
+
+    >>> extension('~/an/interesting/file.lp')
+    'lp'
+    >>> extension('nothing')
+    ''
+    >>> extension('nothing.important')
+    'important'
+    """
+    return os.path.splitext(os.path.basename(filepath))[1][1:]
+
 def is_valid_path(filepath):
     """Return True if filepath is valid.
     
