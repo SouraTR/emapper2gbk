@@ -35,7 +35,13 @@ def contig_info(contig_id, contig_seq, species_informations):
     """
     Create contig information from species_informations dictionary and contig id and contig seq.
     """
-    record = SeqRecord(contig_seq, id=contig_id, name=contig_id,
+    if contig_id.isnumeric():
+        newname = f"_{contig_id}"
+    elif "|" in contig_id:
+        newname = contig_id.split("|")[0]
+    else:
+        newname = contig_id
+    record = SeqRecord(contig_seq, id=contig_id, name=newname,
                     description=species_informations['description'])
 
     record.seq.alphabet = IUPAC.ambiguous_dna
@@ -130,6 +136,8 @@ def faa_to_gbk(genome_fasta:str, prot_fasta:str, annotation_data:Union[str, dict
         # if id is numeric, change it
         if contig_id.isnumeric():
             id_gene = f"gene_{contig_id}"
+        elif "|" in contig_id:
+            id_gene = contig_id.split("|")[0]
         else:
             id_gene = contig_id
         start_position = 1
