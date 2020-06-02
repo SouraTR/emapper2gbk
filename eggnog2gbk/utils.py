@@ -94,11 +94,12 @@ def is_valid_dir(dirpath):
     else:
         return True
 
-def create_GO_dataframes(gobasic_file = None):
+
+def create_GO_namespaces_alternatives(gobasic_file = None):
     """
     Use pronto to query the Gene Ontology and to create the Ontology.
-    Create a dataframe which contains for all GO terms their GO namespaces (molecular_function, ..).
-    Create a second dataframe containing alternative ID for some GO terms (deprecated ones).
+    Create a dictionary which contains for all GO terms their GO namespaces (molecular_function, ..).
+    Create a second dictionary containing alternative ID for some GO terms (deprecated ones).
     """
     if gobasic_file:
         go_ontology = pronto.Ontology(gobasic_file)
@@ -110,21 +111,16 @@ def create_GO_dataframes(gobasic_file = None):
     for go_term in go_ontology:
         if 'GO:' in go_term:
             go_namespaces[go_term] = go_ontology[go_term].namespace
-    df_go_namespace = pa.DataFrame.from_dict(go_namespaces, orient='index')
-    df_go_namespace.reset_index(inplace=True)
-    df_go_namespace.columns = ['GO', 'namespace']
 
     # For each GO terms look if there is an alternative ID fo them.
-    go_alt_ids = {}
+    go_alternative = {}
     for go_term in go_ontology:
         if go_ontology[go_term].alternate_ids != frozenset():
             for go_alt in go_ontology[go_term].alternate_ids:
-                go_alt_ids[go_alt] = go_term
-    df_go_alternative = pa.DataFrame.from_dict(go_alt_ids, orient='index')
-    df_go_alternative.reset_index(inplace=True)
-    df_go_alternative.columns = ['GO', 'alternative_GO']
+                go_alternative[go_alt] = go_term
 
-    return df_go_namespace, df_go_alternative
+    return go_namespaces, go_alternative
+
 
 def create_taxonomic_data(species_name):
     """
@@ -136,6 +132,10 @@ def create_taxonomic_data(species_name):
 
     if species_name == "bacteria":
         species_informations = {'db_xref': 'taxon:2', 'scientificName': 'Bacteria', 'commonName': 'eubacteria', 'formalName': 'false', 'rank': 'superkingdom', 'data_file_division': 'PRO', 'geneticCode': '11', 'submittable': 'false', 'description': 'bacteria genome', 'organism': 'bacteria', 'keywords': ['bacteria']} 
+    elif species_name == "metagenome":
+        species_informations = {'db_xref': 'taxon:256318', 'scientificName': 'metagenome', 'formalName': 'false', 'rank': 'species', 'division': 'UNC', 'lineage': 'unclassified sequences; metagenomes; ', 'geneticCode': '11', 'mitochondrialGeneticCode': '2', 'plastIdGeneticCode': '11', 'submittable': 'true'}
+    elif species_name == 'cellular organisms':
+        species_informations = {'db_xref': 'taxon:131567', 'scientificName': 'cellular organisms', 'formalName': 'false', 'rank': 'no rank', 'division': 'UNC', 'geneticCode': '1', 'submittable': 'false'}
     else:
         url = 'https://www.ebi.ac.uk/ena/data/taxonomy/v1/taxon/scientific-name/' + species_name_url
         response = requests.get(url)
@@ -157,7 +157,9 @@ def create_taxonomic_data(species_name):
     species_informations['description'] = compatible_species_name + ' genome'
     species_informations['organism'] = compatible_species_name
     species_informations['keywords'] = [compatible_species_name]
+
     return species_informations
+
 
 def read_annotation(eggnog_outfile:str):
     """Read an eggno-mapper annotation file and retrieve EC numbers and GO terms by genes.
@@ -168,25 +170,21 @@ def read_annotation(eggnog_outfile:str):
     Returns:
         dict: dict of genes and their annotations as {gene1:{EC:'..,..', GOs:'..,..,'}}
     """
-    # read eggnog-mapper annotation file
-    # warning1: column names are commented
-    # warning2: there are less column names than actual columns
-    annotation_data = pa.read_csv(eggnog_outfile, sep='\t', comment='#', header=None, dtype = str)
-    annotation_data.replace(np.nan, '', inplace=True)
-    # retrieve headers name at line 4
+    # Retrieve headers name at line 4.
     colnames_linenb = 3
     with open(eggnog_outfile, 'r') as f:
         headers_row = next(itertools.islice(csv.reader(f), colnames_linenb, None))[0].lstrip("#").strip().split('\t')
-    # fill headers with unknowns up to columns number
-    i = 1
-    while len(headers_row) < len(annotation_data.columns):
-        headers_row.append(f"unknown_{i}")
-        i += 1
 
-    # assign the headers:
-    annotation_data.columns = headers_row
+    # Fix issue when header is incomplete (eggnog before version 2.0).
+    if len(headers_row) == 17:
+        headers_row.extend(['tax_scope', 'eggNOG_OGs', 'bestOG', 'COG_functional_category', 'eggNOG_free_text'])
 
-    # now create the dict
-    emapper_dict = annotation_data.set_index('query_name')[['GOs','EC']].to_dict('index') # annotation_data.groupby("query_name")[["GOs","EC"]].apply(lambda x: dict(x.values)).to_dict()
-
-    return emapper_dict
+    # Use chunk when reading eggnog file to cope with big file.
+    chunksize = 10 ** 6
+    for annotation_data in pa.read_csv(eggnog_outfile, sep='\t', comment='#', header=None, dtype = str, chunksize = chunksize):
+        annotation_data.replace(np.nan, '', inplace=True)
+        # Assign the headers
+        annotation_data.columns = headers_row
+        annotation_dict = annotation_data.set_index('query_name')[['GOs','EC', 'Preferred_name']].to_dict('index')
+        for key in annotation_dict:
+            yield key, annotation_dict[key]

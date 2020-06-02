@@ -38,7 +38,7 @@ from Bio.Alphabet import IUPAC
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from collections import OrderedDict
-from eggnog2gbk.utils import is_valid_file, create_GO_dataframes, read_annotation, create_taxonomic_data
+from eggnog2gbk.utils import is_valid_file, create_GO_namespaces_alternatives, read_annotation, create_taxonomic_data
 
 
 def merging_mini_gff(gff_folder):
@@ -237,14 +237,9 @@ def gff_to_gbk(genome_fasta, prot_fasta, annot_table, gff_file, species_name, gb
     annotation_data = read_annotation(annot_table)
 
     # Query Gene Ontology to extract namespaces and alternative IDs.
-    df_go_namespace, df_go_alternative = create_GO_dataframes(gobasic)
-    # Dictionary GO id as term and GO namespace as value.
-    df_go_namespace.set_index('GO', inplace=True)
-    go_namespaces = df_go_namespace['namespace'].to_dict()
-
-    # Dictionary GO id as term and GO alternatives id as value.
-    df_go_alternative.set_index('GO', inplace=True)
-    go_alternatives = df_go_alternative['alternative_GO'].to_dict()
+    # go_namespaces: Dictionary GO id as term and GO namespace as value.
+    # go_alternatives: Dictionary GO id as term and GO alternatives id as value.
+    go_namespaces, go_alternatives = create_GO_namespaces_alternatives(gobasic)
 
     # Create a dataframe containing each exon with informations (gene, start, end and strand)
     df_exons = pa.DataFrame(columns=['exon_id', 'gene_id', 'start', 'end', 'strand'])
@@ -264,8 +259,7 @@ def gff_to_gbk(genome_fasta, prot_fasta, annot_table, gff_file, species_name, gb
         gene_id = exon.id.replace('exon:', '')[:-2]
         temporary_datas.append({'exon_id': exon.id, 'gene_id': gene_id,
                             'start': start_position, 'end':end_position, 'strand': strand})
-
-    df_exons = df_exons.append(temporary_datas)
+        df_exons = df_exons.append(temporary_datas)
 
     # All SeqRecord objects will be stored in a list and then give to the SeqIO writer to create the genbank.
     seq_objects = []

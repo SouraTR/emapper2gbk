@@ -133,7 +133,7 @@ def cli():
     parent_parser_namef.add_argument(
         "-nf",
         "--namefile",
-        help="organism/genome name (col 2) associated to genome file basenames (col 1). Default = bacteria for all",
+        help="organism/genome name (col 2) associated to genome file basenames (col 1). Default = 'metagenome' for metagenomic and 'cellular organisms' for genomic",
         required=False,
         type=str)
    # subparsers
@@ -211,8 +211,12 @@ def cli():
     elif args.name:
         orgnames = args.name
     else:
-        orgnames = "bacteria"
-        logger.warning("The default organism name 'bacteria' is used.")
+        if args.cmd == "genomic":
+            orgnames = "cellular organisms"
+            logger.warning("The default organism name 'cellular organisms' is used.")
+        if args.cmd == "metagenomic":
+            orgnames = "metagenome"
+            logger.warning("The default organism name 'metagenome' is used.")
 
     if args.cmd == "genomic":
         # fna, faa, [gff], gbk, ann must all be files or dirs, not mix of both
@@ -232,7 +236,7 @@ def cli():
                 sys.exit(1)
         # check names #2 
         if args.namefile and not directory_mode:
-            logger.error("Tabulated file for organisms name should not be used for single runs of genomic mode. Will use the --name argument or the default 'bacteria' name if None")
+            logger.error("Tabulated file for organisms name should not be used for single runs of genomic mode. Will use the --name argument or the default 'metagenome'for metagenomic or 'cellular organisms' for genomics name if None")
             orgnames = args.name
 
         gbk_creation(genome=args.fastagenome, proteome=args.fastaprot, annot=args.annotation, gff=args.gff, org=orgnames, gbk=args.out, gobasic=args.gobasic, dirmode=directory_mode, cpu=args.cpu, metagenomic_mode=False)

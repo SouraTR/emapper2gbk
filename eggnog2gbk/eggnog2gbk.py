@@ -6,7 +6,7 @@ import sys
 from multiprocessing import Pool
 from eggnog2gbk import gff_to_gbk
 from eggnog2gbk import fa_to_gbk
-from eggnog2gbk.utils import get_basename, is_valid_file, get_extension, read_annotation
+from eggnog2gbk.utils import create_GO_namespaces_alternatives, get_basename, is_valid_file, get_extension, read_annotation
 
 logger = logging.getLogger(__name__)
 
@@ -94,6 +94,12 @@ def gbk_creation(genome:str, proteome:str, annot:str, org:str, gbk:str, gobasic:
                 sys.exit(1)
 
         multiprocess_data = []
+
+        # Query Gene Ontology to extract namespaces and alternative IDs.
+        # go_namespaces: Dictionary GO id as term and GO namespace as value.
+        # go_alternatives: Dictionary GO id as term and GO alternatives id as value.
+        go_namespaces, go_alternatives = create_GO_namespaces_alternatives(gobasic)
+
         if gff:
             for genome_id in all_genomes:
                     multiprocess_data.append(
@@ -103,7 +109,7 @@ def gbk_creation(genome:str, proteome:str, annot:str, org:str, gbk:str, gobasic:
                         'gff':f"{gff}/{genome_id}.gff",
                         'org':org_mapping[genome_id],
                         'gbk':f"{gbk}/{genome_id}.gbk",
-                        'gobasic':gobasic}
+                        'gobasic':(go_namespaces, go_alternatives)}
                         )
             gbk_pool.map(run_gff_to_gbk, multiprocess_data)
         elif not gff and not metagenomic_mode:
@@ -114,12 +120,12 @@ def gbk_creation(genome:str, proteome:str, annot:str, org:str, gbk:str, gobasic:
                         'annot':f"{annot}/{genome_id}.tsv",
                         'org':org_mapping[genome_id],
                         'gbk':f"{gbk}/{genome_id}.gbk",
-                        'gobasic':gobasic}
+                        'gobasic':(go_namespaces, go_alternatives)}
                         )
             gbk_pool.map(run_fa_to_gbk, multiprocess_data)
         else:
             # read annotation of gene catalogue
-            annot_genecat = read_annotation(annot)
+            annot_genecat = dict(read_annotation(annot))
             for genome_id in all_genomes:
                     multiprocess_data.append(
                         {'genome':f"{genome}/{genome_id}.fna",
@@ -127,7 +133,7 @@ def gbk_creation(genome:str, proteome:str, annot:str, org:str, gbk:str, gobasic:
                         'annot':annot_genecat,
                         'org':org_mapping[genome_id],
                         'gbk':f"{gbk}/{genome_id}.gbk",
-                        'gobasic':gobasic}
+                        'gobasic':(go_namespaces, go_alternatives)}
                         )
             gbk_pool.map(run_fa_to_gbk, multiprocess_data)
 
