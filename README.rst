@@ -84,22 +84,35 @@ subcommands:
 
   * Usage
 
-    ``emapper2gbk genomic [-h] -fg FASTAGENOME -fp FASTAPROT [-g GFF] -o OUPUT_DIR -a ANNOTATION [-c CPU] [-n NAME] [-nf NAMEFILE] [-go GOBASIC] [-q]``
+    .. code-block::
 
-    Build a gbk file for each genome/set of genes with an annotation file for each
+            usage: emapper2gbk genomic [-h] -fg FASTAGENOME -fp FASTAPROT [-g GFF] -o
+                                       OUPUT_DIR -a ANNOTATION [-c CPU] [-n NAME]
+                                       [-nf NAMEFILE] [-go GOBASIC] [-q]
 
-    optional arguments:
-        -h, --help                                      show this help message and exit
-        -fg FASTAGENOME, --fastagenome FASTAGENOME      fna file or directory
-        -fp FASTAPROT, --fastaprot FASTAPROT            faa file or directory
-        -g GFF, --gff GFF                               gff file or directory
-        -o OUPUT_DIR, --out OUPUT_DIR                   output directory/file path
-        -a ANNOTATION, --annotation ANNOTATION          eggnog annotation file or directory
-        -c CPU, --cpu CPU                               cpu number for metagenomic mode or genome mode using input directories
-        -n NAME, --name NAME                            organism/genome name in quotes
-        -nf NAMEFILE, --namefile NAMEFILE               organism/genome name (col 2) associated to genome file basenames (col 1). Default = 'metagenome' for metagenomic and 'cellular organisms' for genomic
-        -go GOBASIC, --gobasic GOBASIC                  go ontology, will be downloaded if not provided
-        -q, --quiet                                     quiet mode, only warning, errors logged into console
+            Build a gbk file for each genome/set of genes with an annotation file for each
+
+            optional arguments:
+              -h, --help            show this help message and exit
+              -fg FASTAGENOME, --fastagenome FASTAGENOME
+                                    fna file or directory
+              -fp FASTAPROT, --fastaprot FASTAPROT
+                                    faa file or directory
+              -g GFF, --gff GFF     gff file or directory
+              -o OUPUT_DIR, --out OUPUT_DIR
+                                    output directory/file path
+              -a ANNOTATION, --annotation ANNOTATION
+                                    eggnog annotation file or directory
+              -c CPU, --cpu CPU     cpu number for metagenomic mode or genome mode using
+                                    input directories
+              -n NAME, --name NAME  organism/genome name in quotes
+              -nf NAMEFILE, --namefile NAMEFILE
+                                    organism/genome name (col 2) associated to genome file
+                                    basenames (col 1). Default = 'metagenome' for
+                                    metagenomic and 'cellular organisms' for genomic
+              -go GOBASIC, --gobasic GOBASIC
+                                    go ontology, will be downloaded if not provided
+              -q, --quiet           quiet mode, only warning, errors logged into console
 
   * Examples
 
@@ -124,30 +137,37 @@ subcommands:
 * Metagenomic mode
 
   * Usage
-    ``emapper2gbk metagenomic [-h] -fg FASTAGENOME -fp FASTAPROT [-g GFF] -o OUPUT_DIR [-nf NAMEFILE] [-n NAME] -a ANNOTATION [-c CPU] [-go GOBASIC] [-q]``
 
-    Use the annotation of a complete gene catalogue and build gbk files for each
-    set of genes (fna) and proteins (faa) from input directories
+    .. code-block::
 
-    optional arguments:
-        -h, --help            show this help message and exit
-        -fg FASTAGENOME, --fastagenome FASTAGENOME fna file or directory
-        -fp FASTAPROT, --fastaprot FASTAPROT faa file or directory
-        -g GFF, --gff GFF     gff file or directory
-        -o OUPUT_DIR, --out OUPUT_DIR
+        usage: emapper2gbk metagenomic [-h] -fg FASTAGENOME -fp FASTAPROT [-g GFF] -o
+                                       OUPUT_DIR [-nf NAMEFILE] [-n NAME] -a
+                                       ANNOTATION [-c CPU] [-go GOBASIC] [-q]
+
+        Use the annotation of a complete gene catalogue and build gbk files for each
+        set of genes (fna) and proteins (faa) from input directories
+
+        optional arguments:
+          -h, --help            show this help message and exit
+          -fg FASTAGENOME, --fastagenome FASTAGENOME
+                                fna file or directory
+          -fp FASTAPROT, --fastaprot FASTAPROT
+                                faa file or directory
+          -g GFF, --gff GFF     gff file or directory
+          -o OUPUT_DIR, --out OUPUT_DIR
                                 output directory/file path
-        -nf NAMEFILE, --namefile NAMEFILE
+          -nf NAMEFILE, --namefile NAMEFILE
                                 organism/genome name (col 2) associated to genome file
                                 basenames (col 1). Default = 'metagenome' for
                                 metagenomic and 'cellular organisms' for genomic
-        -n NAME, --name NAME  organism/genome name in quotes
-        -a ANNOTATION, --annotation ANNOTATION
+          -n NAME, --name NAME  organism/genome name in quotes
+          -a ANNOTATION, --annotation ANNOTATION
                                 eggnog annotation file or directory
-        -c CPU, --cpu CPU     cpu number for metagenomic mode or genome mode using
+          -c CPU, --cpu CPU     cpu number for metagenomic mode or genome mode using
                                 input directories
-        -go GOBASIC, --gobasic GOBASIC
+          -go GOBASIC, --gobasic GOBASIC
                                 go ontology, will be downloaded if not provided
-        -q, --quiet             quiet mode, only warning, errors logged into console
+          -q, --quiet           quiet mode, only warning, errors logged into console
 
   * Example
 
