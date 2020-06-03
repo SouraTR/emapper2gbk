@@ -1,7 +1,7 @@
 emapper2gbk: creation of genbank files from Eggnog-mapper annotation outputs
 =============================================================================
 
-Starting from fasta and `Eggnog-mapper<http://eggnog-mapper.embl.de/>`__ annotation files, build a gbk file that is suitable for metabolic network reconstruction with `Pathway Tools<http://bioinformatics.ai.sri.com/ptools/>`__. Adds the GO terms and EC numbers annotations in the genbank file.
+Starting from fasta and `Eggnog-mapper <http://eggnog-mapper.embl.de/>`__ annotation files, build a gbk file that is suitable for metabolic network reconstruction with `Pathway Tools <http://bioinformatics.ai.sri.com/ptools/>`__. Adds the GO terms and EC numbers annotations in the genbank file.
 The program can be run with or without a `.gff` file.
 There are two main modes:
 
@@ -9,7 +9,8 @@ There are two main modes:
 
 * **metagenomic mode**: suitable when a list of isolated genes/proteins have been annotated with Eggnog-mapper, typically the gene catalogue of a metagenome. In that case, there is one annotation file and multiple genomes/proteomes that will contain a subset of the genes present in the annotated gene catalogue. The purpose is to create a genbank file with the genes and annotations that matches each genome (Metagenomic species core genome, Metagenomic-assembled genome...) content. There will not be any `.gff` associated to the genomes, and the creation of genbanks can be performed in parallel by providing directories (with matching names for genome and proteome files) as inputs. In that case, you can give as organism name "metagenome" or "bacteria". 
 
-## Main inputs
+Main inputs
+-----------
 
 For each annotated genome, inputs consist of (but are not limited to):
 * a nucleotide fasta file
@@ -78,9 +79,7 @@ subcommands:
 
   * Usage
 
-  emapper2gbk genomic [-h] -fg FASTAGENOME -fp FASTAPROT [-g GFF] -o
-                            OUPUT_DIR -a ANNOTATION [-c CPU] [-n NAME]
-                            [-nf NAMEFILE] [-go GOBASIC] [-q]
+  emapper2gbk genomic [-h] -fg FASTAGENOME -fp FASTAPROT [-g GFF] -o OUPUT_DIR -a ANNOTATION [-c CPU] [-n NAME] [-nf NAMEFILE] [-go GOBASIC] [-q]
 
   Build a gbk file for each genome/set of genes with an annotation file for each
 
@@ -111,24 +110,22 @@ subcommands:
     * Genomic - single mode
 
     .. code:: sh
-    emapper2gbk genomic -fg genome.fna -fp proteome.faa [-gff genome.gff] -n "Escherichia coli" -o coli.gbk -a eggnog_annotation.tsv [-go go-basic.obo]
+      emapper2gbk genomic -fg genome.fna -fp proteome.faa [-gff genome.gff] -n "Escherichia coli" -o coli.gbk -a eggnog_annotation.tsv [-go go-basic.obo]
 
     * Genomic - multiple mode, "bacteria" as default name
 
     .. code:: sh
-    emapper2gbk genomic -fg genome_dir/ -fp proteome_dir/ [-gff gff_dir/] -n metagenome -o gbk_dir/ -a eggnog_annotation_dir/ [-go go-basic.obo]
+      emapper2gbk genomic -fg genome_dir/ -fp proteome_dir/ [-gff gff_dir/] -n metagenome -o gbk_dir/ -a eggnog_annotation_dir/ [-go go-basic.obo]
 
     * Genomic - multiple mode, tsv file for organism names
 
     .. code:: sh
-    emapper2gbk genomic -fg genome_dir/ -fp proteome_dir/ [-gff gff_dir/] -nf matching_genome_orgnames.tsv -o gbk_dir/ -a eggnog_annotation_dir/ [-go go-basic.obo]
+      emapper2gbk genomic -fg genome_dir/ -fp proteome_dir/ [-gff gff_dir/] -nf matching_genome_orgnames.tsv -o gbk_dir/ -a eggnog_annotation_dir/ [-go go-basic.obo]
 
 * Metagenomic mode
 
   * Usage
-  emapper2gbk metagenomic [-h] -fg FASTAGENOME -fp FASTAPROT [-g GFF] -o
-                                OUPUT_DIR [-nf NAMEFILE] [-n NAME] -a
-                                ANNOTATION [-c CPU] [-go GOBASIC] [-q]
+  emapper2gbk metagenomic [-h] -fg FASTAGENOME -fp FASTAPROT [-g GFF] -o OUPUT_DIR [-nf NAMEFILE] [-n NAME] -a ANNOTATION [-c CPU] [-go GOBASIC] [-q]
 
   Use the annotation of a complete gene catalogue and build gbk files for each
   set of genes (fna) and proteins (faa) from input directories
@@ -158,4 +155,4 @@ subcommands:
   * Example
 
   .. code:: sh
-  emapper2gbk metagenomic -fg genome_dir/ -fp proteome_dir/ -o gbk_dir/ -a gene_cat_ggnog_annotation.tsv [-go go-basic.obo]
+    emapper2gbk metagenomic -fg genome_dir/ -fp proteome_dir/ -o gbk_dir/ -a gene_cat_ggnog_annotation.tsv [-go go-basic.obo]
