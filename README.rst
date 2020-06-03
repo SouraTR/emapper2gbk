@@ -38,11 +38,14 @@ Install
 ~~~~~~~~
 
 * From this cloned repository
-.. code-block:: text
+
+.. code-block:: sh
     pip install -r requirements.txt
     pip install .
+
 * From Pypi
-.. code-block:: text
+
+.. code-block:: sh
     pip install emapper2gbk
 
 Usage 
