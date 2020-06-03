@@ -27,6 +27,7 @@ Dependencies
 ~~~~~~~~~~~~
 
 All are described in `requirements.txt` and can be installed with `pip install -r requirements.txt`.
+
 * biopython
 * gffutils
 * numpy
@@ -112,7 +113,7 @@ subcommands:
     * Genomic - single mode
 
     .. code:: sh
-    
+
         emapper2gbk genomic -fg genome.fna -fp proteome.faa [-gff genome.gff] -n "Escherichia coli" -o coli.gbk -a eggnog_annotation.tsv [-go go-basic.obo]
 
     * Genomic - multiple mode, "bacteria" as default name
