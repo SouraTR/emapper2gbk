@@ -88,17 +88,17 @@ subcommands:
     Build a gbk file for each genome/set of genes with an annotation file for each
 
     optional arguments:
-    -h, --help                                      show this help message and exit
-    -fg FASTAGENOME, --fastagenome FASTAGENOME      fna file or directory
-    -fp FASTAPROT, --fastaprot FASTAPROT            faa file or directory
-    -g GFF, --gff GFF                               gff file or directory
-    -o OUPUT_DIR, --out OUPUT_DIR                   output directory/file path
-    -a ANNOTATION, --annotation ANNOTATION          eggnog annotation file or directory
-    -c CPU, --cpu CPU                               cpu number for metagenomic mode or genome mode using input directories
-    -n NAME, --name NAME                            organism/genome name in quotes
-    -nf NAMEFILE, --namefile NAMEFILE               organism/genome name (col 2) associated to genome file basenames (col 1). Default = 'metagenome' for metagenomic and 'cellular organisms' for genomic
-    -go GOBASIC, --gobasic GOBASIC                  go ontology, will be downloaded if not provided
-    -q, --quiet                                     quiet mode, only warning, errors logged into console
+        -h, --help                                      show this help message and exit
+        -fg FASTAGENOME, --fastagenome FASTAGENOME      fna file or directory
+        -fp FASTAPROT, --fastaprot FASTAPROT            faa file or directory
+        -g GFF, --gff GFF                               gff file or directory
+        -o OUPUT_DIR, --out OUPUT_DIR                   output directory/file path
+        -a ANNOTATION, --annotation ANNOTATION          eggnog annotation file or directory
+        -c CPU, --cpu CPU                               cpu number for metagenomic mode or genome mode using input directories
+        -n NAME, --name NAME                            organism/genome name in quotes
+        -nf NAMEFILE, --namefile NAMEFILE               organism/genome name (col 2) associated to genome file basenames (col 1). Default = 'metagenome' for metagenomic and 'cellular organisms' for genomic
+        -go GOBASIC, --gobasic GOBASIC                  go ontology, will be downloaded if not provided
+        -q, --quiet                                     quiet mode, only warning, errors logged into console
 
   * Examples
 
