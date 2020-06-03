@@ -52,7 +52,7 @@ Usage
 -------
 
 Convert GFF, fastas, annotation table and species name into Genbank.
-usage: emapper2gbk [-h] [-v] {genomic,metagenomic} ...
+usage: `emapper2gbk [-h] [-v] {genomic,metagenomic} ...`
 
 Two modes: genomic (one genome/proteome/gff/annot file --> one gbk) or metagenomic with the annotation of the full gene catalogue and fasta files (proteome/genomes) corresponding to list of genes.
 
