@@ -77,6 +77,7 @@ subcommands:
 
     {genomic,metagenomic}
         genomic             genomic mode : 1 annot, 1 faa, 1 fna, [1 gff] --> 1 gbk
+        
         metagenomic         metagenomic mode : 1 annot, n faa, n fna --> n gb
 
 * Genomic mode
