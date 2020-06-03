@@ -1,4 +1,4 @@
-"""Console script for eggnog2gbk."""
+"""Console script for emapper2gbk."""
 import argparse
 import os
 from argparse import RawTextHelpFormatter
@@ -6,10 +6,10 @@ import sys
 import pkg_resources
 import logging
 import time
-from eggnog2gbk.eggnog2gbk import gbk_creation
-from eggnog2gbk.utils import is_valid_dir, is_valid_file, is_valid_path
+from emapper2gbk.emapper2gbk import gbk_creation
+from emapper2gbk.utils import is_valid_dir, is_valid_file, is_valid_path
 
-VERSION = pkg_resources.get_distribution("eggnog2gbk").version
+VERSION = pkg_resources.get_distribution("emapper2gbk").version
 LICENSE = """Copyright (C) Pleiade and Dyliss Inria projects
 MIT License - Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,30 +19,34 @@ copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions. See LICENSE for more details \n
 """
 MESSAGE = """
-Starting from fasta and eggnog annotation files, build a gbk file that is suitable for metabolic network reconstruction with Pathway Tools. Adds the GO terms and EC numbers annotations in the genbank file.\n
+Starting from fasta and Eggnog-mapper annotation files, build a gbk file that is suitable for metabolic network reconstruction with Pathway Tools. Adds the GO terms and EC numbers annotations in the genbank file.\n
 Two modes: genomic (one genome/proteome/gff/annot file --> one gbk) or metagenomic with the annotation of the full gene catalogue and fasta files (proteome/genomes) corresponding to list of genes. \n
 Genomic mode can be used with or without gff files making it suitable to build a gbk from a list of genes and their annotation. \n
 Examples: \n
 * Genomic - single mode \n
-eggnok2gbk genomic -fg genome.fna -fp proteome.faa [-gff genome.gff] -n "Escherichia coli" -o coli.gbk -a eggnog_annotation.tsv [-go go-basic.obo] \n
+emapper2gbk genomic -fg genome.fna -fp proteome.faa [-gff genome.gff] -n "Escherichia coli" -o coli.gbk -a eggnog_annotation.tsv [-go go-basic.obo] \n
 * Genomic - multiple mode, "bacteria" as default name \n
-eggnok2gbk genomic -fg genome_dir/ -fp proteome_dir/ [-gff gff_dir/] -n bacteria -o gbk_dir/ -a eggnog_annotation_dir/ [-go go-basic.obo] \n
+emapper2gbk genomic -fg genome_dir/ -fp proteome_dir/ [-gff gff_dir/] -n metagenome -o gbk_dir/ -a eggnog_annotation_dir/ [-go go-basic.obo] \n
 * Genomic - multiple mode, tsv file for organism names \n
-eggnok2gbk genomic -fg genome_dir/ -fp proteome_dir/ [-gff gff_dir/] -nf matching_genome_orgnames.tsv -o gbk_dir/ -a eggnog_annotation_dir/ [-go go-basic.obo] \n
+emapper2gbk genomic -fg genome_dir/ -fp proteome_dir/ [-gff gff_dir/] -nf matching_genome_orgnames.tsv -o gbk_dir/ -a eggnog_annotation_dir/ [-go go-basic.obo] \n
 * Metagenomic \n
-eggnok2gbk metagenomic -fg genome_dir/ -fp proteome_dir/ -o gbk_dir/ -a gene_cat_ggnog_annotation.tsv [-go go-basic.obo]
+emapper2gbk metagenomic -fg genome_dir/ -fp proteome_dir/ -o gbk_dir/ -a gene_cat_ggnog_annotation.tsv [-go go-basic.obo]
 \n
+
+You can give the GO ontology as an input to the program, it will be otherwise downloaded during the run. You can download it here: http://purl.obolibrary.org/obo/go/go-basic.obo .
+The program requests the NCBI database to retrieve taxonomic information of the organism. However, if the organism is "bacteria" or "metagenome", the taxonomic information will not have to be retrieved online.
+Hence, if you need to run the program from a cluster with no internet access, it is possible for a "bacteria" or "metagenome" organism, and by providing the GO-basic.obo file.
 """
 
-logger = logging.getLogger('eggnog2gbk')
+logger = logging.getLogger('emapper2gbk')
 logger.setLevel(logging.DEBUG)
 
 def cli():
-    """Console script for eggnog2gbk."""
+    """Console script for emapper2gbk."""
     start_time = time.time()
     parser = argparse.ArgumentParser(
-        "eggnog2gbk",
-        description=MESSAGE + " For specific help on each subcommand use: eggnog2gbk {cmd} --help", formatter_class=RawTextHelpFormatter
+        "emapper2gbk",
+        description=MESSAGE + " For specific help on each subcommand use: emapper2gbk {cmd} --help", formatter_class=RawTextHelpFormatter
     )
     parser.add_argument(
         "-v",

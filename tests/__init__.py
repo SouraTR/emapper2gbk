@@ -1,1 +1,1 @@
-"""Unit test package for eggnog2gbk."""
+"""Unit test package for emapper2gbk."""

@@ -4,9 +4,9 @@ import os
 import csv
 import sys
 from multiprocessing import Pool
-from eggnog2gbk import gff_to_gbk
-from eggnog2gbk import fa_to_gbk
-from eggnog2gbk.utils import create_GO_namespaces_alternatives, get_basename, is_valid_file, get_extension, read_annotation
+from emapper2gbk import gff_to_gbk
+from emapper2gbk import fa_to_gbk
+from emapper2gbk.utils import create_GO_namespaces_alternatives, get_basename, is_valid_file, get_extension, read_annotation
 
 logger = logging.getLogger(__name__)
 

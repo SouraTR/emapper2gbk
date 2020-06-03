@@ -4,7 +4,7 @@
 # You can set these variables from the command line.
 SPHINXOPTS    =
 SPHINXBUILD   = python -msphinx
-SPHINXPROJ    = eggnog2gbk
+SPHINXPROJ    = emapper2gbk
 SOURCEDIR     = .
 BUILDDIR      = _build
 

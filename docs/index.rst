@@ -1,4 +1,4 @@
-Welcome to eggnog2gbk's documentation!
+Welcome to emapper2gbk's documentation!
 ======================================
 
 .. toctree::

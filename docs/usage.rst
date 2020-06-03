@@ -2,6 +2,6 @@
 Usage
 =====
 
-To use eggnog2gbk in a project::
+To use emapper2gbk in a project::
 
-    import eggnog2gbk
+    import emapper2gbk

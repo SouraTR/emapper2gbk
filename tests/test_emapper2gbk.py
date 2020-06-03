@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
-"""Tests for `eggnog2gbk` package."""
+"""Tests for `emapper2gbk` package."""
 
 import os
 import shutil
 import subprocess
-from eggnog2gbk.eggnog2gbk import gbk_creation
+from emapper2gbk.emapper2gbk import gbk_creation
 from Bio import SeqIO
 
 
