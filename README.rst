@@ -112,16 +112,19 @@ subcommands:
     * Genomic - single mode
 
     .. code:: sh
+    
         emapper2gbk genomic -fg genome.fna -fp proteome.faa [-gff genome.gff] -n "Escherichia coli" -o coli.gbk -a eggnog_annotation.tsv [-go go-basic.obo]
 
     * Genomic - multiple mode, "bacteria" as default name
 
     .. code:: sh
+
         emapper2gbk genomic -fg genome_dir/ -fp proteome_dir/ [-gff gff_dir/] -n metagenome -o gbk_dir/ -a eggnog_annotation_dir/ [-go go-basic.obo]
 
     * Genomic - multiple mode, tsv file for organism names
 
     .. code:: sh
+
         emapper2gbk genomic -fg genome_dir/ -fp proteome_dir/ [-gff gff_dir/] -nf matching_genome_orgnames.tsv -o gbk_dir/ -a eggnog_annotation_dir/ [-go go-basic.obo]
 
 * Metagenomic mode
@@ -157,4 +160,5 @@ subcommands:
   * Example
 
     .. code:: sh
+
         emapper2gbk metagenomic -fg genome_dir/ -fp proteome_dir/ -o gbk_dir/ -a gene_cat_ggnog_annotation.tsv [-go go-basic.obo]
