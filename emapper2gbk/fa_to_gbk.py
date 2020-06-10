@@ -198,8 +198,9 @@ def faa_to_gbk(genome_fasta:str, prot_fasta:str, annotation_data:Union[str, dict
                 if gene_ecs != [""]:
                     new_feature_cds.qualifiers['EC_number'] = gene_ecs
 
-        # Add protein sequence.
-        new_feature_cds.qualifiers['translation'] = gene_protein_seqs[gene_nucleic_id]
+        if gene_nucleic_id in gene_protein_seqs.keys():
+            # Add protein sequence.
+            new_feature_cds.qualifiers['translation'] = gene_protein_seqs[gene_nucleic_id]
 
         # Add CDS information to contig record
         record.features.append(new_feature_cds)
