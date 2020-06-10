@@ -126,7 +126,7 @@ subcommands:
 
     .. code:: sh
 
-        emapper2gbk genomic -fg genome_dir/ -fp proteome_dir/ [-gff gff_dir/] -n metagenome -o gbk_dir/ -a eggnog_annotation_dir/ [-go go-basic.obo]
+        emapper2gbk genomic -fg genome_dir/ -fp proteome_dir/ [-gff gff_dir/] -n bacteria -o gbk_dir/ -a eggnog_annotation_dir/ [-go go-basic.obo]
 
     * Genomic - multiple mode, tsv file for organism names
 
