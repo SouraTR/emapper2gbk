@@ -148,7 +148,7 @@ def faa_to_gbk(genome_fasta:str, prot_fasta:str, annotation_data:Union[str, dict
                                                             end_position,
                                                             strand),
                                                             type="gene")
-        new_feature_gene.qualifiers['locus_tag'] = id_gene # + "_0001"
+        new_feature_gene.qualifiers['locus_tag'] = id_gene  + "_0001"
         # print(new_feature_gene.qualifiers['locus_tag'] )
         # Add gene information to contig record.
         record.features.append(new_feature_gene)
