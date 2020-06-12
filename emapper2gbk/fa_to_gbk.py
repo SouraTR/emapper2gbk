@@ -159,7 +159,7 @@ def faa_to_gbk(genome_fasta:str, prot_fasta:str, annotation_data:Union[str, dict
                                                             type="CDS")
 
         # Add gene ID in locus_tag.
-        new_feature_cds.qualifiers['locus_tag'] = id_gene # + "_0001"
+        new_feature_cds.qualifiers['locus_tag'] = id_gene + "_0001"
 
         # Add functional annotations.
         if gene_nucleic_id in annotation_data.keys():
