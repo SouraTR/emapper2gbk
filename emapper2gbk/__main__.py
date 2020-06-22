@@ -38,7 +38,7 @@ The program requests the NCBI database to retrieve taxonomic information of the 
 Hence, if you need to run the program from a cluster with no internet access, it is possible for a "bacteria" or "metagenome" organism, and by providing the GO-basic.obo file.
 """
 
-logger = logging.getLogger('emapper2gbk')
+logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
 
 def cli():
