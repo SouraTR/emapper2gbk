@@ -58,6 +58,7 @@ def merging_mini_gff(gff_folder):
 
     return gff_merged_path
 
+
 def contig_info(contig_id, contig_seq, species_informations):
     """
     Create contig information from species_informations dictionary and contig id and contig seq.
@@ -103,6 +104,7 @@ def contig_info(contig_id, contig_seq, species_informations):
 
     return record
 
+
 def strand_change(input_strand):
     """
     The input is strand in str ('-', '+') modify it to be a strand in int (-1, +1) to 
@@ -125,61 +127,6 @@ def strand_change(input_strand):
 
     return new_strand
 
-def search_and_add_RNA(gff_database, gene_informations, record, type_RNA):
-    """
-    Search in the gff_database if the gene have RNA of the (type_RNA).
-    For the RNA it will add a feature to the contig record of the genbank.
-    Then it returns the contig record.
-    gene_informations contain:
-        [0] -> gene feature
-        [1] -> gene ID cleaned
-        [2] -> gene start position
-        [3] -> gene end postion
-        [4] -> gene strand modified (str -> int)
-    """
-    for rna in gff_database.children(gene_informations[0], featuretype=type_RNA, order_by='start'):
-        new_feature_RNA = sf.SeqFeature(sf.FeatureLocation(gene_informations[2],
-                                                            gene_informations[3],
-                                                            gene_informations[4]),
-                                                            type=type_RNA)
-        new_feature_RNA.qualifiers['locus_tag'] = gene_informations[1]
-        record.features.append(new_feature_RNA)
-    return record
-
-def search_and_add_pseudogene(gff_database, gene, record, df_exons, gene_protein_seq):
-    """
-    Search in the gff_database if the gene is a pseudogene.
-    Add it to the record.
-    """
-    location_exons = []
-
-    for pseudogene in gff_database.children(gene, featuretype="pseudogene", order_by='start'):
-        # Select exon corresponding to the gene.
-        # Then iterate for each exon and extract information.
-        df_temp = df_exons[df_exons['gene_id'] == pseudogene.id]
-        for _, row in df_temp.iterrows():
-            new_feature_location_exons = sf.FeatureLocation(row['start'],
-                                                            row['end'],
-                                                            row['strand'])
-            location_exons.append(new_feature_location_exons)
-        if location_exons and len(location_exons)>=2:
-            exon_compound_locations = sf.CompoundLocation(location_exons, operator='join')
-
-            new_feature_cds = sf.SeqFeature(exon_compound_locations, type='CDS')
-        else:
-            start_position = gene.start -1
-            end_position = gene.end
-            strand = strand_change(gene.strand)
-            new_feature_cds = sf.SeqFeature(sf.FeatureLocation(start_position,
-                                                                end_position,
-                                                                strand),
-                                                            type="CDS")
-
-        new_feature_cds.qualifiers['translation'] = gene_protein_seq[pseudogene.id]
-        new_feature_cds.qualifiers['locus_tag'] = gene.id
-        new_feature_cds.qualifiers['pseudo'] = None
-        record.features.append(new_feature_cds)
-    return record
 
 def gff_to_gbk(genome_fasta, prot_fasta, annot_table, gff_file, species_name, gbk_out, gobasic=None):
     """
@@ -196,24 +143,6 @@ def gff_to_gbk(genome_fasta, prot_fasta, annot_table, gff_file, species_name, gb
     # gffutils use sqlite3 file-based database to access data inside GFF.
     # ':memory:' ask gffutils to keep database in memory instead of writting in a file.
     gff_database = gffutils.create_db(gff_file, ':memory:', force=True, keep_order=True, merge_strategy='merge', sort_attribute_values=True)
-
-    # Length of your gene ID.
-    # Catch it in the GFF database.
-    # It's pretty dumb as we go into a loop for one information.
-    # But I don't find another way to catch the length of gene_id.
-    length_gene_id = 0
-
-    for gene in gff_database.features_of_type('gene'):
-        length_gene_id = len(gene.id.replace('gene:', ''))
-        break
-
-    # Get the longest contig ID to check if all contig IDs have the
-    # same length, if not add 0 (at the supposed position of the number).
-    longest_contig_id = ""
-
-    for contig_for_length_id in gff_database.features_of_type('sequence_assembly'):
-        if len(longest_contig_id) < len(contig_for_length_id.id):
-            longest_contig_id = contig_for_length_id.id
 
     print('Formatting fasta and annotation file')
     # Dictionary with scaffold/chromosome id as key and sequence as value.
@@ -234,32 +163,12 @@ def gff_to_gbk(genome_fasta, prot_fasta, annot_table, gff_file, species_name, gb
     species_informations = create_taxonomic_data(species_name)
 
     # Read the ggnog tsv file containing GO terms and EC associated with gene name.
-    annotation_data = read_annotation(annot_table)
+    annotation_data = dict(read_annotation(annot_table))
 
     # Query Gene Ontology to extract namespaces and alternative IDs.
     # go_namespaces: Dictionary GO id as term and GO namespace as value.
     # go_alternatives: Dictionary GO id as term and GO alternatives id as value.
     go_namespaces, go_alternatives = create_GO_namespaces_alternatives(gobasic)
-
-    # Create a dataframe containing each exon with informations (gene, start, end and strand)
-    df_exons = pa.DataFrame(columns=['exon_id', 'gene_id', 'start', 'end', 'strand'])
-
-    print('Searching for exons')
-
-    temporary_datas = []
-
-    # Search for all exons in gff database and extract start position (have to minus one to get the right position)
-    # the end position, the strand (have to change from str to int) and the gene ID.
-    # Then add it to a list of dictionary that will be added to the dataframe.
-    for exon in gff_database.features_of_type('exon'):
-        start_position = exon.start - 1
-        end_position = exon.end
-        strand = strand_change(exon.strand)
-
-        gene_id = exon.id.replace('exon:', '')[:-2]
-        temporary_datas.append({'exon_id': exon.id, 'gene_id': gene_id,
-                            'start': start_position, 'end':end_position, 'strand': strand})
-        df_exons = df_exons.append(temporary_datas)
 
     # All SeqRecord objects will be stored in a list and then give to the SeqIO writer to create the genbank.
     seq_objects = []
@@ -269,100 +178,77 @@ def gff_to_gbk(genome_fasta, prot_fasta, annot_table, gff_file, species_name, gb
     # Iterate through each contig.
     # Then iterate through gene and throug RNA linked with the gene.
     # Then look if protein informations are available.
-    for contig_id in sorted(contig_seqs):
-        print("contig " + contig_id)
-        # Data for each contig.
-        record = contig_info(contig_id, contig_seqs[contig_id], species_informations)
-        for gene in gff_database.features_of_type('gene'):
-            gene_contig = gene.chrom
-            print("gene_contig " + gene_contig)
-            if gene_contig == contig_id:
-                id_gene = gene.id
-                start_position = gene.start -1
-                end_position = gene.end
-                strand = strand_change(gene.strand)
-                new_feature_gene = sf.SeqFeature(sf.FeatureLocation(start_position,
-                                                                    end_position,
-                                                                    strand),
-                                                                    type="gene")
-                new_feature_gene.qualifiers['locus_tag'] = id_gene
-                # Add gene information to contig record.
-                record.features.append(new_feature_gene)
+    for gene in gff_database.features_of_type('gene'):
+        id_gene = gene.id
 
-                # Search and add RNAs.
-                gene_informations = [gene, id_gene, start_position, end_position, strand]
-                record = search_and_add_RNA(gff_database, gene_informations, record, 'mRNA')
+        record = contig_info(id_gene, contig_seqs[id_gene], species_informations)
 
-                record = search_and_add_RNA(gff_database, gene_informations, record,'tRNA')
+        start_position = gene.start -1
+        end_position = gene.end
+        strand = strand_change(gene.strand)
+        new_feature_gene = sf.SeqFeature(sf.FeatureLocation(start_position,
+                                                            end_position,
+                                                            strand),
+                                                            type="gene")
+        new_feature_gene.qualifiers['locus_tag'] = id_gene
+        # Add gene information to contig record.
+        record.features.append(new_feature_gene)
 
-                record = search_and_add_RNA(gff_database, gene_informations, record, 'ncRNA')
+        # Iterate through gene childs to find CDS object.
+        # For each CDS in the GFF add a CDS in the genbank.
+        for cds_object in gff_database.children(gene, featuretype="CDS", order_by='start'):
+            cds_id = cds_object.id
+            start_position = cds_object.start -1
+            end_position = cds_object.end
+            new_feature_cds = sf.SeqFeature(sf.FeatureLocation(start_position,
+                                                                end_position,
+                                                                strand),
+                                                            type="CDS")
 
-                record = search_and_add_RNA(gff_database, gene_informations, record, 'lncRNA')
+            new_feature_cds.qualifiers['locus_tag'] = id_gene
 
-                # Search for pseudogene and add them.
-                record = search_and_add_pseudogene(gff_database, gene, record, df_exons, gene_protein_seq)
+            # Add GO annotation according to the namespace.
+            if id_gene in annotation_data.keys():
+                # Add gene name.
+                if 'Preferred_name' in annotation_data[id_gene]:
+                    new_feature_cds.qualifiers['gene'] = annotation_data[id_gene]['Preferred_name']
 
-                # Create CDS using exons, if no exon use gene information
-                location_exons = []
+                if 'GOs' in annotation_data[id_gene] :
+                    gene_gos = annotation_data[id_gene]['GOs'].split(',')
+                    if gene_gos != [""]:
+                        go_components = []
+                        go_functions = []
+                        go_process = []
 
-                # Use parent mRNA in gff to find CDS.
-                # With this we take the isoform of gene.
-                for mrna in gff_database.children(gene, featuretype="mRNA", order_by='start'):
-                    mrna_id = mrna.id
-                    # Select exon corresponding to the gene.
-                    # Then iterate for each exon and extract information.
-                    df_temp = df_exons[df_exons['gene_id'] == mrna_id]
-                    for _, row in df_temp.iterrows():
-                        new_feature_location_exons = sf.FeatureLocation(row['start'],
-                                                                        row['end'],
-                                                                        row['strand'])
-                        location_exons.append(new_feature_location_exons)
-                    if location_exons and len(location_exons)>=2:
-                        exon_compound_locations = sf.CompoundLocation(location_exons, operator='join')
+                        for go in gene_gos:
+                            # Check if GO term is not a deprecated one.
+                            # If yes take the corresponding one in alternative GO.
+                            if go not in go_namespaces:
+                                go_test = go_alternatives[go]
+                            else:
+                                go_test = go
+                            if go_namespaces[go_test] == 'cellular_component':
+                                    go_components.append(go)
+                            if go_namespaces[go_test] == 'molecular_function':
+                                go_functions.append(go)
+                            if go_namespaces[go_test] == 'biological_process':
+                                go_process.append(go)
+                        new_feature_cds.qualifiers['go_component'] = go_components
+                        new_feature_cds.qualifiers['go_function'] = go_functions
+                        new_feature_cds.qualifiers['go_process'] = go_process
 
-                        new_feature_cds = sf.SeqFeature(exon_compound_locations, type='CDS')
-                    else:
-                        new_feature_cds = sf.SeqFeature(sf.FeatureLocation(start_position,
-                                                                            end_position,
-                                                                            strand),
-                                                                        type="CDS")
 
-                    new_feature_cds.qualifiers['translation'] = gene_protein_seq[mrna_id]
-                    new_feature_cds.qualifiers['locus_tag'] = id_gene
-                    print("mrna" + mrna_id)
-                    # Add GO annotation according to the namespace.
-                    if mrna_id in annotation_data.keys():
-                        gene_gos = re.split(';|,', annotation_data[mrna_id]['GOs'])
-                        if gene_gos != [""]:
-                            go_components = []
-                            go_functions = []
-                            go_process = []
+                # Add EC annotation.
+                if 'EC' in annotation_data[id_gene]:
+                    gene_ecs = annotation_data[id_gene]['EC'].split(',')
+                    if gene_ecs != [""]:
+                        new_feature_cds.qualifiers['EC_number'] = gene_ecs
 
-                            for go in gene_gos:
-                                # Check if GO term is not a deprecated one.
-                                # If yes take the corresponding one in alternative GO.
-                                if go not in go_namespaces:
-                                    go_test = go_alternatives[go]
-                                else:
-                                    go_test = go
-                                if go_namespaces[go_test] == 'cellular_component':
-                                        go_components.append(go)
-                                if go_namespaces[go_test] == 'molecular_function':
-                                    go_functions.append(go)
-                                if go_namespaces[go_test] == 'biological_process':
-                                    go_process.append(go)                           
-                            new_feature_cds.qualifiers['go_component'] = go_components
-                            new_feature_cds.qualifiers['go_function'] = go_functions
-                            new_feature_cds.qualifiers['go_process'] = go_process
+            if id_gene in gene_protein_seq:
+                new_feature_cds.qualifiers['translation'] = gene_protein_seq[id_gene]
 
-                    # Add EC annotation.
-                    if mrna_id in annotation_data.keys():
-                        gene_ecs = re.split(';|,', annotation_data[mrna_id]['EC'])
-                        if gene_ecs != [""]:
-                            new_feature_cds.qualifiers['EC_number'] = [ec.replace('ec:', '') for ec in gene_ecs]
-
-                    # Add CDS information to contig record
-                    record.features.append(new_feature_cds)
+            # Add CDS information to contig record
+            record.features.append(new_feature_cds)
 
         seq_objects.append(record)
 

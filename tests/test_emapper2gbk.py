@@ -301,6 +301,6 @@ def check_gbks_from_dir(gbk_dir):
     
 if __name__ == "__main__":
     test_gbk_no_gff_test()
-    # test_gbk_from_gff()
+    # test_gbk_from_gff_test()
     #test_gbk_from_dir()
     #test_gbk_metagenomic_mode()
