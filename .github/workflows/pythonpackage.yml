@@ -42,4 +42,4 @@ jobs:
       run: |
         pip install pytest
         cd tests
-        pytest test_eggnog2gbk.py
+        pytest test_emapper2gbk.py
