@@ -1,0 +1,12 @@
+##gff-version 3
+#!gff-spec-version 1.21
+#!processor NCBI annotwriter
+#!genome-build ASM584v2
+#!genome-build-accession NCBI_Assembly:GCF_000005845.2
+##sequence-region NC_000913_3 1 12642
+##species https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=511145
+NC_000913_3	RefSeq	region	1	12642	.	+	.	ID=id0;Dbxref=taxon:511145;Is_circular=true;Name=ANONYMOUS;gbkey=Src;genome=chromosome;mol_type=genomic DNA;strain=K-12;substrain=MG1655
+NC_000913_3	RefSeq	gene	9289	10452	.	-	.	ID=gene3987;Dbxref=ASAP:ABE-0012562,ECOCYC:EG10278,EcoGene:EG10278,GeneID:948324;Name=fadA;gbkey=Gene;gene=fadA;gene_biotype=protein_coding;gene_synonym=ECK3837,oldA;locus_tag=b3845
+NC_000913_3	RefSeq	CDS	9289	10452	.	-	0	ID=cds3816;Parent=gene3987;Dbxref=UniProtKB/Swiss-Prot:P21151,Genbank:YP_026272.1,ASAP:ABE-0012562,ECOCYC:EG10278,EcoGene:EG10278,GeneID:948324;Name=YP_026272.1;gbkey=CDS;gene=fadA;orig_transcript_id=gnl|b3845|mrna.b3845;product=3-ketoacyl-CoA thiolase;protein_id=YP_026272.1;transl_table=11
+NC_000913_3	RefSeq	gene	10453	12642	.	-	.	ID=gene3988;Dbxref=ASAP:ABE-0012564,ECOCYC:EG10279,EcoGene:EG10279,GeneID:948336;Name=fadB;gbkey=Gene;gene=fadB;gene_biotype=protein_coding;gene_synonym=ECK3838,oldB;locus_tag=b3846
+NC_000913_3	RefSeq	CDS	10453	12642	.	-	0	ID=cds3817;Parent=gene3988;Dbxref=UniProtKB/Swiss-Prot:P21177,Genbank:NP_418288.1,ASAP:ABE-0012564,ECOCYC:EG10279,EcoGene:EG10279,GeneID:948336;Name=NP_418288.1;gbkey=CDS;gene=fadB;orig_transcript_id=gnl|b3846|mrna.b3846;product=dodecenoyl-CoA delta-isomerase%2C enoyl-CoA hydratase%2C 3-hydroxybutyryl-CoA epimerase%2C 3-hydroxyacyl-CoA dehydrogenase;protein_id=NP_418288.1;transl_table=11

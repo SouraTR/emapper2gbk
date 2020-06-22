@@ -14,12 +14,16 @@ Main inputs
 
 For each annotated genome, inputs consist of (but are not limited to):
 
-* a nucleotide fasta file
+* a nucleotide fasta file: containing the CDS sequence of each genes
 * the translated sequences in fasta
 * the annotation file obtained after Eggnog-mapper annotation (usually `xxx.emapper.annotation`)
 * the name of the considered organism (can be "bacteria" or "metagenome") or a file with organisms names (matching the genomes names).
 
-In addition, the gff file, the number of available cores for multiprocessing, the go-basic file of GO ontology
+In addition, as optional files:
+
+* a gff file: containing the position of each gene on the genome
+* the number of available cores for multiprocessing (when working on multiple genomes)
+* a go-basic file of GO ontology (if not given, emapper2gbk will download a copy and use it)
 
 Dependencies and installation
 -----------------------------
@@ -64,7 +68,7 @@ Genomic mode can be used with or without gff files making it suitable to build a
 
 You can give the GO ontology as an input to the program, it will be otherwise downloaded during the run. You can download it here: http://purl.obolibrary.org/obo/go/go-basic.obo .
 The program requests the NCBI database to retrieve taxonomic information of the organism. However, if the organism is "bacteria" or "metagenome", the taxonomic information will not have to be retrieved online.
-Hence, if you need to run the program from a cluster with no internet access, it is possible for a "bacteria" or "metagenome" organism, and by providing the GO-basic.obo file.
+Hence, if you need to run the program from a cluster with no internet access, it is possible for a "bacteria" or "metagenome" organism, and by providing the GO-basic.obo file (that you can download before using emapper2gbk).
 
 For specific help on each subcommand use: ``emapper2gbk {cmd} --help``
 
@@ -111,7 +115,10 @@ subcommands:
                                     basenames (col 1). Default = 'metagenome' for
                                     metagenomic and 'cellular organisms' for genomic
               -go GOBASIC, --gobasic GOBASIC
-                                    go ontology, will be downloaded if not provided
+                                    go ontology, GOBASIC is either the name of an existing
+                                    file containing the GO Ontology or the name of the
+                                    file that will be created by emapper2gbk containing
+                                    the GO Ontology
               -q, --quiet           quiet mode, only warning, errors logged into console
 
   * Examples
@@ -166,7 +173,10 @@ subcommands:
           -c CPU, --cpu CPU     cpu number for metagenomic mode or genome mode using
                                 input directories
           -go GOBASIC, --gobasic GOBASIC
-                                go ontology, will be downloaded if not provided
+                                go ontology, GOBASIC is either the name of an existing
+                                file containing the GO Ontology or the name of the
+                                file that will be created by emapper2gbk containing
+                                the GO Ontology
           -q, --quiet           quiet mode, only warning, errors logged into console
 
   * Example

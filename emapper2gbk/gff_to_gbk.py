@@ -31,6 +31,7 @@ import os
 import pandas as pa
 import re
 import shutil
+import sys
 
 from Bio import SeqFeature as sf
 from Bio import SeqIO
@@ -39,24 +40,7 @@ from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 from collections import OrderedDict
 from emapper2gbk.utils import is_valid_file, create_GO_namespaces_alternatives, read_annotation, create_taxonomic_data
-
-
-def merging_mini_gff(gff_folder):
-    """
-    Merge multiple gff files into one.
-    Return the path to the merged file.
-    """
-    mini_gff_path = os.path.dirname(os.path.realpath(os.listdir(gff_folder)[0])) + "/" + gff_folder + "/"
-    gff_merged_path = mini_gff_path + 'merged_gff.gff'
-
-    with open(gff_merged_path, 'w') as gff_file_merged:
-        gff_files = os.listdir(gff_folder)
-        gff_files.remove('merged_gff.gff')
-        for mini_gff in gff_files:
-            with open(mini_gff_path + mini_gff, 'rb') as mini_gff_file:
-                shutil.copyfileobj(mini_gff_file, gff_file_merged)
-
-    return gff_merged_path
+from typing import Union
 
 
 def contig_info(contig_id, contig_seq, species_informations):
@@ -128,7 +112,7 @@ def strand_change(input_strand):
     return new_strand
 
 
-def gff_to_gbk(genome_fasta, prot_fasta, annot_table, gff_file, species_name, gbk_out, gobasic=None):
+def gff_to_gbk(genome_fasta:str, prot_fasta:str, annotation_data:Union[str, dict], gff_file:str, species_name:str, gbk_out:str, gobasic:Union[None, str, dict]):
     """
     From a genome fasta (containing each contigs of the genome),
     a protein fasta (containing each protein sequence),
@@ -162,13 +146,18 @@ def gff_to_gbk(genome_fasta, prot_fasta, annot_table, gff_file, species_name, gb
     # Create a taxonomy dictionary querying the EBI.
     species_informations = create_taxonomic_data(species_name)
 
-    # Read the ggnog tsv file containing GO terms and EC associated with gene name.
-    annotation_data = dict(read_annotation(annot_table))
+    # Read the eggnog tsv file containing GO terms and EC associated with gene name.
+    # if metagenomic mode, annotation is already read and given as a dict
+    if not type(annotation_data) is dict:
+        annotation_data = dict(read_annotation(annotation_data))
 
     # Query Gene Ontology to extract namespaces and alternative IDs.
     # go_namespaces: Dictionary GO id as term and GO namespace as value.
     # go_alternatives: Dictionary GO id as term and GO alternatives id as value.
-    go_namespaces, go_alternatives = create_GO_namespaces_alternatives(gobasic)
+    if not type(gobasic[0]) is dict and not type(gobasic[1]) is dict:
+        go_namespaces, go_alternatives = create_GO_namespaces_alternatives(gobasic)
+    else:
+        go_namespaces, go_alternatives = gobasic
 
     # All SeqRecord objects will be stored in a list and then give to the SeqIO writer to create the genbank.
     seq_objects = []
@@ -180,6 +169,12 @@ def gff_to_gbk(genome_fasta, prot_fasta, annot_table, gff_file, species_name, gb
     # Then look if protein informations are available.
     for gene in gff_database.features_of_type('gene'):
         id_gene = gene.id
+        if id_gene.isnumeric():
+            id_gene = f"gene_{id_gene}"
+        elif "|" in id_gene:
+            id_gene = id_gene.split("|")[0]
+        else:
+            id_gene = id_gene
 
         record = contig_info(id_gene, contig_seqs[id_gene], species_informations)
 
@@ -255,21 +250,12 @@ def gff_to_gbk(genome_fasta, prot_fasta, annot_table, gff_file, species_name, gb
     # Create Genbank with the list of SeqRecord.
     SeqIO.write(seq_objects, gbk_out, 'genbank')
 
-def main(genome_fasta, prot_fasta, annot_table, gff_file_folder, species_name, gbk_out, gobasic_file=None):
+def main(genome_fasta, prot_fasta, annot_table, gff_file, species_name, gbk_out, gobasic=None):
     # check validity of inputs
-    for elem in [genome_fasta, prot_fasta, annot_table]:
+    for elem in [genome_fasta, prot_fasta]:
+        print(elem)
         if not is_valid_file(elem):
             print(f"{elem} is not a valid path file.")
             sys.exit(1)
-    if gobasic_file:
-        if not is_valid_file(gobasic_file):
-            print(f"{gobasic_file} is not a valid path file.")
-            sys.exit(1)
-    # Check if gff is a file or is multiple files in a folder.
-    # If it's multiple files, it wil merge them in one.
-    if os.path.isfile(gff_file_folder):
-        gff_file = gff_file_folder
-    if not os.path.isfile(gff_file_folder):
-        gff_file = merging_mini_gff(gff_file_folder)
 
-    gff_to_gbk(genome_fasta, prot_fasta, annot_table, gff_file, species_name, gbk_out, gobasic_file)
+    gff_to_gbk(genome_fasta, prot_fasta, annot_table, gff_file, species_name, gbk_out, gobasic)

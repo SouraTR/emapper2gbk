@@ -16,6 +16,7 @@ FNA_INPUT = "betaox.fna"
 FNA_DIR = "fna/"
 ANNOT_INPUT = "betaox_annotation.tsv"
 ANNOT_DIR = "ann/"
+GFF_DIR = "gff/"
 ORG_NAME = "Escherichia coli"
 ORG_FILE = "organism_names.tsv"
 
@@ -186,8 +187,29 @@ def test_gbk_from_gff_test():
                 gbk=gbk_test,
                 gobasic='go-basic.obo')
 
-    compare_two_gbks(EXPECTED_GBK_WITH_GFF, gbk_test)
+    compare_two_gbks(EXPECTED_GBK_NO_GFF, gbk_test)
     os.remove(gbk_test)
+    return
+
+def test_gbk_from_gff_metagenomic_mode():
+    """Test metagenomic mode.
+    """
+    print("*** Test metagenomic mode ***")
+    gbk_dir_test = 'gbk_mg/'
+    os.makedirs(gbk_dir_test)
+    gbk_creation(genome=FNA_DIR,
+                proteome=FAA_DIR,
+                annot=ANNOT_INPUT,
+                org=ORG_FILE,
+                gff=GFF_DIR,
+                gbk=gbk_dir_test,
+                gobasic='go-basic.obo',
+                dirmode=True,
+                metagenomic_mode=True)
+
+    check_gbks_from_dir(gbk_dir_test)
+
+    shutil.rmtree(gbk_dir_test)
     return
 
 def compare_two_gbks(expected_gbk:str, tested_gbk:str):

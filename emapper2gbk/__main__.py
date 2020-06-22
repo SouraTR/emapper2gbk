@@ -119,7 +119,7 @@ def cli():
     parent_parser_go.add_argument(
         "-go",
         "--gobasic",
-        help="go ontology, will be downloaded if not provided",
+        help="go ontology, GOBASIC is either the name of an existing file containing the GO Ontology or the name of the file that will be created by emapper2gbk containing the GO Ontology",
         required=False,
         default=None,
         type=str
@@ -201,8 +201,7 @@ def cli():
 
     # check go-basic file
     if args.gobasic and not is_valid_file(args.gobasic):
-        logger.critical(f"Go-basic file path is incorrect")
-        sys.exit(1)
+        logger.critical(f"No Go-basic file available, it will be download by emapper2gbk.")
 
     args = parser.parse_args()
 
@@ -252,7 +251,7 @@ def cli():
             logger.critical(f"In metagenomic mode, proteomes, genomes, output must be directories and annotation must be a single file")
             sys.exit(1)
         gbk_creation(genome=args.fastagenome, proteome=args.fastaprot, annot=args.annotation, gff=args.gff, org=orgnames, gbk=args.out, gobasic=args.gobasic, dirmode=True, metagenomic_mode=True, cpu=args.cpu)
-        
+
     logger.info("--- Total runtime %.2f seconds ---" % (time.time() - start_time))
 
 if __name__ == "__main__":

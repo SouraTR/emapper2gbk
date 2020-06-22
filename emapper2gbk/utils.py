@@ -3,9 +3,14 @@ import os
 import pandas as pa
 import csv
 import itertools
+import logging
 import numpy as np
 import pronto
 import requests
+import shutil
+
+logger = logging.getLogger(__name__)
+
 
 def get_basename(filepath):
     """Return the basename of given filepath.
@@ -101,10 +106,19 @@ def create_GO_namespaces_alternatives(gobasic_file = None):
     Create a dictionary which contains for all GO terms their GO namespaces (molecular_function, ..).
     Create a second dictionary containing alternative ID for some GO terms (deprecated ones).
     """
+    go_basic_obo_url = 'http://purl.obolibrary.org/obo/go/go-basic.obo'
+
     if gobasic_file:
-        go_ontology = pronto.Ontology(gobasic_file)
+        if is_valid_file(gobasic_file):
+            go_ontology = pronto.Ontology(gobasic_file)
+        else:
+            logger.critical(gobasic_file + ' file is not available, emapper2gbk will download the GO ontology and create it.')
+            response = requests.get(go_basic_obo_url, stream=True)
+            with open(gobasic_file, 'wb') as go_basic_file_write:
+                shutil.copyfileobj(response.raw, go_basic_file_write)
+            go_ontology = pronto.Ontology(go_basic_obo_url)
     else:
-        go_ontology = pronto.Ontology('http://purl.obolibrary.org/obo/go/go-basic.obo')
+        go_ontology = pronto.Ontology(go_basic_obo_url)
 
     # For each GO terms look to the namespaces associated with them.
     go_namespaces = {}

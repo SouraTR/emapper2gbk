@@ -40,7 +40,7 @@ def gbk_creation(genome:str, proteome:str, annot:str, org:str, gbk:str, gobasic:
                 try:
                     dialect = csv.Sniffer().sniff(csvfile.read(1024), delimiters=";,\t")
                 except csv.Error:
-                    logger.critical(f"Could not determine the delimiter in the organim tabulated file.")
+                    logger.critical(f"Could not determine the delimiter in the organism tabulated file.")
                     exit(1)
                 csvfile.seek(0)
                 reader = csv.reader(csvfile, dialect)
@@ -100,12 +100,26 @@ def gbk_creation(genome:str, proteome:str, annot:str, org:str, gbk:str, gobasic:
         # go_alternatives: Dictionary GO id as term and GO alternatives id as value.
         go_namespaces, go_alternatives = create_GO_namespaces_alternatives(gobasic)
 
-        if gff:
+        if gff and not metagenomic_mode:
             for genome_id in all_genomes:
                     multiprocess_data.append(
                         {'genome':f"{genome}/{genome_id}.fna",
                         'proteome':f"{proteome}/{genome_id}.faa",
                         'annot':f"{annot}/{genome_id}.tsv",
+                        'gff':f"{gff}/{genome_id}.gff",
+                        'org':org_mapping[genome_id],
+                        'gbk':f"{gbk}/{genome_id}.gbk",
+                        'gobasic':(go_namespaces, go_alternatives)}
+                        )
+            gbk_pool.map(run_gff_to_gbk, multiprocess_data)
+        elif gff and metagenomic_mode:
+            # read annotation of gene catalogue
+            annot_genecat = dict(read_annotation(annot))
+            for genome_id in all_genomes:
+                    multiprocess_data.append(
+                        {'genome':f"{genome}/{genome_id}.fna",
+                        'proteome':f"{proteome}/{genome_id}.faa",
+                        'annot':annot_genecat,
                         'gff':f"{gff}/{genome_id}.gff",
                         'org':org_mapping[genome_id],
                         'gbk':f"{gbk}/{genome_id}.gbk",

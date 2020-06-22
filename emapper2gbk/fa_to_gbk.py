@@ -217,10 +217,5 @@ def main(genome_fasta, prot_fasta, annot_table, species_name, gbk_out, gobasic=N
         if not is_valid_file(elem):
             logger.critical(f"{elem} is not a valid path file.")
             sys.exit(1)
-    if gobasic:
-        if not type(gobasic[0]) is dict and not type(gobasic[1]) is dict:
-            if not is_valid_file(gobasic):
-                logger.critical(f"{gobasic} is not a valid path file.")
-                sys.exit(1)
 
     faa_to_gbk(genome_fasta, prot_fasta, annot_table, species_name, gbk_out, gobasic)

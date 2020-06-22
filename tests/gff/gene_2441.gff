@@ -1,0 +1,10 @@
+##gff-version 3
+#!gff-spec-version 1.21
+#!processor NCBI annotwriter
+#!genome-build ASM584v2
+#!genome-build-accession NCBI_Assembly:GCF_000005845.2
+##sequence-region NC_000913_3 1 12642
+##species https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=511145
+NC_000913_3	RefSeq	region	1	12642	.	+	.	ID=id0;Dbxref=taxon:511145;Is_circular=true;Name=ANONYMOUS;gbkey=Src;genome=chromosome;mol_type=genomic DNA;strain=K-12;substrain=MG1655
+NC_000913_3	RefSeq	gene	5833	7977	.	-	.	ID=gene2441;Dbxref=ASAP:ABE-0007723,ECOCYC:G7212,EcoGene:EG14127,GeneID:949097;Name=fadJ;gbkey=Gene;gene=fadJ;gene_biotype=protein_coding;gene_synonym=ECK2335,yfcX;locus_tag=b2341
+NC_000913_3	RefSeq	CDS	5833	7977	.	-	0	ID=cds2356;Parent=gene2441;Dbxref=UniProtKB/Swiss-Prot:P77399,Genbank:NP_416843.1,ASAP:ABE-0007723,ECOCYC:G7212,EcoGene:EG14127,GeneID:949097;Name=NP_416843.1;gbkey=CDS;gene=fadJ;orig_transcript_id=gnl|b2341|mrna.b2341;product=3-hydroxyacyl-CoA dehydrogenase FadJ;protein_id=NP_416843.1;transl_table=11
