@@ -2,7 +2,6 @@
 # coding: utf8
 import sys
 import argparse
-import datetime
 import os
 import re
 import shutil
@@ -11,10 +10,8 @@ from typing import Union
 from collections import OrderedDict
 from Bio import SeqFeature as sf
 from Bio import SeqIO
-from Bio.Alphabet import IUPAC
-from Bio.Seq import Seq
-from Bio.SeqRecord import SeqRecord
-from emapper2gbk.utils import is_valid_file, create_GO_namespaces_alternatives, read_annotation, create_taxonomic_data, get_basename
+
+from emapper2gbk.utils import is_valid_file, create_GO_namespaces_alternatives, read_annotation, create_taxonomic_data, get_basename, record_info, create_cds_feature
 
 logger = logging.getLogger(__name__)
 
@@ -30,57 +27,6 @@ if you use another separator add to the re.split(',|;').
 Other informations can be added by adding a dictionary with gene ID as key and the information
 as value and adapt the condition used for the others annotations (EC, Go term).
 """
-
-def contig_info(contig_id, contig_seq, species_informations):
-    """
-    Create contig information from species_informations dictionary and contig id and contig seq.
-    """
-    if contig_id.isnumeric():
-        newname = f"_{contig_id}"
-    elif "|" in contig_id:
-        newname = contig_id.split("|")[0]
-    else:
-        newname = contig_id
-    record = SeqRecord(contig_seq, id=contig_id, name=newname,
-                    description=species_informations['description'])
-
-    record.seq.alphabet = IUPAC.ambiguous_dna
-    if 'data_file_division' in species_informations:
-        record.annotations['data_file_division'] = species_informations['data_file_division']
-    record.annotations['date'] = datetime.date.today().strftime('%d-%b-%Y').upper()
-    if 'topology' in species_informations:
-        record.annotations['topology'] = species_informations['topology']
-    record.annotations['accessions'] = contig_id
-    if 'organism' in species_informations:
-        record.annotations['organism'] = species_informations['organism']
-    # Use of literal_eval for taxonomy and keywords to retrieve list.
-    if 'taxonomy' in species_informations:
-        record.annotations['taxonomy'] = species_informations['taxonomy']
-    if 'keywords' in species_informations:
-        record.annotations['keywords'] = species_informations['keywords']
-    if 'source' in species_informations:
-        record.annotations['source'] = species_informations['source']
-
-    new_feature_source = sf.SeqFeature(sf.FeatureLocation(1-1,
-                                                        len(contig_seq)),
-                                                        type="source")
-    new_feature_source.qualifiers['scaffold'] = contig_id
-    if 'isolate' in species_informations:
-        new_feature_source.qualifiers['isolate'] = species_informations['isolate']
-    # db_xref corresponds to the taxon NCBI ID.
-    # Important if you want to use Pathway Tools after.
-    if 'db_xref' in species_informations:
-        new_feature_source.qualifiers['db_xref'] = species_informations['db_xref']
-    if 'cell_type' in species_informations:
-        new_feature_source.qualifiers['cell_type'] = species_informations['cell_type']
-    if 'dev_stage' in species_informations:
-        new_feature_source.qualifiers['dev_stage'] = species_informations['dev_stage']
-    if 'mol_type' in species_informations:
-        new_feature_source.qualifiers['mol_type'] = species_informations['mol_type']
-
-    record.features.append(new_feature_source)
-
-    return record
 
 
 def faa_to_gbk(genome_fasta:str, prot_fasta:str, annotation_data:Union[str, dict], species_name:str, gbk_out:str, gobasic:Union[None, str, dict]):
@@ -120,10 +66,13 @@ def faa_to_gbk(genome_fasta:str, prot_fasta:str, annotation_data:Union[str, dict
     # Query Gene Ontology to extract namespaces and alternative IDs.
     # go_namespaces: Dictionary GO id as term and GO namespace as value.
     # go_alternatives: Dictionary GO id as term and GO alternatives id as value.
-    if not type(gobasic[0]) is dict and not type(gobasic[1]) is dict:
-        go_namespaces, go_alternatives = create_GO_namespaces_alternatives(gobasic)
+    if gobasic:
+        if not type(gobasic[0]) is dict and not type(gobasic[1]) is dict:
+            go_namespaces, go_alternatives = create_GO_namespaces_alternatives(gobasic)
+        else:
+            go_namespaces, go_alternatives = gobasic
     else:
-        go_namespaces, go_alternatives = gobasic
+        go_namespaces, go_alternatives = create_GO_namespaces_alternatives()
 
     # All SeqRecord objects will be stored in a list and then give to the SeqIO writer to create the genbank.
     seq_objects = []
@@ -133,7 +82,7 @@ def faa_to_gbk(genome_fasta:str, prot_fasta:str, annotation_data:Union[str, dict
     # Iterate through each contig/gene.
     for gene_nucleic_id in sorted(gene_nucleic_seqs):
         # Create a SeqRecord object using gene information.
-        record = contig_info(gene_nucleic_id, gene_nucleic_seqs[gene_nucleic_id], species_informations)
+        record = record_info(gene_nucleic_id, gene_nucleic_seqs[gene_nucleic_id], species_informations)
         # if id is numeric, change it
         if gene_nucleic_id.isnumeric():
             id_gene = f"gene_{gene_nucleic_id}"

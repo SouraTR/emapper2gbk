@@ -2,12 +2,17 @@ import sys
 import os
 import pandas as pa
 import csv
+import datetime
 import itertools
 import logging
 import numpy as np
 import pronto
 import requests
 import shutil
+
+from Bio.Alphabet import IUPAC
+from Bio.SeqRecord import SeqRecord
+from Bio import SeqFeature as sf
 
 logger = logging.getLogger(__name__)
 
@@ -175,6 +180,58 @@ def create_taxonomic_data(species_name):
     return species_informations
 
 
+def record_info(record_id, record_seq, species_informations):
+    """
+    Create SeqBio record informations from species_informations dictionary and record id and record seq.
+    """
+    if record_id.isnumeric():
+        newname = f"_{record_id}"
+    elif "|" in record_id:
+        newname = record_id.split("|")[0]
+    else:
+        newname = record_id
+    record = SeqRecord(record_seq, id=record_id, name=newname,
+                    description=species_informations['description'])
+
+    record.seq.alphabet = IUPAC.ambiguous_dna
+    if 'data_file_division' in species_informations:
+        record.annotations['data_file_division'] = species_informations['data_file_division']
+    record.annotations['date'] = datetime.date.today().strftime('%d-%b-%Y').upper()
+    if 'topology' in species_informations:
+        record.annotations['topology'] = species_informations['topology']
+    record.annotations['accessions'] = record_id
+    if 'organism' in species_informations:
+        record.annotations['organism'] = species_informations['organism']
+    # Use of literal_eval for taxonomy and keywords to retrieve list.
+    if 'taxonomy' in species_informations:
+        record.annotations['taxonomy'] = species_informations['taxonomy']
+    if 'keywords' in species_informations:
+        record.annotations['keywords'] = species_informations['keywords']
+    if 'source' in species_informations:
+        record.annotations['source'] = species_informations['source']
+
+    new_feature_source = sf.SeqFeature(sf.FeatureLocation(1-1,
+                                                        len(record_seq)),
+                                                        type="source")
+    new_feature_source.qualifiers['scaffold'] = record_id
+    if 'isolate' in species_informations:
+        new_feature_source.qualifiers['isolate'] = species_informations['isolate']
+    # db_xref corresponds to the taxon NCBI ID.
+    # Important if you want to use Pathway Tools after.
+    if 'db_xref' in species_informations:
+        new_feature_source.qualifiers['db_xref'] = species_informations['db_xref']
+    if 'cell_type' in species_informations:
+        new_feature_source.qualifiers['cell_type'] = species_informations['cell_type']
+    if 'dev_stage' in species_informations:
+        new_feature_source.qualifiers['dev_stage'] = species_informations['dev_stage']
+    if 'mol_type' in species_informations:
+        new_feature_source.qualifiers['mol_type'] = species_informations['mol_type']
+
+    record.features.append(new_feature_source)
+
+    return record
+
+
 def read_annotation(eggnog_outfile:str):
     """Read an eggno-mapper annotation file and retrieve EC numbers and GO terms by genes.
 
@@ -202,3 +259,54 @@ def read_annotation(eggnog_outfile:str):
         annotation_dict = annotation_data.set_index('query_name')[['GOs','EC', 'Preferred_name']].to_dict('index')
         for key in annotation_dict:
             yield key, annotation_dict[key]
+
+
+def create_cds_feature(id_gene, start_position, end_position, strand, annotation_data, go_namespaces, go_alternatives, gene_protein_seq):
+    new_feature_cds = sf.SeqFeature(sf.FeatureLocation(start_position,
+                                                        end_position,
+                                                        strand),
+                                                    type="CDS")
+
+    new_feature_cds.qualifiers['locus_tag'] = id_gene
+
+    # Add GO annotation according to the namespace.
+    if id_gene in annotation_data.keys():
+        # Add gene name.
+        if 'Preferred_name' in annotation_data[id_gene]:
+            new_feature_cds.qualifiers['gene'] = annotation_data[id_gene]['Preferred_name']
+
+        if 'GOs' in annotation_data[id_gene] :
+            gene_gos = annotation_data[id_gene]['GOs'].split(',')
+            if gene_gos != [""]:
+                go_components = []
+                go_functions = []
+                go_process = []
+
+                for go in gene_gos:
+                    # Check if GO term is not a deprecated one.
+                    # If yes take the corresponding one in alternative GO.
+                    if go not in go_namespaces:
+                        go_test = go_alternatives[go]
+                    else:
+                        go_test = go
+                    if go_namespaces[go_test] == 'cellular_component':
+                            go_components.append(go)
+                    if go_namespaces[go_test] == 'molecular_function':
+                        go_functions.append(go)
+                    if go_namespaces[go_test] == 'biological_process':
+                        go_process.append(go)
+                new_feature_cds.qualifiers['go_component'] = go_components
+                new_feature_cds.qualifiers['go_function'] = go_functions
+                new_feature_cds.qualifiers['go_process'] = go_process
+
+
+        # Add EC annotation.
+        if 'EC' in annotation_data[id_gene]:
+            gene_ecs = annotation_data[id_gene]['EC'].split(',')
+            if gene_ecs != [""]:
+                new_feature_cds.qualifiers['EC_number'] = gene_ecs
+
+    if id_gene in gene_protein_seq:
+        new_feature_cds.qualifiers['translation'] = gene_protein_seq[id_gene]
+
+    return new_feature_cds

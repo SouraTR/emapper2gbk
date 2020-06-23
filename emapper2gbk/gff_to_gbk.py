@@ -27,6 +27,7 @@ import argparse
 import datetime
 import gffutils
 import numpy as np
+import logging
 import os
 import pandas as pa
 import re
@@ -35,58 +36,12 @@ import sys
 
 from Bio import SeqFeature as sf
 from Bio import SeqIO
-from Bio.Alphabet import IUPAC
-from Bio.Seq import Seq
-from Bio.SeqRecord import SeqRecord
+
 from collections import OrderedDict
-from emapper2gbk.utils import is_valid_file, create_GO_namespaces_alternatives, read_annotation, create_taxonomic_data
+from emapper2gbk.utils import is_valid_file, create_GO_namespaces_alternatives, read_annotation, create_taxonomic_data, get_basename, record_info, create_cds_feature
 from typing import Union
 
-
-def contig_info(contig_id, contig_seq, species_informations):
-    """
-    Create contig information from species_informations dictionary and contig id and contig seq.
-    """
-    record = SeqRecord(contig_seq, id=contig_id, name=contig_id,
-                    description=species_informations['description'])
-
-    record.seq.alphabet = IUPAC.ambiguous_dna
-    if 'data_file_division' in species_informations:
-        record.annotations['data_file_division'] = species_informations['data_file_division']
-    record.annotations['date'] = datetime.date.today().strftime('%d-%b-%Y').upper()
-    if 'topology' in species_informations:
-        record.annotations['topology'] = species_informations['topology']
-    record.annotations['accessions'] = contig_id
-    if 'organism' in species_informations:
-        record.annotations['organism'] = species_informations['organism']
-    # Use of literal_eval for taxonomy and keywords to retrieve list.
-    if 'taxonomy' in species_informations:
-        record.annotations['taxonomy'] = species_informations['taxonomy']
-    if 'keywords' in species_informations:
-        record.annotations['keywords'] = species_informations['keywords']
-    if 'source' in species_informations:
-        record.annotations['source'] = species_informations['source']
-
-    new_feature_source = sf.SeqFeature(sf.FeatureLocation(1-1,
-                                                        len(contig_seq)),
-                                                        type="source")
-    new_feature_source.qualifiers['scaffold'] = contig_id
-    if 'isolate' in species_informations:
-        new_feature_source.qualifiers['isolate'] = species_informations['isolate']
-    # db_xref corresponds to the taxon NCBI ID.
-    # Important if you want to use Pathway Tools after.
-    if 'db_xref' in species_informations:
-        new_feature_source.qualifiers['db_xref'] = species_informations['db_xref']
-    if 'cell_type' in species_informations:
-        new_feature_source.qualifiers['cell_type'] = species_informations['cell_type']
-    if 'dev_stage' in species_informations:
-        new_feature_source.qualifiers['dev_stage'] = species_informations['dev_stage']
-    if 'mol_type' in species_informations:
-        new_feature_source.qualifiers['mol_type'] = species_informations['mol_type']
-
-    record.features.append(new_feature_source)
-
-    return record
+logger = logging.getLogger(__name__)
 
 
 def strand_change(input_strand):
@@ -121,21 +76,21 @@ def gff_to_gbk(genome_fasta:str, prot_fasta:str, annotation_data:Union[str, dict
     a contig information table (containing species name, taxon ID, ..)
     create a genbank file.
     """
+    genome_id = get_basename(genome_fasta)
 
-    print('Creating GFF database (gffutils)')
+    logger.info('Creating GFF database (gffutils) for ' + genome_id)
     # Create the gff database file.
     # gffutils use sqlite3 file-based database to access data inside GFF.
     # ':memory:' ask gffutils to keep database in memory instead of writting in a file.
     gff_database = gffutils.create_db(gff_file, ':memory:', force=True, keep_order=True, merge_strategy='merge', sort_attribute_values=True)
 
-    print('Formatting fasta and annotation file')
-    # Dictionary with scaffold/chromosome id as key and sequence as value.
-    contig_seqs = OrderedDict()
+    logger.info('Formatting fasta and annotation file for ' + genome_id)
+    # Dictionary with gene id as key and sequence as value.
+    gene_nucleic_sequence = OrderedDict()
 
     for record in SeqIO.parse(genome_fasta, "fasta"):
-        id_contig = record.id
-        contig_seqs[id_contig] = record.seq
-
+        id_gene = record.id
+        gene_nucleic_sequence[id_gene] = record.seq
 
     # Dictionary with gene id as key and protein sequence as value.
     gene_protein_seq = {}
@@ -154,15 +109,18 @@ def gff_to_gbk(genome_fasta:str, prot_fasta:str, annotation_data:Union[str, dict
     # Query Gene Ontology to extract namespaces and alternative IDs.
     # go_namespaces: Dictionary GO id as term and GO namespace as value.
     # go_alternatives: Dictionary GO id as term and GO alternatives id as value.
-    if not type(gobasic[0]) is dict and not type(gobasic[1]) is dict:
-        go_namespaces, go_alternatives = create_GO_namespaces_alternatives(gobasic)
+    if gobasic:
+        if not type(gobasic[0]) is dict and not type(gobasic[1]) is dict:
+            go_namespaces, go_alternatives = create_GO_namespaces_alternatives(gobasic)
+        else:
+            go_namespaces, go_alternatives = gobasic
     else:
-        go_namespaces, go_alternatives = gobasic
+        go_namespaces, go_alternatives = create_GO_namespaces_alternatives()
 
     # All SeqRecord objects will be stored in a list and then give to the SeqIO writer to create the genbank.
     seq_objects = []
 
-    print('Assembling Genbank informations')
+    logger.info('Assembling Genbank informations for ' + genome_id)
 
     # Iterate through each contig.
     # Then iterate through gene and throug RNA linked with the gene.
@@ -176,7 +134,7 @@ def gff_to_gbk(genome_fasta:str, prot_fasta:str, annotation_data:Union[str, dict
         else:
             id_gene = id_gene
 
-        record = contig_info(id_gene, contig_seqs[id_gene], species_informations)
+        record = record_info(id_gene, gene_nucleic_sequence[id_gene], species_informations)
 
         start_position = gene.start -1
         end_position = gene.end
@@ -195,65 +153,22 @@ def gff_to_gbk(genome_fasta:str, prot_fasta:str, annotation_data:Union[str, dict
             cds_id = cds_object.id
             start_position = cds_object.start -1
             end_position = cds_object.end
-            new_feature_cds = sf.SeqFeature(sf.FeatureLocation(start_position,
-                                                                end_position,
-                                                                strand),
-                                                            type="CDS")
+            strand = strand_change(cds_object.strand)
 
-            new_feature_cds.qualifiers['locus_tag'] = id_gene
-
-            # Add GO annotation according to the namespace.
-            if id_gene in annotation_data.keys():
-                # Add gene name.
-                if 'Preferred_name' in annotation_data[id_gene]:
-                    new_feature_cds.qualifiers['gene'] = annotation_data[id_gene]['Preferred_name']
-
-                if 'GOs' in annotation_data[id_gene] :
-                    gene_gos = annotation_data[id_gene]['GOs'].split(',')
-                    if gene_gos != [""]:
-                        go_components = []
-                        go_functions = []
-                        go_process = []
-
-                        for go in gene_gos:
-                            # Check if GO term is not a deprecated one.
-                            # If yes take the corresponding one in alternative GO.
-                            if go not in go_namespaces:
-                                go_test = go_alternatives[go]
-                            else:
-                                go_test = go
-                            if go_namespaces[go_test] == 'cellular_component':
-                                    go_components.append(go)
-                            if go_namespaces[go_test] == 'molecular_function':
-                                go_functions.append(go)
-                            if go_namespaces[go_test] == 'biological_process':
-                                go_process.append(go)
-                        new_feature_cds.qualifiers['go_component'] = go_components
-                        new_feature_cds.qualifiers['go_function'] = go_functions
-                        new_feature_cds.qualifiers['go_process'] = go_process
-
-
-                # Add EC annotation.
-                if 'EC' in annotation_data[id_gene]:
-                    gene_ecs = annotation_data[id_gene]['EC'].split(',')
-                    if gene_ecs != [""]:
-                        new_feature_cds.qualifiers['EC_number'] = gene_ecs
-
-            if id_gene in gene_protein_seq:
-                new_feature_cds.qualifiers['translation'] = gene_protein_seq[id_gene]
+            new_cds_feature = create_cds_feature(id_gene, start_position, end_position, strand, annotation_data, go_namespaces, go_alternatives, gene_protein_seq)
 
             # Add CDS information to contig record
-            record.features.append(new_feature_cds)
+            record.features.append(new_cds_feature)
 
         seq_objects.append(record)
 
     # Create Genbank with the list of SeqRecord.
     SeqIO.write(seq_objects, gbk_out, 'genbank')
 
+
 def main(genome_fasta, prot_fasta, annot_table, gff_file, species_name, gbk_out, gobasic=None):
     # check validity of inputs
     for elem in [genome_fasta, prot_fasta]:
-        print(elem)
         if not is_valid_file(elem):
             print(f"{elem} is not a valid path file.")
             sys.exit(1)
