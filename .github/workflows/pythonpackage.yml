@@ -6,8 +6,18 @@ name: Python package
 on:
   push:
     branches: '*'
+    paths-ignore:
+      - 'docs/**'
+      - 'AUTHORS.rst'
+      - 'HISTORY.rst'
+      - 'README.rst'
   pull_request:
     branches: [ master ]
+    paths-ignore:
+      - 'docs/**'
+      - 'AUTHORS.rst'
+      - 'HISTORY.rst'
+      - 'README.rst'
 
 jobs:
   build:
