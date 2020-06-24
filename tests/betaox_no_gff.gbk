@@ -1,0 +1,837 @@
+LOCUS       gene1781                1701 bp    DNA              BCT 20-MAY-2020
+DEFINITION  Escherichia coli genome.
+ACCESSION   gene1781
+VERSION     gene1781
+KEYWORDS    Escherichia coli.
+SOURCE      .
+  ORGANISM  Escherichia coli
+            Bacteria; Proteobacteria; Gammaproteobacteria; Enterobacterales;
+            Enterobacteriaceae; Escherichia.
+FEATURES             Location/Qualifiers
+     source          1..1701
+                     /scaffold="gene1781"
+                     /db_xref="taxon:562"
+     gene            2..1701
+                     /locus_tag="gene1781"
+     CDS             2..1701
+                     /translation="MHPTGPHLGPDVLFRESNMKVTLTFNEQRRAAYRQQGLWGDASLA
+                     DYWQQTARAMPDKIAVVDNHGASYTYSALDHAASCLANWMLAKGIESGDRIAFQLPGWC
+                     EFTVIYLACLKIGAVSVPLLPSWREAELVWVLNKCQAKMFFAPTLFKQTRPVDLILPLQ
+                     NQLPQLQQIVGVDKLAPATSSLSLSQIIADNTSLTTAITTHGDELAAVLFTSGTEGLPK
+                     GVMLTHNNILASERAYCARLNLTWQDVFMMPAPLGHATGFLHGVTAPFLIGARSVLLDI
+                     FTPDACLALLEQQRCTCMLGATPFVYDLLNVLEKQPADLSALRFFLCGGTTIPKKVARE
+                     CQQRGIKLLSVYGSTESSPHAVVNLDDPLSRFMHTDGYAAAGVEIKVVDDARKTLPPGC
+                     EGEEASRGPNVFMGYFDEPELTARALDEEGWYYSGDLCRMDEAGYIKITGRKKDIIVRG
+                     GENISSREVEDILLQHPKIHDACVVAMSDERLGERSCAYVVLKAPHHSLSLEEVVAFFS
+                     RKRVAKYKYPEHIVVIEKLPRTTSGKIQKFLLRKDIMRRLTQDVCEEIE"
+                     /locus_tag="gene1781"
+                     /go_component="GO:0005575"
+                     /go_component="GO:0005623"
+                     /go_component="GO:0005886"
+                     /go_component="GO:0016020"
+                     /go_component="GO:0044464"
+                     /go_component="GO:0071944"
+                     /go_function="GO:0003674"
+                     /go_function="GO:0003824"
+                     /go_function="GO:0015645"
+                     /go_function="GO:0016405"
+                     /go_function="GO:0016874"
+                     /go_function="GO:0016877"
+                     /go_function="GO:0016878"
+                     /go_function="GO:0031956"
+ORIGIN
+        1 atgcatccca caggcccgca tctcgggcct gatgttctgt ttcgagagtc caacatgaaa
+       61 gtgacattaa cgtttaacga acaacgtcgt gcggcgtatc gtcagcaagg gttatggggc
+      121 gatgcttcgc tggccgatta ctggcagcag accgctcgtg cgatgccaga caaaattgcc
+      181 gtggtcgata atcatggtgc atcgtacacc tatagcgcgc tcgatcacgc cgcgagctgt
+      241 ctggcaaact ggatgttagc gaagggtatt gaatcaggcg atcgcatcgc atttcaactg
+      301 cctggctggt gtgaatttac cgttatctat cttgcctgcc tgaaaatcgg tgcagtttcc
+      361 gtgccgctgt tgccttcctg gcgggaagca gaactggtgt gggtgctcaa taagtgtcag
+      421 gcaaaaatgt tctttgcacc gacgttgttt aaacaaacgc gtccggtaga tttaatcctg
+      481 ccgctgcaaa atcagcttcc acaactacaa caaattgtcg gcgtggacaa actggctccc
+      541 gccacctctt ccctctcatt aagtcagatt atcgccgaca atacctcact gaccacggcg
+      601 ataacgaccc acggcgatga attagctgcg gtgctgttta cctccggaac cgagggtctg
+      661 ccaaagggcg tgatgctaac gcataacaat attctcgcca gtgagcgggc ttattgcgcg
+      721 cgactgaatc tgacctggca ggatgtcttt atgatgcctg cgccacttgg tcacgcaacg
+      781 ggctttctgc atggcgtaac ggcaccattc ttaattggcg ctcgcagcgt gttgttagat
+      841 attttcactc ctgatgcgtg tctcgcgctg cttgagcagc agcgttgcac ctgtatgctc
+      901 ggcgcaacgc cgtttgtcta tgatcttttg aatgtactag agaaacaacc cgcggacctt
+      961 tcagcgctgc gtttctttct ttgcggcgga accacaatcc ccaaaaaagt ggcgcgtgaa
+     1021 tgccagcagc gcggcattaa attattaagt gtttatggtt ccacagaaag ttcgccgcat
+     1081 gcggtggtga atctcgatga tcctttgtcg cgctttatgc acaccgatgg ttacgctgcc
+     1141 gcaggtgtag agattaaagt ggtcgatgac gcacgcaaga ccttaccgcc aggttgcgaa
+     1201 ggtgaagaag cctcgcgtgg ccccaatgtg tttatggggt attttgatga acctgaatta
+     1261 accgcccgtg ccctggatga agaaggctgg tattacagcg gcgatctctg ccgtatggat
+     1321 gaggctggct atataaaaat taccggacgc aaaaaagata ttattgtccg cggcggcgaa
+     1381 aatattagca gccgtgaagt ggaagatatt ttattgcagc atcctaaaat tcacgatgcc
+     1441 tgtgtggttg caatgtccga tgaacgttta ggtgaacgat catgcgctta tgtcgtgctg
+     1501 aaagcgccgc atcattcatt atcgctggaa gaggtagtgg ctttttttag ccgtaaacgg
+     1561 gtcgcaaaat ataaatatcc tgaacatatc gtggtaatcg aaaaactacc gcgaactacc
+     1621 tcaggtaaaa tacaaaagtt tttgttaaga aaagatatta tgcggcgttt aacgcaggat
+     1681 gtctgtgaag agattgaata a
+//
+LOCUS       gene1887                1686 bp    DNA              BCT 20-MAY-2020
+DEFINITION  Escherichia coli genome.
+ACCESSION   gene1887
+VERSION     gene1887
+KEYWORDS    Escherichia coli.
+SOURCE      .
+  ORGANISM  Escherichia coli
+            Bacteria; Proteobacteria; Gammaproteobacteria; Enterobacterales;
+            Enterobacteriaceae; Escherichia.
+FEATURES             Location/Qualifiers
+     source          1..1686
+                     /scaffold="gene1887"
+                     /db_xref="taxon:562"
+     gene            2..1686
+                     /locus_tag="gene1887"
+     CDS             2..1686
+                     /translation="LKKVWLNRYPADVPTEINPDRYQSLVDMFEQSVARYADQPAFVNM
+                     GEVMTFRKLEERSRAFAAYLQQGLGLKKGDRVALMMPNLLQYPVALFGILRAGMIVVNV
+                     NPLYTPRELEHQLNDSGASAIVIVSNFAHTLEKVVDKTAVQHVILTRMGDQLSTAKGTV
+                     VNFVVKYIKRLVPKYHLPDAISFRSALHNGYRMQYVKPELVPEDLAFLQYTGGTTGVAK
+                     GAMLTHRNMLANLEQVNATYGPLLHPGKELVVTALPLYHIFALTINCLLFIELGGQNLL
+                     ITNPRDIPGLVKELAKYPFTAITGVNTLFNALLNNKEFQQLDFSSLHLSAGGGMPVQQV
+                     VAERWVKLTGQYLLEGYGLTECAPLVSVNPYDIDYHSGSIGLPVPSTEAKLVDDDDNEV
+                     PPGQPGELCVKGPQVMLGYWQRPDATDEIIKNGWLHTGDIAVMDEEGFLRIVDRKKDMI
+                     LVSGFNVYPNEIEDVVMQHPGVQEVAAVGVPSGSSGEAVKIFVVKKDPSLTEESLVTFC
+                     RRQLTGYKVPKLVEFRDELPKSNVGKILRRELRDEARGKVDNKA"
+                     /locus_tag="gene1887"
+                     /go_component="GO:0005575"
+                     /go_component="GO:0005622"
+                     /go_component="GO:0005623"
+                     /go_component="GO:0005737"
+                     /go_component="GO:0005829"
+                     /go_component="GO:0005886"
+                     /go_component="GO:0009898"
+                     /go_component="GO:0016020"
+                     /go_component="GO:0044424"
+                     /go_component="GO:0044425"
+                     /go_component="GO:0044444"
+                     /go_component="GO:0044459"
+                     /go_component="GO:0044464"
+                     /go_component="GO:0071944"
+                     /go_component="GO:0098552"
+                     /go_component="GO:0098562"
+                     /go_function="GO:0003674"
+                     /go_function="GO:0003824"
+                     /go_function="GO:0004467"
+                     /go_function="GO:0005488"
+                     /go_function="GO:0005504"
+                     /go_function="GO:0008289"
+                     /go_function="GO:0015645"
+                     /go_function="GO:0016405"
+                     /go_function="GO:0016874"
+                     /go_function="GO:0016877"
+                     /go_function="GO:0016878"
+                     /go_function="GO:0031406"
+                     /go_function="GO:0033293"
+                     /go_function="GO:0036041"
+                     /go_function="GO:0036094"
+                     /go_function="GO:0043167"
+                     /go_function="GO:0043168"
+                     /go_function="GO:0043177"
+                     /go_function="GO:0070538"
+                     /go_process="GO:0001676"
+                     /go_process="GO:0006082"
+                     /go_process="GO:0006139"
+                     /go_process="GO:0006163"
+                     /go_process="GO:0006629"
+                     /go_process="GO:0006631"
+                     /go_process="GO:0006635"
+                     /go_process="GO:0006637"
+                     /go_process="GO:0006644"
+                     /go_process="GO:0006725"
+                     /go_process="GO:0006732"
+                     /go_process="GO:0006753"
+                     /go_process="GO:0006790"
+                     /go_process="GO:0006793"
+                     /go_process="GO:0006796"
+                     /go_process="GO:0006807"
+                     /go_process="GO:0008150"
+                     /go_process="GO:0008152"
+                     /go_process="GO:0008610"
+                     /go_process="GO:0008654"
+                     /go_process="GO:0009056"
+                     /go_process="GO:0009058"
+                     /go_process="GO:0009062"
+                     /go_process="GO:0009117"
+                     /go_process="GO:0009150"
+                     /go_process="GO:0009259"
+                     /go_process="GO:0009314"
+                     /go_process="GO:0009411"
+                     /go_process="GO:0009416"
+                     /go_process="GO:0009628"
+                     /go_process="GO:0009987"
+                     /go_process="GO:0016042"
+                     /go_process="GO:0016054"
+                     /go_process="GO:0019395"
+                     /go_process="GO:0019637"
+                     /go_process="GO:0019693"
+                     /go_process="GO:0019752"
+                     /go_process="GO:0030258"
+                     /go_process="GO:0032787"
+                     /go_process="GO:0033865"
+                     /go_process="GO:0033875"
+                     /go_process="GO:0034032"
+                     /go_process="GO:0034440"
+                     /go_process="GO:0034641"
+                     /go_process="GO:0035383"
+                     /go_process="GO:0043436"
+                     /go_process="GO:0043603"
+                     /go_process="GO:0044237"
+                     /go_process="GO:0044238"
+                     /go_process="GO:0044242"
+                     /go_process="GO:0044248"
+                     /go_process="GO:0044249"
+                     /go_process="GO:0044255"
+                     /go_process="GO:0044281"
+                     /go_process="GO:0044282"
+                     /go_process="GO:0046395"
+                     /go_process="GO:0046483"
+                     /go_process="GO:0050896"
+                     /go_process="GO:0051186"
+                     /go_process="GO:0055086"
+                     /go_process="GO:0055114"
+                     /go_process="GO:0071704"
+                     /go_process="GO:0072329"
+                     /go_process="GO:0072521"
+                     /go_process="GO:0090407"
+                     /go_process="GO:1901135"
+                     /go_process="GO:1901360"
+                     /go_process="GO:1901564"
+                     /go_process="GO:1901575"
+                     /go_process="GO:1901576"
+                     /EC_number="6.2.1.3"
+ORIGIN
+        1 ttgaagaagg tttggcttaa ccgttatccc gcggacgttc cgacggagat caaccctgac
+       61 cgttatcaat ctctggtaga tatgtttgag cagtcggtcg cgcgctacgc cgatcaacct
+      121 gcgtttgtga atatggggga ggtaatgacc ttccgcaagc tggaagaacg cagtcgcgcg
+      181 tttgccgctt atttgcaaca agggttgggg ctgaagaaag gcgatcgcgt tgcgttgatg
+      241 atgcctaatt tattgcaata tccggtggcg ctgtttggca ttttgcgtgc cgggatgatc
+      301 gtcgtaaacg ttaacccgtt gtataccccg cgtgagcttg agcatcagct taacgatagc
+      361 ggcgcatcgg cgattgttat cgtgtctaac tttgctcaca cactggaaaa agtggttgat
+      421 aaaaccgccg ttcagcacgt aattctgacc cgtatgggcg atcagctatc tacggcaaaa
+      481 ggcacggtag tcaatttcgt tgttaaatac atcaagcgtt tggtgccgaa ataccatctg
+      541 ccagatgcca tttcatttcg tagcgcactg cataacggct accggatgca gtacgtcaaa
+      601 cccgaactgg tgccggaaga tttagctttt ctgcaataca ccggcggcac cactggtgtg
+      661 gcgaaaggcg cgatgctgac tcaccgcaat atgctggcga acctggaaca ggttaacgcg
+      721 acctatggtc cgctgttgca tccgggcaaa gagctggtgg tgacggcgct gccgctgtat
+      781 cacatttttg ccctgaccat taactgcctg ctgtttatcg aactgggtgg gcagaacctg
+      841 cttatcacta acccgcgcga tattccaggg ttggtaaaag agttagcgaa atatccgttt
+      901 accgctatca cgggcgttaa caccttgttc aatgcgttgc tgaacaataa agagttccag
+      961 cagctggatt tctccagtct gcatctttcc gcaggcggtg ggatgccagt gcagcaagtg
+     1021 gtggcagagc gttgggtgaa actgaccgga cagtatctgc tggaaggcta tggccttacc
+     1081 gagtgtgcgc cgctggtcag cgttaaccca tatgatattg attatcatag tggtagcatc
+     1141 ggtttgccgg tgccgtcgac ggaagccaaa ctggtggatg atgatgataa tgaagtacca
+     1201 ccaggtcaac cgggtgagct ttgtgtcaaa ggaccgcagg tgatgctggg ttactggcag
+     1261 cgtcccgatg ctaccgatga aatcatcaaa aatggctggt tacacaccgg cgacatcgcg
+     1321 gtaatggatg aagaaggatt cctgcgcatt gtcgatcgta aaaaagacat gattctggtt
+     1381 tccggtttta acgtctatcc caacgagatt gaagatgtcg tcatgcagca tcctggcgta
+     1441 caggaagtcg cggctgttgg cgtaccttcc ggctccagtg gtgaagcggt gaaaatcttc
+     1501 gtagtgaaaa aagatccatc gcttaccgaa gagtcactgg tgactttttg ccgccgtcag
+     1561 ctcacgggat acaaagtacc gaagctggtg gagtttcgtg atgagttacc gaaatctaac
+     1621 gtcggaaaaa ttttgcgacg agaattacgt gacgaagcgc gcggcaaagt ggacaataaa
+     1681 gcctga
+//
+LOCUS       gene226                 2445 bp    DNA              BCT 20-MAY-2020
+DEFINITION  Escherichia coli genome.
+ACCESSION   gene226
+VERSION     gene226
+KEYWORDS    Escherichia coli.
+SOURCE      .
+  ORGANISM  Escherichia coli
+            Bacteria; Proteobacteria; Gammaproteobacteria; Enterobacterales;
+            Enterobacteriaceae; Escherichia.
+FEATURES             Location/Qualifiers
+     source          1..2445
+                     /scaffold="gene226"
+                     /db_xref="taxon:562"
+     gene            2..2445
+                     /locus_tag="gene226"
+     CDS             2..2445
+                     /translation="MMILSILATVVLLGALFYHRVSLFISSLILLAWTAALGVAGLWSA
+                     WVLVPLAIILVPFNFAPMRKSMISAPVFRGFRKVMPPMSRTEKEAIDAGTTWWEGDLFQ
+                     GKPDWKKLHNYPQPRLTAEEQAFLDGPVEEACRMANDFQITHELADLPPELWAYLKEHR
+                     FFAMIIKKEYGGLEFSAYAQSRVLQKLSGVSGILAITVGVPNSLGPGELLQHYGTDEQK
+                     DHYLPRLARGQEIPCFALTSPEAGSDAGAIPDTGIVCMGEWQGQQVLGMRLTWNKRYIT
+                     LAPIATVLGLAFKLSDPEKLLGGAEDLGITCALIPTTTPGVEIGRRHFPLNVPFQNGPT
+                     RGKDVFVPIDYIIGGPKMAGQGWRMLVECLSVGRGITLPSNSTGGVKSVALATGAYAHI
+                     RRQFKISIGKMEGIEEPLARIAGNAYVMDAAASLITYGIMLGEKPAVLSAIVKYHCTHR
+                     GQQSIIDAMDITGGKGIMLGQSNFLARAYQGAPIAITVEGANILTRSMMIFGQGAIRCH
+                     PYVLEEMEAAKNNDVNAFDKLLFKHIGHVGSNKVRSFWLGLTRGLTSSTPTGDATKRYY
+                     QHLNRLSANLALLSDVSMAVLGGSLKRRERISARLGDILSQLYLASAVLKRYDDEGRNE
+                     ADLPLVHWGVQDALYQAEQAMDDLLQNFPNRVVAGLLNVVIFPTGRHYLAPSDKLDHKV
+                     AKILQVPNATRSRIGRGQYLTPSEHNPVGLLEEALVDVIAADPIHQRICKELGKNLPFT
+                     RLDELAHNALVKGLIDKDEAAILVKAEESRLRSINVDDFDPEELATKPVKLPEKVRKVE
+                     AA"
+                     /locus_tag="gene226"
+                     /go_component="GO:0005575"
+                     /go_component="GO:0005623"
+                     /go_component="GO:0005886"
+                     /go_component="GO:0016020"
+                     /go_component="GO:0044464"
+                     /go_component="GO:0071944"
+                     /go_function="GO:0003674"
+                     /go_function="GO:0003824"
+                     /go_function="GO:0003995"
+                     /go_function="GO:0016491"
+                     /go_function="GO:0016627"
+                     /go_process="GO:0006082"
+                     /go_process="GO:0006629"
+                     /go_process="GO:0006631"
+                     /go_process="GO:0006635"
+                     /go_process="GO:0008150"
+                     /go_process="GO:0008152"
+                     /go_process="GO:0009056"
+                     /go_process="GO:0009062"
+                     /go_process="GO:0009987"
+                     /go_process="GO:0016042"
+                     /go_process="GO:0016054"
+                     /go_process="GO:0019395"
+                     /go_process="GO:0019752"
+                     /go_process="GO:0030258"
+                     /go_process="GO:0032787"
+                     /go_process="GO:0033539"
+                     /go_process="GO:0034440"
+                     /go_process="GO:0043436"
+                     /go_process="GO:0044237"
+                     /go_process="GO:0044238"
+                     /go_process="GO:0044242"
+                     /go_process="GO:0044248"
+                     /go_process="GO:0044255"
+                     /go_process="GO:0044281"
+                     /go_process="GO:0044282"
+                     /go_process="GO:0046395"
+                     /go_process="GO:0055114"
+                     /go_process="GO:0071704"
+                     /go_process="GO:0072329"
+                     /go_process="GO:1901575"
+ORIGIN
+        1 atgatgattt tgagtattct cgctacggtt gtcctgctcg gcgcgttgtt ctatcaccgc
+       61 gtgagcttat ttatcagcag tctgattttg ctcgcctgga cagccgccct cggcgttgct
+      121 ggtctgtggt cggcgtgggt actggtgcct ctggccatta tcctcgtgcc atttaacttt
+      181 gcgcctatgc gtaagtcgat gatttccgcg ccggtatttc gcggtttccg taaggtgatg
+      241 ccgccgatgt cgcgcactga gaaagaagcg attgatgcgg gcaccacctg gtgggagggc
+      301 gacttgttcc agggcaagcc ggactggaaa aagctgcata actatccgca gccgcgcctg
+      361 accgccgaag agcaagcgtt tctcgacggc ccggtagaag aagcctgccg gatggcgaat
+      421 gatttccaga tcacccatga gctggcggat ctgccgccgg agttgtgggc gtaccttaaa
+      481 gagcatcgtt tcttcgcgat gatcatcaaa aaagagtacg gcgggctgga gttctcggct
+      541 tatgcccagt ctcgcgtgct gcaaaaactc tccggcgtga gcgggatcct ggcgattacc
+      601 gtcggcgtgc caaactcatt aggcccgggc gaactgttgc aacattacgg cactgacgag
+      661 cagaaagatc actatctgcc gcgtctggcg cgtggtcagg agatcccctg ctttgcactg
+      721 accagcccgg aagcgggttc cgatgcgggc gcgattccgg acaccgggat tgtctgcatg
+      781 ggcgaatggc agggccagca ggtgctgggg atgcgtctga cctggaacaa acgctacatt
+      841 acgctggcac cgattgcgac cgtgcttggg ctggcgttta aactctccga cccggaaaaa
+      901 ttactcggcg gtgcagaaga tttaggcatt acctgtgcgc tgatcccaac caccacgccg
+      961 ggcgtggaaa ttggtcgtcg ccacttcccg ctgaacgtac cgttccagaa cggaccgacg
+     1021 cgcggtaaag atgtcttcgt gccgatcgat tacatcatcg gcgggccgaa aatggccggg
+     1081 caaggctggc ggatgctggt ggagtgcctc tcggtaggcc gcggcatcac cctgccttcc
+     1141 aactcaaccg gcggcgtgaa atcggtagcg ctggcaaccg gcgcgtatgc tcacattcgc
+     1201 cgtcagttca aaatctctat tggtaagatg gaagggattg aagagccgct ggcgcgtatt
+     1261 gccggtaatg cctacgtgat ggatgctgcg gcatcgctga ttacctacgg cattatgctc
+     1321 ggcgaaaaac ctgccgtgct gtcggctatc gttaagtatc actgtaccca ccgcgggcag
+     1381 cagtcgatta ttgatgcgat ggatattacc ggcggtaaag gcattatgct cgggcaaagc
+     1441 aacttcctgg cgcgtgctta ccagggcgca ccgattgcca tcaccgttga aggggctaac
+     1501 attctgaccc gcagcatgat gatcttcgga caaggagcga ttcgttgcca tccgtacgtg
+     1561 ctggaagaga tggaagcggc gaagaacaat gacgtcaacg cgttcgataa actgttgttc
+     1621 aaacatatcg gtcacgtcgg tagcaacaaa gttcgcagct tctggctggg cctgacgcgc
+     1681 ggtttaacca gcagcacgcc aaccggcgat gccactaaac gctactatca gcacctgaac
+     1741 cgcctgagcg ccaacctcgc cctgctttct gatgtctcga tggcagtgct gggcggcagc
+     1801 ctgaaacgtc gcgagcgcat ctcggcccgt ctgggggata ttttaagcca gctctacctc
+     1861 gcctctgccg tgctgaagcg ttatgacgac gaaggccgta atgaagccga cctgccgctg
+     1921 gtgcactggg gcgtacaaga tgcgctgtat caggctgaac aggcgatgga tgatttactg
+     1981 caaaacttcc cgaaccgcgt ggttgccggg ctgctgaatg tggtgatctt cccgaccgga
+     2041 cgtcattatc tggcaccttc tgacaagctg gatcataaag tggcgaagat tttacaagtg
+     2101 ccgaacgcca cccgttcccg cattggtcgc ggtcagtacc tgacgccgag cgagcataat
+     2161 ccggttggct tgctggaaga ggcgctggtg gatgtgattg ccgccgaccc aattcatcag
+     2221 cggatctgta aagagctggg taaaaacctg ccgtttaccc gtctggatga actggcgcac
+     2281 aacgcgctgg tgaaggggct gattgataaa gatgaagccg ctattctggt gaaagctgaa
+     2341 gaaagccgtc tgcgcagtat taacgttgat gactttgatc cggaagagct ggcgacgaag
+     2401 ccggtaaagt tgccggagaa agtgcggaaa gttgaagccg cgtaa
+//
+LOCUS       gene2441                2145 bp    DNA              BCT 20-MAY-2020
+DEFINITION  Escherichia coli genome.
+ACCESSION   gene2441
+VERSION     gene2441
+KEYWORDS    Escherichia coli.
+SOURCE      .
+  ORGANISM  Escherichia coli
+            Bacteria; Proteobacteria; Gammaproteobacteria; Enterobacterales;
+            Enterobacteriaceae; Escherichia.
+FEATURES             Location/Qualifiers
+     source          1..2145
+                     /scaffold="gene2441"
+                     /db_xref="taxon:562"
+     gene            2..2145
+                     /locus_tag="gene2441"
+     CDS             2..2145
+                     /translation="MEMTSAFTLNVRLDNIAVITIDVPGEKMNTLKAEFASQVRAIIKQ
+                     LRENKELRGVVFVSAKPDNFIAGADINMIGNCKTAQEAEALARQGQQLMAEIHALPIQV
+                     IAAIHGACLGGGLELALACHGRVCTDDPKTVLGLPEVQLGLLPGSGGTQRLPRLIGVST
+                     ALEMILTGKQLRAKQALKLGLVDDVVPHSILLEAAVELAKKERPSSRPLPVRERILAGP
+                     LGRALLFKMVGKKTEHKTQGNYPATERILEVVETGLAQGTSSGYDAEARAFGELAMTPQ
+                     SQALRSIFFASTDVKKDPGSDAPPAPLNSVGILGGGLMGGGIAYVTACKAGIPVRIKDI
+                     NPQGINHALKYSWDQLEGKVRRRHLKASERDKQLALISGTTDYRGFAHRDLIIEAVFEN
+                     LELKQQMVAEVEQNCAAHTIFASNTSSLPIGDIAAHATRPEQVIGLHFFSPVEKMPLVE
+                     IIPHAGTSAQTIATTVKLAKKQGKTPIVVRDKAGFYVNRILAPYINEAIRMLTQGERVE
+                     HIDAALVKFGFPVGPIQLLDEVGIDTGTKIIPVLEAAYGERFSAPANVVSSILNDDRKG
+                     RKNGRGFYLYGQKGRKSKKQVDPAIYPLIGTQGQGRISAPQVAERCVMLMLNEAVRCVD
+                     EQVIRSVRDGDIGAVFGIGFPPFLGGPFRYIDSLGAGEVVAIMQRLATQYGSRFTPCER
+                     LVEMGARGESFWKTTATDLQ"
+                     /locus_tag="gene2441"
+                     /go_function="GO:0003674"
+                     /go_function="GO:0003824"
+                     /go_function="GO:0003857"
+                     /go_function="GO:0004165"
+                     /go_function="GO:0004300"
+                     /go_function="GO:0008691"
+                     /go_function="GO:0008692"
+                     /go_function="GO:0016491"
+                     /go_function="GO:0016614"
+                     /go_function="GO:0016616"
+                     /go_function="GO:0016829"
+                     /go_function="GO:0016835"
+                     /go_function="GO:0016836"
+                     /go_function="GO:0016853"
+                     /go_function="GO:0016854"
+                     /go_function="GO:0016856"
+                     /go_function="GO:0016860"
+                     /go_function="GO:0016863"
+                     /go_process="GO:0006082"
+                     /go_process="GO:0006629"
+                     /go_process="GO:0006631"
+                     /go_process="GO:0006635"
+                     /go_process="GO:0006725"
+                     /go_process="GO:0006805"
+                     /go_process="GO:0008150"
+                     /go_process="GO:0008152"
+                     /go_process="GO:0009056"
+                     /go_process="GO:0009062"
+                     /go_process="GO:0009404"
+                     /go_process="GO:0009407"
+                     /go_process="GO:0009410"
+                     /go_process="GO:0009636"
+                     /go_process="GO:0009850"
+                     /go_process="GO:0009852"
+                     /go_process="GO:0009987"
+                     /go_process="GO:0010124"
+                     /go_process="GO:0010817"
+                     /go_process="GO:0016042"
+                     /go_process="GO:0016054"
+                     /go_process="GO:0019395"
+                     /go_process="GO:0019439"
+                     /go_process="GO:0019748"
+                     /go_process="GO:0019752"
+                     /go_process="GO:0030258"
+                     /go_process="GO:0032787"
+                     /go_process="GO:0034440"
+                     /go_process="GO:0042178"
+                     /go_process="GO:0042221"
+                     /go_process="GO:0042445"
+                     /go_process="GO:0042447"
+                     /go_process="GO:0042537"
+                     /go_process="GO:0043436"
+                     /go_process="GO:0044237"
+                     /go_process="GO:0044238"
+                     /go_process="GO:0044242"
+                     /go_process="GO:0044248"
+                     /go_process="GO:0044255"
+                     /go_process="GO:0044281"
+                     /go_process="GO:0044282"
+                     /go_process="GO:0046395"
+                     /go_process="GO:0050896"
+                     /go_process="GO:0051716"
+                     /go_process="GO:0055114"
+                     /go_process="GO:0065007"
+                     /go_process="GO:0065008"
+                     /go_process="GO:0070887"
+                     /go_process="GO:0071466"
+                     /go_process="GO:0071704"
+                     /go_process="GO:0072329"
+                     /go_process="GO:0098754"
+                     /go_process="GO:1901360"
+                     /go_process="GO:1901361"
+                     /go_process="GO:1901575"
+                     /EC_number="1.1.1.157"
+                     /EC_number="1.1.1.35"
+                     /EC_number="4.2.1.17"
+                     /EC_number="5.1.2.3"
+                     /EC_number="5.3.3.8"
+ORIGIN
+        1 atggaaatga catcagcgtt tacccttaat gttcgtctgg acaacattgc cgttatcacc
+       61 atcgacgtac cgggtgagaa aatgaatacc ctgaaggcgg agtttgcctc gcaggtgcgc
+      121 gccattatta agcaactccg tgaaaacaaa gagttgcgag gcgtggtgtt tgtctccgct
+      181 aaaccggaca acttcattgc tggcgcagac atcaacatga tcggcaactg caaaacggcg
+      241 caagaagcgg aagctctggc gcggcagggc caacagttga tggcggagat tcatgctttg
+      301 cccattcagg ttatcgcggc tattcatggc gcttgcctgg gtggtgggct ggagttggcg
+      361 ctggcgtgcc acggtcgcgt ttgtactgac gatcctaaaa cggtgctcgg tttgcctgaa
+      421 gtacaacttg gattgttacc cggttcaggc ggcacccagc gtttaccgcg tctgataggc
+      481 gtcagcacag cattagagat gatcctcacc ggaaaacaac ttcgggcgaa acaggcatta
+      541 aagctggggc tggtggatga cgttgttccg cactccattc tgctggaagc cgctgttgag
+      601 ctggcaaaga aggagcgccc atcttcccgc cctctacctg tacgcgagcg tattctggcg
+      661 gggccgttag gtcgtgcgct gctgttcaaa atggtcggca agaaaacaga acacaaaact
+      721 caaggcaatt atccggcgac agaacgcatc ctggaggttg ttgaaacggg attagcgcag
+      781 ggcaccagca gcggttatga cgccgaagct cgggcgtttg gcgaactggc gatgacgcca
+      841 caatcgcagg cgctgcgtag tatctttttt gccagtacgg acgtgaagaa agatcccggc
+      901 agtgatgcgc cgcctgcgcc attaaacagc gtggggattt taggtggtgg cttgatgggc
+      961 ggcggtattg cttatgtcac tgcttgtaaa gcggggattc cggtcagaat taaagatatc
+     1021 aacccgcagg gcataaatca tgcgctgaag tacagttggg atcagctgga gggcaaagtt
+     1081 cgccgtcgtc atctcaaagc cagcgaacgt gacaaacagc tggcattaat ctccggaacg
+     1141 acggactatc gcggctttgc ccatcgcgat ctgattattg aagcggtgtt tgaaaatctc
+     1201 gaattgaaac aacagatggt ggcggaagtt gagcaaaatt gcgccgctca taccatcttt
+     1261 gcttcgaata cgtcatcttt accgattggt gatatcgccg ctcacgccac gcgacctgag
+     1321 caagttatcg gcctgcattt cttcagtccg gtggaaaaaa tgccgctggt ggagattatt
+     1381 cctcatgcgg ggacatcggc gcaaaccatc gctaccacag taaaactggc gaaaaaacag
+     1441 ggtaaaacgc caattgtcgt gcgtgacaaa gccggttttt acgtcaatcg catcttagcg
+     1501 ccttacatta atgaagctat ccgcatgttg acccaaggtg aacgggtaga gcacattgat
+     1561 gccgcgctag tgaaatttgg ttttccggta ggcccaatcc aacttttgga tgaggtagga
+     1621 atcgacaccg ggactaaaat tattcctgta ctggaagccg cttatggaga acgttttagc
+     1681 gcgcctgcaa atgttgtttc ttcaattttg aacgacgatc gcaaaggcag aaaaaatggc
+     1741 cggggtttct atctttatgg tcagaaaggg cgtaaaagca aaaaacaggt cgatcccgcc
+     1801 atttacccgc tgattggcac acaagggcag gggcgaatct ccgcaccgca ggttgctgaa
+     1861 cggtgtgtga tgttgatgct gaatgaagca gtacgttgtg ttgatgagca ggttatccgt
+     1921 agcgtgcgtg acggggatat tggcgcggta tttggcattg gttttccgcc atttctcggt
+     1981 ggaccgttcc gctatatcga ttctctcggc gcgggcgaag tggttgcaat aatgcaacga
+     2041 cttgccacgc agtatggttc ccgttttacc ccttgcgagc gtttggtcga gatgggcgcg
+     2101 cgtggggaaa gtttttggaa aacaactgca actgacctgc aataa
+//
+LOCUS       gene2442                1311 bp    DNA              BCT 20-MAY-2020
+DEFINITION  Escherichia coli genome.
+ACCESSION   gene2442
+VERSION     gene2442
+KEYWORDS    Escherichia coli.
+SOURCE      .
+  ORGANISM  Escherichia coli
+            Bacteria; Proteobacteria; Gammaproteobacteria; Enterobacterales;
+            Enterobacteriaceae; Escherichia.
+FEATURES             Location/Qualifiers
+     source          1..1311
+                     /scaffold="gene2442"
+                     /db_xref="taxon:562"
+     gene            2..1311
+                     /locus_tag="gene2442"
+     CDS             2..1311
+                     /translation="MGQVLPLVTRQGDRIAIVSGLRTPFARQATAFHGIPAVDLGKMVV
+                     GELLARSEIPAEVIEQLVFGQVVQMPEAPNIAREIVLGTGMNVHTDAYSVSRACATSFQ
+                     AVANVAESLMAGTIRAGIAGGADSSSVLPIGVSKKLARVLVDVNKARTMSQRLKLFSRL
+                     RLRDLMPVPPAVAEYSTGLRMGDTAEQMAKTYGITREQQDALAHRSHQRAAQAWSDGKL
+                     KEEVMTAFIPPYKQPLVEDNNIRGNSSLADYAKLRPAFDRKHGTVTAANSTPLTDGAAA
+                     VILMTESRAKELGLVPLGYLRSYAFTAIDVWQDMLLGPAWSTPLALERAGLTMSDLTLI
+                     DMHEAFAAQTLANIQLLGSERFAREALGRAHATGEVDDSKFNVLGGSIAYGHPFAATGA
+                     RMITQTLHELRRRGGGFGLVTACAAGGLGAAMVLEAE"
+                     /locus_tag="gene2442"
+                     /go_component="GO:0005575"
+                     /go_component="GO:0005622"
+                     /go_component="GO:0005623"
+                     /go_component="GO:0005737"
+                     /go_component="GO:0005829"
+                     /go_component="GO:0044424"
+                     /go_component="GO:0044444"
+                     /go_component="GO:0044464"
+                     /go_function="GO:0003674"
+                     /go_function="GO:0003824"
+                     /go_function="GO:0003857"
+                     /go_function="GO:0003988"
+                     /go_function="GO:0004300"
+                     /go_function="GO:0016408"
+                     /go_function="GO:0016491"
+                     /go_function="GO:0016614"
+                     /go_function="GO:0016616"
+                     /go_function="GO:0016740"
+                     /go_function="GO:0016746"
+                     /go_function="GO:0016747"
+                     /go_function="GO:0016829"
+                     /go_function="GO:0016835"
+                     /go_function="GO:0016836"
+                     /go_process="GO:0006082"
+                     /go_process="GO:0006629"
+                     /go_process="GO:0006631"
+                     /go_process="GO:0006635"
+                     /go_process="GO:0008150"
+                     /go_process="GO:0008152"
+                     /go_process="GO:0009056"
+                     /go_process="GO:0009062"
+                     /go_process="GO:0009987"
+                     /go_process="GO:0016042"
+                     /go_process="GO:0016054"
+                     /go_process="GO:0019395"
+                     /go_process="GO:0019752"
+                     /go_process="GO:0030258"
+                     /go_process="GO:0032787"
+                     /go_process="GO:0033542"
+                     /go_process="GO:0034440"
+                     /go_process="GO:0043436"
+                     /go_process="GO:0044237"
+                     /go_process="GO:0044238"
+                     /go_process="GO:0044242"
+                     /go_process="GO:0044248"
+                     /go_process="GO:0044255"
+                     /go_process="GO:0044281"
+                     /go_process="GO:0044282"
+                     /go_process="GO:0046395"
+                     /go_process="GO:0055114"
+                     /go_process="GO:0071704"
+                     /go_process="GO:0072329"
+                     /go_process="GO:1901575"
+                     /EC_number="2.3.1.16"
+ORIGIN
+        1 atgggtcagg ttttaccgct ggttacccgc cagggcgatc gtatcgccat tgttagcggt
+       61 ttacgtacgc cttttgcccg tcaggcgacg gcttttcatg gcattcccgc ggttgattta
+      121 gggaagatgg tggtaggcga actgctggca cgcagcgaga tccccgccga agtgattgaa
+      181 caactggtct ttggtcaggt cgtacaaatg cctgaagccc ccaacattgc gcgtgaaatt
+      241 gttctcggta cgggaatgaa tgtacatacc gatgcttaca gcgtcagccg cgcttgcgct
+      301 accagtttcc aggcagttgc aaacgtcgca gaaagcctga tggcgggaac tattcgagcg
+      361 gggattgccg gtggggcaga ttcctcttcg gtattgccaa ttggcgtcag taaaaaactg
+      421 gcgcgcgtgc tggttgatgt caacaaagct cgtaccatga gccagcgact gaaactcttc
+      481 tctcgcctgc gtttgcgcga cttaatgccc gtaccacctg cggtagcaga atattctacc
+      541 ggcttgcgga tgggcgacac cgcagagcaa atggcgaaaa cctacggcat cacccgagaa
+      601 cagcaagatg cattagcgca ccgttcgcat cagcgtgccg ctcaggcatg gtcagacgga
+      661 aaactcaaag aagaggtgat gactgccttt atccctcctt ataaacaacc gcttgtcgaa
+      721 gacaacaata ttcgcggtaa ttcctcgctt gccgattacg caaagctgcg cccggcgttt
+      781 gatcgcaaac acggaacggt aacggcggca aacagtacgc cgctgaccga tggcgcggca
+      841 gcggtgatcc tgatgactga atcccgggcg aaagaattag ggctggtgcc gctggggtat
+      901 ctgcgcagct acgcatttac tgcgattgat gtctggcagg acatgttgct cggtccagcc
+      961 tggtcaacac cgctggcgct ggagcgtgcc ggtttgacga tgagcgatct gacattgatc
+     1021 gatatgcacg aagcctttgc agctcagacg ctggcgaata ttcagttgct gggtagtgaa
+     1081 cgttttgctc gtgaagcact ggggcgtgca catgccactg gcgaagtgga cgatagcaaa
+     1141 tttaacgtgc ttggcggttc gattgcttac gggcatccct tcgcggcgac cggcgcgcgg
+     1201 atgattaccc agacattgca tgaacttcgc cgtcgcggcg gtggatttgg tttagttacc
+     1261 gcctgtgctg ccggtgggct tggcgcggca atggttctgg aggcggaata a
+//
+LOCUS       gene3987                1164 bp    DNA              BCT 20-MAY-2020
+DEFINITION  Escherichia coli genome.
+ACCESSION   gene3987
+VERSION     gene3987
+KEYWORDS    Escherichia coli.
+SOURCE      .
+  ORGANISM  Escherichia coli
+            Bacteria; Proteobacteria; Gammaproteobacteria; Enterobacterales;
+            Enterobacteriaceae; Escherichia.
+FEATURES             Location/Qualifiers
+     source          1..1164
+                     /scaffold="gene3987"
+                     /db_xref="taxon:562"
+     gene            2..1164
+                     /locus_tag="gene3987"
+     CDS             2..1164
+                     /translation="MEQVVIVDAIRTPMGRSKGGAFRNVRAEDLSAHLMRSLLARNPAL
+                     EAAALDDIYWGCVQQTLEQGFNIARNAALLAEVPHSVPAVTVNRLCGSSMQALHDAARM
+                     IMTGDAQACLVGGVEHMGHVPMSHGVDFHPGLSRNVAKAAGMMGLTAEMLARMHGISRE
+                     MQDAFAARSHARAWAATQSAAFKNEIIPTGGHDADGVLKQFNYDEVIRPETTVEALATL
+                     RPAFDPVNGMVTAGTSSALSDGAAAMLVMSESRAHELGLKPRARVRSMAVVGCDPSIMG
+                     YGPVPASKLALKKAGLSASDIGVFEMNEAFAAQILPCIKDLGLIEQIDEKINLNGGAIA
+                     LGHPLGCSGARISTTLLNLMERKDVQFGLATMCIGLGQGIATVFERV"
+                     /locus_tag="gene3987"
+                     /go_component="GO:0005575"
+                     /go_component="GO:0005622"
+                     /go_component="GO:0005623"
+                     /go_component="GO:0005737"
+                     /go_component="GO:0044424"
+                     /go_component="GO:0044464"
+                     /go_function="GO:0003674"
+                     /go_function="GO:0003824"
+                     /go_function="GO:0003988"
+                     /go_function="GO:0016408"
+                     /go_function="GO:0016740"
+                     /go_function="GO:0016746"
+                     /go_function="GO:0016747"
+                     /go_process="GO:0006082"
+                     /go_process="GO:0006629"
+                     /go_process="GO:0006631"
+                     /go_process="GO:0006635"
+                     /go_process="GO:0008150"
+                     /go_process="GO:0008152"
+                     /go_process="GO:0009056"
+                     /go_process="GO:0009062"
+                     /go_process="GO:0009987"
+                     /go_process="GO:0016042"
+                     /go_process="GO:0016054"
+                     /go_process="GO:0019395"
+                     /go_process="GO:0019752"
+                     /go_process="GO:0030258"
+                     /go_process="GO:0032787"
+                     /go_process="GO:0034440"
+                     /go_process="GO:0043436"
+                     /go_process="GO:0044237"
+                     /go_process="GO:0044238"
+                     /go_process="GO:0044242"
+                     /go_process="GO:0044248"
+                     /go_process="GO:0044255"
+                     /go_process="GO:0044281"
+                     /go_process="GO:0044282"
+                     /go_process="GO:0046395"
+                     /go_process="GO:0055114"
+                     /go_process="GO:0071704"
+                     /go_process="GO:0072329"
+                     /go_process="GO:1901575"
+                     /EC_number="2.3.1.16"
+ORIGIN
+        1 atggaacagg ttgtcattgt cgatgcaatt cgcaccccga tgggccgttc gaagggcggt
+       61 gcttttcgta acgtgcgtgc agaagatctc tccgctcatt taatgcgtag cctgctggcg
+      121 cgtaacccgg cgctggaagc ggcggccctc gacgatattt actggggttg tgtgcagcag
+      181 acgctggagc agggttttaa tatcgcccgt aacgcggcgc tgctggcaga agtaccacac
+      241 tctgtcccgg cggttaccgt taatcgcttg tgtggttcat ccatgcaggc actgcatgac
+      301 gcagcacgaa tgatcatgac tggcgatgcg caggcatgtc tggttggcgg cgtggagcat
+      361 atgggccatg tgccgatgag tcacggcgtc gattttcacc ccggcctgag ccgcaatgtc
+      421 gccaaagcgg cgggcatgat gggcttaacg gcagaaatgc tggcgcgtat gcacggtatc
+      481 agccgtgaaa tgcaggatgc ctttgccgcg cggtcacacg cccgcgcctg ggccgccacg
+      541 cagtcggccg catttaaaaa tgaaatcatc ccgaccggtg gtcacgatgc cgacggcgtc
+      601 ctgaagcagt ttaattacga cgaagtgatt cgcccggaaa ccaccgtgga agccctcgcc
+      661 acgctgcgtc cggcgtttga tccagtaaac ggtatggtaa cggcgggcac atcttctgca
+      721 ctttccgatg gcgcagctgc catgctggtg atgagtgaaa gccgcgccca tgaattaggt
+      781 cttaagccgc gcgctcgtgt gcgttcgatg gcggtcgttg gttgtgaccc atcgattatg
+      841 ggttacggcc cggttccggc ctcgaaactg gcgctgaaaa aagcggggct ttctgccagc
+      901 gatatcggcg tgtttgaaat gaacgaagcc tttgccgcgc agatcctgcc atgtattaaa
+      961 gatctgggac taattgagca gattgacgag aagatcaacc tcaacggtgg cgcgatcgcg
+     1021 ctgggtcatc cgctgggttg ttccggtgcg cgtatcagca ccacgctgct gaatctgatg
+     1081 gaacgcaaag acgttcagtt tggtctggcg acgatgtgta tcggtctggg tcagggtatt
+     1141 gcgacggtgt ttgagcgggt ttaa
+//
+LOCUS       gene3988                2190 bp    DNA              BCT 20-MAY-2020
+DEFINITION  Escherichia coli genome.
+ACCESSION   gene3988
+VERSION     gene3988
+KEYWORDS    Escherichia coli.
+SOURCE      .
+  ORGANISM  Escherichia coli
+            Bacteria; Proteobacteria; Gammaproteobacteria; Enterobacterales;
+            Enterobacteriaceae; Escherichia.
+FEATURES             Location/Qualifiers
+     source          1..2190
+                     /scaffold="gene3988"
+                     /db_xref="taxon:562"
+     gene            2..2190
+                     /locus_tag="gene3988"
+     CDS             2..2190
+                     /translation="MLYKGDTLYLDWLEDGIAELVFDAPGSVNKLDTATVASLGEAIGV
+                     LEQQSDLKGLLLRSNKAAFIVGADITEFLSLFLVPEEQLSQWLHFANSVFNRLEDLPVP
+                     TIAAVNGYALGGGCECVLATDYRLATPDLRIGLPETKLGIMPGFGGSVRMPRMLGADSA
+                     LEIIAAGKDVGADQALKIGLVDGVVKAEKLVEGAKAVLRQAINGDLDWKAKRQPKLEPL
+                     KLSKIEATMSFTIAKGMVAQTAGKHYPAPITAVKTIEAAARFGREEALNLENKSFVPLA
+                     HTNEARALVGIFLNDQYVKGKAKKLTKDVETPKQAAVLGAGIMGGGIAYQSAWKGVPVV
+                     MKDINDKSLTLGMTEAAKLLNKQLERGKIDGLKLAGVISTIHPTLDYAGFDRVDIVVEA
+                     VVENPKVKKAVLAETEQKVRQDTVLASNTSTIPISELANALERPENFCGMHFFNPVHRM
+                     PLVEIIRGEKSSDETIAKVVAWASKMGKTPIVVNDCPGFFVNRVLFPYFAGFSQLLRDG
+                     ADFRKIDKVMEKQFGWPMGPAYLLDVVGIDTAHHAQAVMAAGFPQRMQKDYRDAIDALF
+                     DANRFGQKNGLGFWRYKEDSKGKPKKEEDAAVEDLLAEVSQPKRDFSEEEIIARMMIPM
+                     VNEVVRCLEEGIIATPAEADMALVYGLGFPPFHGGAFRWLDTLGSAKYLDMAQQYQHLG
+                     PLYEVPEGLRNKARHNEPYYPPVEPARPVGDLKTA"
+                     /locus_tag="gene3988"
+                     /go_function="GO:0003674"
+                     /go_function="GO:0003824"
+                     /go_function="GO:0003857"
+                     /go_function="GO:0004165"
+                     /go_function="GO:0004300"
+                     /go_function="GO:0008691"
+                     /go_function="GO:0008692"
+                     /go_function="GO:0016491"
+                     /go_function="GO:0016614"
+                     /go_function="GO:0016616"
+                     /go_function="GO:0016829"
+                     /go_function="GO:0016835"
+                     /go_function="GO:0016836"
+                     /go_function="GO:0016853"
+                     /go_function="GO:0016854"
+                     /go_function="GO:0016856"
+                     /go_function="GO:0016860"
+                     /go_function="GO:0016863"
+                     /go_process="GO:0006082"
+                     /go_process="GO:0006629"
+                     /go_process="GO:0006631"
+                     /go_process="GO:0006635"
+                     /go_process="GO:0006725"
+                     /go_process="GO:0006805"
+                     /go_process="GO:0008150"
+                     /go_process="GO:0008152"
+                     /go_process="GO:0009056"
+                     /go_process="GO:0009062"
+                     /go_process="GO:0009404"
+                     /go_process="GO:0009407"
+                     /go_process="GO:0009410"
+                     /go_process="GO:0009636"
+                     /go_process="GO:0009850"
+                     /go_process="GO:0009852"
+                     /go_process="GO:0009987"
+                     /go_process="GO:0010124"
+                     /go_process="GO:0010817"
+                     /go_process="GO:0016042"
+                     /go_process="GO:0016054"
+                     /go_process="GO:0019395"
+                     /go_process="GO:0019439"
+                     /go_process="GO:0019748"
+                     /go_process="GO:0019752"
+                     /go_process="GO:0030258"
+                     /go_process="GO:0032787"
+                     /go_process="GO:0034440"
+                     /go_process="GO:0042178"
+                     /go_process="GO:0042221"
+                     /go_process="GO:0042445"
+                     /go_process="GO:0042447"
+                     /go_process="GO:0042537"
+                     /go_process="GO:0043436"
+                     /go_process="GO:0044237"
+                     /go_process="GO:0044238"
+                     /go_process="GO:0044242"
+                     /go_process="GO:0044248"
+                     /go_process="GO:0044255"
+                     /go_process="GO:0044281"
+                     /go_process="GO:0044282"
+                     /go_process="GO:0046395"
+                     /go_process="GO:0050896"
+                     /go_process="GO:0051716"
+                     /go_process="GO:0055114"
+                     /go_process="GO:0065007"
+                     /go_process="GO:0065008"
+                     /go_process="GO:0070887"
+                     /go_process="GO:0071466"
+                     /go_process="GO:0071704"
+                     /go_process="GO:0072329"
+                     /go_process="GO:0098754"
+                     /go_process="GO:1901360"
+                     /go_process="GO:1901361"
+                     /go_process="GO:1901575"
+                     /EC_number="1.1.1.157"
+                     /EC_number="1.1.1.35"
+                     /EC_number="4.2.1.17"
+                     /EC_number="5.1.2.3"
+                     /EC_number="5.3.3.8"
+ORIGIN
+        1 atgctttaca aaggcgacac cctgtacctt gactggctgg aagatggcat tgccgaactg
+       61 gtatttgatg ccccaggttc agttaataaa ctcgacactg cgaccgtcgc cagcctcggc
+      121 gaggccatcg gcgtgctgga acagcaatca gatctaaaag ggctgctgct gcgttcgaac
+      181 aaagcagcct ttatcgtcgg tgctgatatc accgaatttt tgtccctgtt cctcgttcct
+      241 gaagaacagt taagtcagtg gctgcacttt gccaatagcg tgtttaatcg cctggaagat
+      301 ctgccggtgc cgaccattgc tgccgtcaat ggctatgcgc tgggcggtgg ctgcgaatgc
+      361 gtgctggcga ccgattatcg tctggcgacg ccggatctgc gcatcggtct gccggaaacc
+      421 aaactgggca tcatgcctgg ctttggcggt tctgtacgta tgccacgtat gctgggcgct
+      481 gacagtgcgc tggaaatcat tgccgccggt aaagatgtcg gcgcggatca ggcgctgaaa
+      541 atcggtctgg tggatggcgt agtcaaagca gaaaaactgg ttgaaggcgc aaaggcggtt
+      601 ttacgccagg ccattaacgg cgacctcgac tggaaagcaa aacgtcagcc gaagctggaa
+      661 ccactaaaac tgagcaagat tgaagccacc atgagcttca ccatcgctaa agggatggtc
+      721 gcacaaacag cggggaaaca ttatccggcc cccatcaccg cagtaaaaac cattgaagct
+      781 gcggcccgtt ttggtcgtga agaagcctta aacctggaaa acaaaagttt tgtcccgctg
+      841 gcgcatacca acgaagcccg cgcactggtc ggcattttcc ttaacgatca atatgtaaaa
+      901 ggcaaagcga agaaactcac caaagacgtt gaaaccccga aacaggccgc ggtgctgggt
+      961 gcaggcatta tgggcggcgg catcgcttac cagtctgcgt ggaaaggcgt gccggttgtc
+     1021 atgaaagata tcaacgacaa gtcgttaacc ctcggcatga ccgaagccgc gaaactgctg
+     1081 aacaagcagc ttgagcgcgg caagatcgat ggtctgaaac tggctggcgt gatctccaca
+     1141 atccacccaa cgctcgacta cgccggattt gaccgcgtgg atattgtggt agaagcggtt
+     1201 gttgaaaacc cgaaagtgaa aaaagccgta ctggcagaaa ccgaacaaaa agtacgccag
+     1261 gataccgtgc tggcgtctaa cacttcaacc attcctatca gcgaactggc caacgcgctg
+     1321 gaacgcccgg aaaacttctg cgggatgcac ttctttaacc cggtccaccg aatgccgttg
+     1381 gtagaaatta ttcgcggcga gaaaagctcc gacgaaacca tcgcgaaagt tgtcgcctgg
+     1441 gcgagcaaga tgggcaagac gccgattgtg gttaacgact gccccggctt ctttgttaac
+     1501 cgcgtgctgt tcccgtattt cgccggtttc agccagctgc tgcgcgacgg cgcggatttc
+     1561 cgcaagatcg acaaagtgat ggaaaaacag tttggctggc cgatgggccc ggcatatctg
+     1621 ctggacgttg tgggcattga taccgcgcat cacgctcagg ctgtcatggc agcaggcttc
+     1681 ccgcagcgga tgcagaaaga ttaccgcgat gccatcgacg cgctgtttga tgccaaccgc
+     1741 tttggtcaga agaacggcct cggtttctgg cgttataaag aagacagcaa aggtaagccg
+     1801 aagaaagaag aagacgccgc cgttgaagac ctgctggcag aagtgagcca gccgaagcgc
+     1861 gatttcagcg aagaagagat tatcgcccgc atgatgatcc cgatggtcaa cgaagtggtg
+     1921 cgctgtctgg aggaaggcat tatcgccact ccggcggaag cggatatggc gctggtctac
+     1981 ggcctgggct tccctccgtt ccacggcggc gcgttccgct ggctggacac cctcggtagc
+     2041 gcaaaatacc tcgatatggc acagcaatat cagcacctcg gcccgctgta tgaagtgccg
+     2101 gaaggtctgc gtaataaagc gcgtcataac gaaccgtact atcctccggt tgagccagcc
+     2161 cgtccggttg gcgacctgaa aacggcttaa
+//

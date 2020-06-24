@@ -1,0 +1,10 @@
+##gff-version 3
+#!gff-spec-version 1.21
+#!processor NCBI annotwriter
+#!genome-build ASM584v2
+#!genome-build-accession NCBI_Assembly:GCF_000005845.2
+##sequence-region NC_000913_3 1 12642
+##species https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=511145
+NC_000913_3	RefSeq	region	1	12642	.	+	.	ID=id0;Dbxref=taxon:511145;Is_circular=true;Name=ANONYMOUS;gbkey=Src;genome=chromosome;mol_type=genomic DNA;strain=K-12;substrain=MG1655
+NC_000913_3	RefSeq	gene	2446	4146	.	+	.	ID=gene1781;Dbxref=ASAP:ABE-0005676,ECOCYC:EG12357,EcoGene:EG12357,GeneID:946213;Name=fadK;gbkey=Gene;gene=fadK;gene_biotype=protein_coding;gene_synonym=ECK1699,ydiD;locus_tag=b1701
+NC_000913_3	RefSeq	CDS	2446	4146	.	+	0	ID=cds1721;Parent=gene1781;Dbxref=UniProtKB/Swiss-Prot:P38135,Genbank:NP_416216.5,ASAP:ABE-0005676,ECOCYC:EG12357,EcoGene:EG12357,GeneID:946213;Name=NP_416216.5;gbkey=CDS;gene=fadK;orig_transcript_id=gnl|b1701|mrna.b1701;product=short chain acyl-CoA synthetase;protein_id=NP_416216.5;transl_table=11
