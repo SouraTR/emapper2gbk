@@ -47,7 +47,7 @@ setup(
     },
     install_requires=requirements,
     license="GNU General Public License v3",
-    long_description=readme + '\n\n' + history,
+    long_description=readme + history,
     include_package_data=True,
     keywords='emapper2gbk',
     name='emapper2gbk',
