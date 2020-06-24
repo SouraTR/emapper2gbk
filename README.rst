@@ -88,38 +88,38 @@ subcommands:
 
   * Usage
 
-    .. code-block::
+    .. code-block:: sh
 
-            usage: emapper2gbk genomic [-h] -fg FASTAGENOME -fp FASTAPROT [-g GFF] -o
-                                       OUPUT_DIR -a ANNOTATION [-c CPU] [-n NAME]
-                                       [-nf NAMEFILE] [-go GOBASIC] [-q]
+      usage: emapper2gbk genomic [-h] -fg FASTAGENOME -fp FASTAPROT [-g GFF] -o
+                                  OUPUT_DIR -a ANNOTATION [-c CPU] [-n NAME]
+                                  [-nf NAMEFILE] [-go GOBASIC] [-q]
 
-            Build a gbk file for each genome/set of genes with an annotation file for each
+      Build a gbk file for each genome/set of genes with an annotation file for each
 
-            optional arguments:
-              -h, --help            show this help message and exit
-              -fg FASTAGENOME, --fastagenome FASTAGENOME
-                                    fna file or directory
-              -fp FASTAPROT, --fastaprot FASTAPROT
-                                    faa file or directory
-              -g GFF, --gff GFF     gff file or directory
-              -o OUPUT_DIR, --out OUPUT_DIR
-                                    output directory/file path
-              -a ANNOTATION, --annotation ANNOTATION
-                                    eggnog annotation file or directory
-              -c CPU, --cpu CPU     cpu number for metagenomic mode or genome mode using
-                                    input directories
-              -n NAME, --name NAME  organism/genome name in quotes
-              -nf NAMEFILE, --namefile NAMEFILE
-                                    organism/genome name (col 2) associated to genome file
-                                    basenames (col 1). Default = 'metagenome' for
-                                    metagenomic and 'cellular organisms' for genomic
-              -go GOBASIC, --gobasic GOBASIC
-                                    go ontology, GOBASIC is either the name of an existing
-                                    file containing the GO Ontology or the name of the
-                                    file that will be created by emapper2gbk containing
-                                    the GO Ontology
-              -q, --quiet           quiet mode, only warning, errors logged into console
+      optional arguments:
+        -h, --help            show this help message and exit
+        -fg FASTAGENOME, --fastagenome FASTAGENOME
+                              fna file or directory
+        -fp FASTAPROT, --fastaprot FASTAPROT
+                              faa file or directory
+        -g GFF, --gff GFF     gff file or directory
+        -o OUPUT_DIR, --out OUPUT_DIR
+                              output directory/file path
+        -a ANNOTATION, --annotation ANNOTATION
+                              eggnog annotation file or directory
+        -c CPU, --cpu CPU     cpu number for metagenomic mode or genome mode using
+                              input directories
+        -n NAME, --name NAME  organism/genome name in quotes
+        -nf NAMEFILE, --namefile NAMEFILE
+                              organism/genome name (col 2) associated to genome file
+                              basenames (col 1). Default = 'metagenome' for
+                              metagenomic and 'cellular organisms' for genomic
+        -go GOBASIC, --gobasic GOBASIC
+                              go ontology, GOBASIC is either the name of an existing
+                              file containing the GO Ontology or the name of the
+                              file that will be created by emapper2gbk containing
+                              the GO Ontology
+        -q, --quiet           quiet mode, only warning, errors logged into console
 
   * Examples
 
@@ -127,60 +127,60 @@ subcommands:
 
     .. code:: sh
 
-        emapper2gbk genomic -fg genome.fna -fp proteome.faa [-gff genome.gff] -n "Escherichia coli" -o coli.gbk -a eggnog_annotation.tsv [-go go-basic.obo]
+      emapper2gbk genomic -fg genome.fna -fp proteome.faa [-gff genome.gff] -n "Escherichia coli" -o coli.gbk -a eggnog_annotation.tsv [-go go-basic.obo]
 
     * Genomic - multiple mode, "bacteria" as default name
 
     .. code:: sh
 
-        emapper2gbk genomic -fg genome_dir/ -fp proteome_dir/ [-gff gff_dir/] -n bacteria -o gbk_dir/ -a eggnog_annotation_dir/ [-go go-basic.obo]
+      emapper2gbk genomic -fg genome_dir/ -fp proteome_dir/ [-gff gff_dir/] -n bacteria -o gbk_dir/ -a eggnog_annotation_dir/ [-go go-basic.obo]
 
     * Genomic - multiple mode, tsv file for organism names
 
     .. code:: sh
 
-        emapper2gbk genomic -fg genome_dir/ -fp proteome_dir/ [-gff gff_dir/] -nf matching_genome_orgnames.tsv -o gbk_dir/ -a eggnog_annotation_dir/ [-go go-basic.obo]
+      emapper2gbk genomic -fg genome_dir/ -fp proteome_dir/ [-gff gff_dir/] -nf matching_genome_orgnames.tsv -o gbk_dir/ -a eggnog_annotation_dir/ [-go go-basic.obo]
 
 * Metagenomic mode
 
   * Usage
 
-    .. code-block::
+    .. code-block:: sh
 
-        usage: emapper2gbk metagenomic [-h] -fg FASTAGENOME -fp FASTAPROT [-g GFF] -o
-                                       OUPUT_DIR [-nf NAMEFILE] [-n NAME] -a
-                                       ANNOTATION [-c CPU] [-go GOBASIC] [-q]
+      usage: emapper2gbk metagenomic [-h] -fg FASTAGENOME -fp FASTAPROT [-g GFF] -o
+                                      OUPUT_DIR [-nf NAMEFILE] [-n NAME] -a
+                                      ANNOTATION [-c CPU] [-go GOBASIC] [-q]
 
-        Use the annotation of a complete gene catalogue and build gbk files for each
-        set of genes (fna) and proteins (faa) from input directories
+      Use the annotation of a complete gene catalogue and build gbk files for each
+      set of genes (fna) and proteins (faa) from input directories
 
-        optional arguments:
-          -h, --help            show this help message and exit
-          -fg FASTAGENOME, --fastagenome FASTAGENOME
-                                fna file or directory
-          -fp FASTAPROT, --fastaprot FASTAPROT
-                                faa file or directory
-          -g GFF, --gff GFF     gff file or directory
-          -o OUPUT_DIR, --out OUPUT_DIR
-                                output directory/file path
-          -nf NAMEFILE, --namefile NAMEFILE
-                                organism/genome name (col 2) associated to genome file
-                                basenames (col 1). Default = 'metagenome' for
-                                metagenomic and 'cellular organisms' for genomic
-          -n NAME, --name NAME  organism/genome name in quotes
-          -a ANNOTATION, --annotation ANNOTATION
-                                eggnog annotation file or directory
-          -c CPU, --cpu CPU     cpu number for metagenomic mode or genome mode using
-                                input directories
-          -go GOBASIC, --gobasic GOBASIC
-                                go ontology, GOBASIC is either the name of an existing
-                                file containing the GO Ontology or the name of the
-                                file that will be created by emapper2gbk containing
-                                the GO Ontology
-          -q, --quiet           quiet mode, only warning, errors logged into console
+      optional arguments:
+        -h, --help            show this help message and exit
+        -fg FASTAGENOME, --fastagenome FASTAGENOME
+                              fna file or directory
+        -fp FASTAPROT, --fastaprot FASTAPROT
+                              faa file or directory
+        -g GFF, --gff GFF     gff file or directory
+        -o OUPUT_DIR, --out OUPUT_DIR
+                              output directory/file path
+        -nf NAMEFILE, --namefile NAMEFILE
+                              organism/genome name (col 2) associated to genome file
+                              basenames (col 1). Default = 'metagenome' for
+                              metagenomic and 'cellular organisms' for genomic
+        -n NAME, --name NAME  organism/genome name in quotes
+        -a ANNOTATION, --annotation ANNOTATION
+                              eggnog annotation file or directory
+        -c CPU, --cpu CPU     cpu number for metagenomic mode or genome mode using
+                              input directories
+        -go GOBASIC, --gobasic GOBASIC
+                              go ontology, GOBASIC is either the name of an existing
+                              file containing the GO Ontology or the name of the
+                              file that will be created by emapper2gbk containing
+                              the GO Ontology
+        -q, --quiet           quiet mode, only warning, errors logged into console
 
   * Example
 
     .. code:: sh
 
-        emapper2gbk metagenomic -fg genome_dir/ -fp proteome_dir/ -o gbk_dir/ -a gene_cat_ggnog_annotation.tsv [-go go-basic.obo]
+      emapper2gbk metagenomic -fg genome_dir/ -fp proteome_dir/ -o gbk_dir/ -a gene_cat_ggnog_annotation.tsv [-go go-basic.obo]
