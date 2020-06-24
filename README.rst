@@ -1,5 +1,5 @@
 emapper2gbk: creation of genbank files from Eggnog-mapper annotation outputs
-=============================================================================
+============================================================================
 
 Starting from fasta and `Eggnog-mapper <http://eggnog-mapper.embl.de/>`__ annotation files, build a gbk file that is suitable for metabolic network reconstruction with `Pathway Tools <http://bioinformatics.ai.sri.com/ptools/>`__. Adds the GO terms and EC numbers annotations in the genbank file.
 The program can be run with or without a `.gff` file.
@@ -40,8 +40,8 @@ All are described in ``requirements.txt`` and can be installed with ``pip instal
 * pronto
 * requests
 
-Install 
-~~~~~~~~
+Install
+~~~~~~~
 
 * From this cloned repository
 
@@ -56,8 +56,8 @@ Install
 
     pip install emapper2gbk
 
-Usage 
--------
+Usage
+-----
 
 Convert GFF, fastas, annotation table and species name into Genbank.
 usage: ``emapper2gbk [-h] [-v] {genomic,metagenomic} ...``
