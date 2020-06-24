@@ -184,3 +184,4 @@ subcommands:
     .. code:: sh
 
       emapper2gbk metagenomic -fg genome_dir/ -fp proteome_dir/ -o gbk_dir/ -a gene_cat_ggnog_annotation.tsv [-go go-basic.obo]
+
