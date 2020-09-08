@@ -10,9 +10,15 @@ import pronto
 import requests
 import shutil
 
-from Bio.Alphabet import IUPAC
 from Bio.SeqRecord import SeqRecord
 from Bio import SeqFeature as sf
+
+try:
+    # Import to be compatible with biopython version lesser than 1.78
+    from Bio.Alphabet import IUPAC
+except ImportError:
+    # Exception to be compatible with biopython version superior to 1.78
+    IUPAC = None
 
 logger = logging.getLogger(__name__)
 
@@ -190,10 +196,15 @@ def record_info(record_id, record_seq, species_informations):
         newname = record_id.split("|")[0]
     else:
         newname = record_id
-    record = SeqRecord(record_seq, id=record_id, name=newname,
-                    description=species_informations['description'])
 
-    record.seq.alphabet = IUPAC.ambiguous_dna
+    record = SeqRecord(record_seq, id=record_id, name=newname,
+                    description=species_informations['description'],
+                    annotations={"molecule_type": "DNA"})
+
+    # Condition to be compatible with biopython version lesser than 1.78
+    if IUPAC:
+        record.seq.alphabet = IUPAC.ambiguous_dna
+
     if 'data_file_division' in species_informations:
         record.annotations['data_file_division'] = species_informations['data_file_division']
     record.annotations['date'] = datetime.date.today().strftime('%d-%b-%Y').upper()
