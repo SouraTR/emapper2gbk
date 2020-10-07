@@ -114,7 +114,8 @@ def faa_to_gbk(genome_fasta:str, prot_fasta:str, annotation_data:Union[str, dict
         if gene_nucleic_id in annotation_data.keys():
             # Add gene name.
             if 'Preferred_name' in annotation_data[gene_nucleic_id]:
-                new_feature_cds.qualifiers['gene'] = annotation_data[gene_nucleic_id]['Preferred_name']
+                if annotation_data[gene_nucleic_id]['Preferred_name'] != "":
+                    new_feature_cds.qualifiers['gene'] = annotation_data[gene_nucleic_id]['Preferred_name']
 
             # Add GO annotation according to the namespace.
             if 'GOs' in annotation_data[gene_nucleic_id]:

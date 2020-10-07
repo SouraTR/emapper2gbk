@@ -284,7 +284,8 @@ def create_cds_feature(id_gene, start_position, end_position, strand, annotation
     if id_gene in annotation_data.keys():
         # Add gene name.
         if 'Preferred_name' in annotation_data[id_gene]:
-            new_feature_cds.qualifiers['gene'] = annotation_data[id_gene]['Preferred_name']
+            if annotation_data[id_gene]['Preferred_name'] != "":
+                new_feature_cds.qualifiers['gene'] = annotation_data[id_gene]['Preferred_name']
 
         if 'GOs' in annotation_data[id_gene] :
             gene_gos = annotation_data[id_gene]['GOs'].split(',')
