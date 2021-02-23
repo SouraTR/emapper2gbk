@@ -1,3 +1,5 @@
+[![PyPI version](https://img.shields.io/pypi/v/emapper2gbk.svg)](https://pypi.org/project/emapper2gbk/) [![GitHub license](https://img.shields.io/github/license/AuReMe/emapper2gbk.svg)](https://github.com/AuReMe/emapper2gbk/blob/master/LICENSE) [![Actions Status](https://github.com/AuReMe/emapper2gbk/workflows/Python%20package/badge.svg)](https://github.com/AuReMe/emapper2gbk/actions) [![](https://img.shields.io/badge/doi-10.7554/eLife.61968-blueviolet.svg)](https://doi.org/10.7554/eLife.61968)
+
 emapper2gbk: creation of genbank files from Eggnog-mapper annotation outputs
 ============================================================================
 
@@ -8,6 +10,10 @@ There are two main modes:
 * **genomic mode**: usually when focusing on a single organism, with a `.gff` file (but can be without). The creation of genbanks can be performed in parallel by providing directories (with matching names for genomes, proteomes and annotation files) as inputs
 
 * **metagenomic mode**: suitable when a list of isolated genes/proteins have been annotated with Eggnog-mapper, typically the gene catalogue of a metagenome. In that case, there is one annotation file and multiple genomes/proteomes that will contain a subset of the genes present in the annotated gene catalogue. The purpose is to create a genbank file with the genes and annotations that matches each genome (Metagenomic species core genome, Metagenomic-assembled genome...) content. There will not be any ``.gff`` associated to the genomes, and the creation of genbanks can be performed in parallel by providing directories (with matching names for genome and proteome files) as inputs. In that case, you can give as organism name "metagenome" or "bacteria". 
+
+**If you use emapper2gbk, please cite**
+
+Belcour* A, Frioux* C, Aite M, Bretaudeau A, Hildebrand F, Siegel A. Metage2Metabo, microbiota-scale metabolic complementarity for the identification of key species. eLife 2020;9:e61968 [https://doi.org/10.7554/eLife.61968](https://doi.org/10.7554/eLife.61968).
 
 Main inputs
 -----------
