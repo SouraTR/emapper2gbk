@@ -14,6 +14,7 @@ FAA_INPUT = "betaox.faa"
 FAA_DIR = "faa/"
 FNA_INPUT = "betaox.fna"
 FNA_DIR = "fna/"
+GENOME_FNA_INPUT = "genome_betaox.fna"
 ANNOT_INPUT = "betaox_annotation.tsv"
 ANNOT_DIR = "ann/"
 GFF_DIR = "gff/"
@@ -179,7 +180,7 @@ def test_gbk_from_gff_test():
     print("*** Test genomic mode with gff as input ***")
     gbk_test = 'test_gff.gbk'
 
-    gbk_creation(genome=FNA_INPUT,
+    gbk_creation(genome=GENOME_FNA_INPUT,
                 proteome=FAA_INPUT,
                 annot=ANNOT_INPUT,
                 gff=GFF_INPUT,
@@ -187,7 +188,7 @@ def test_gbk_from_gff_test():
                 gbk=gbk_test,
                 gobasic='go-basic.obo')
 
-    compare_two_gbks(EXPECTED_GBK_NO_GFF, gbk_test)
+    compare_two_gbks(EXPECTED_GBK_WITH_GFF, gbk_test)
     os.remove(gbk_test)
     return
 
@@ -322,7 +323,7 @@ def check_gbks_from_dir(gbk_dir):
 
     
 if __name__ == "__main__":
-    test_gbk_no_gff_test()
-    # test_gbk_from_gff_test()
+    #test_gbk_no_gff_test()
+    test_gbk_from_gff_test()
     #test_gbk_from_dir()
     #test_gbk_metagenomic_mode()
