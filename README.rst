@@ -1,3 +1,14 @@
+.. image:: https://img.shields.io/pypi/v/emapper2gbk.svg
+	:target: https://pypi.org/project/emapper2gbk
+
+.. image:: https://img.shields.io/github/license/AuReMe/emapper_to_gbk.svg
+	:target: https://github.com/AuReMe/emapper_to_gbk/blob/master/LICENSE
+
+.. image:: https://github.com/AuReMe/emapper_to_gbk/workflows/Python%20package/badge.svg
+    :target: https://github.com/AuReMe/emapper_to_gbk/actions
+
+.. image:: https://img.shields.io/badge/doi-10.7554/eLife.61968-blueviolet.svg
+	:target: https://doi.org/10.7554/eLife.61968
 
 emapper2gbk: creation of genbank files from Eggnog-mapper annotation outputs
 ============================================================================
