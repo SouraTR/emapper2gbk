@@ -85,12 +85,11 @@ def gff_to_gbk(genome_fasta:str, prot_fasta:str, annotation_data:Union[str, dict
     gff_database = gffutils.create_db(gff_file, ':memory:', force=True, keep_order=True, merge_strategy='merge', sort_attribute_values=True)
 
     logger.info('Formatting fasta and annotation file for ' + genome_id)
-    # Dictionary with gene id as key and sequence as value.
-    gene_nucleic_sequence = OrderedDict()
-
+    # Dictionary with region id (contig, chromosome) as key and sequence as value.
+    genome_nucleic_sequence = OrderedDict()
     for record in SeqIO.parse(genome_fasta, "fasta"):
-        id_gene = record.id
-        gene_nucleic_sequence[id_gene] = record.seq
+        region_id = record.id
+        genome_nucleic_sequence[region_id] = record.seq
 
     # Dictionary with gene id as key and protein sequence as value.
     gene_protein_seq = {}
@@ -125,40 +124,42 @@ def gff_to_gbk(genome_fasta:str, prot_fasta:str, annotation_data:Union[str, dict
     # Iterate through each contig.
     # Then iterate through gene and throug RNA linked with the gene.
     # Then look if protein informations are available.
-    for gene in gff_database.features_of_type('gene'):
-        id_gene = gene.id
-        if id_gene.isnumeric():
-            id_gene = f"gene_{id_gene}"
-        elif "|" in id_gene:
-            id_gene = id_gene.split("|")[0]
-        else:
-            id_gene = id_gene
+    for region_id in genome_nucleic_sequence:
+        record = record_info(region_id, genome_nucleic_sequence[region_id], species_informations)
+        gene_region_id = [gene for gene in gff_database.features_of_type('gene') if gene.chrom == region_id]
+        for gene in gene_region_id:
+            id_gene = gene.id.replace('gene-','')
+            if id_gene.isnumeric():
+                id_gene = f"gene_{id_gene}"
+            elif "|" in id_gene:
+                id_gene = id_gene.split("|")[0]
+            else:
+                id_gene = id_gene
+            chrom_id = gene.chrom
 
-        record = record_info(id_gene, gene_nucleic_sequence[id_gene], species_informations)
+            start_position = gene.start -1
+            end_position = gene.end
+            strand = strand_change(gene.strand)
+            new_feature_gene = sf.SeqFeature(sf.FeatureLocation(start_position,
+                                                                end_position,
+                                                                strand),
+                                                                type="gene")
+            new_feature_gene.qualifiers['locus_tag'] = id_gene
+            # Add gene information to contig record.
+            record.features.append(new_feature_gene)
 
-        start_position = gene.start -1
-        end_position = gene.end
-        strand = strand_change(gene.strand)
-        new_feature_gene = sf.SeqFeature(sf.FeatureLocation(start_position,
-                                                            end_position,
-                                                            strand),
-                                                            type="gene")
-        new_feature_gene.qualifiers['locus_tag'] = id_gene
-        # Add gene information to contig record.
-        record.features.append(new_feature_gene)
+            # Iterate through gene childs to find CDS object.
+            # For each CDS in the GFF add a CDS in the genbank.
+            for cds_object in gff_database.children(gene, featuretype="CDS", order_by='start'):
+                cds_id = cds_object.id.replace('cds-','')
+                start_position = cds_object.start -1
+                end_position = cds_object.end
+                strand = strand_change(cds_object.strand)
 
-        # Iterate through gene childs to find CDS object.
-        # For each CDS in the GFF add a CDS in the genbank.
-        for cds_object in gff_database.children(gene, featuretype="CDS", order_by='start'):
-            cds_id = cds_object.id
-            start_position = cds_object.start -1
-            end_position = cds_object.end
-            strand = strand_change(cds_object.strand)
-
-            new_cds_feature = create_cds_feature(id_gene, start_position, end_position, strand, annotation_data, go_namespaces, go_alternatives, gene_protein_seq)
-
-            # Add CDS information to contig record
-            record.features.append(new_cds_feature)
+                new_cds_feature = create_cds_feature(cds_id, start_position, end_position, strand, annotation_data, go_namespaces, go_alternatives, gene_protein_seq)
+                new_cds_feature.qualifiers['locus_tag'] = id_gene
+                # Add CDS information to contig record
+                record.features.append(new_cds_feature)
 
         seq_objects.append(record)
 
