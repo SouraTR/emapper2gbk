@@ -1,4 +1,3 @@
-[![PyPI version](https://img.shields.io/pypi/v/emapper2gbk.svg)](https://pypi.org/project/emapper2gbk/) [![GitHub license](https://img.shields.io/github/license/AuReMe/emapper2gbk.svg)](https://github.com/AuReMe/emapper2gbk/blob/master/LICENSE) [![Actions Status](https://github.com/AuReMe/emapper2gbk/workflows/Python%20package/badge.svg)](https://github.com/AuReMe/emapper2gbk/actions) [![](https://img.shields.io/badge/doi-10.7554/eLife.61968-blueviolet.svg)](https://doi.org/10.7554/eLife.61968)
 
 emapper2gbk: creation of genbank files from Eggnog-mapper annotation outputs
 ============================================================================
@@ -13,7 +12,7 @@ There are two main modes:
 
 **If you use emapper2gbk, please cite**
 
-Belcour* A, Frioux* C, Aite M, Bretaudeau A, Hildebrand F, Siegel A. Metage2Metabo, microbiota-scale metabolic complementarity for the identification of key species. eLife 2020;9:e61968 [https://doi.org/10.7554/eLife.61968](https://doi.org/10.7554/eLife.61968).
+Belcour* A, Frioux* C, Aite M, Bretaudeau A, Hildebrand F, Siegel A. Metage2Metabo, microbiota-scale metabolic complementarity for the identification of key species. eLife 2020;9:e61968 `https://doi.org/10.7554/eLife.61968<https://doi.org/10.7554/eLife.61968>`_.
 
 Main inputs
 -----------
