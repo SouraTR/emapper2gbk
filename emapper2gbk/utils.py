@@ -252,10 +252,12 @@ def read_annotation(eggnog_outfile:str):
     Returns:
         dict: dict of genes and their annotations as {gene1:{EC:'..,..', GOs:'..,..,'}}
     """
-    # Retrieve headers name at line 4.
-    colnames_linenb = 3
+    # Look at the twentieth first rows to find the header.
     with open(eggnog_outfile, 'r') as f:
-        headers_row = next(itertools.islice(csv.reader(f), colnames_linenb, None))[0].lstrip("#").strip().split('\t')
+        twentieth_first_rows = list(itertools.islice(f, 20))
+        first_row_after_header = min([index for index, str_row in enumerate(twentieth_first_rows) if not str_row.startswith('#')])
+        header_row = first_row_after_header - 1
+        headers_row = twentieth_first_rows[header_row].lstrip("#").strip().split('\t')
 
     # Fix issue when header is incomplete (eggnog before version 2.0).
     if len(headers_row) == 17:

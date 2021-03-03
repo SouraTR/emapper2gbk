@@ -16,6 +16,7 @@ FNA_INPUT = "betaox.fna"
 FNA_DIR = "fna/"
 GENOME_FNA_INPUT = "genome_betaox.fna"
 ANNOT_INPUT = "betaox_annotation.tsv"
+ANNOT_INPUT_V2 = "betaox_v2.emapper.annotations"
 ANNOT_DIR = "ann/"
 GFF_DIR = "gff/"
 ORG_NAME = "Escherichia coli"
@@ -164,6 +165,24 @@ def test_gbk_no_gff_test():
     gbk_creation(genome=FNA_INPUT,
                 proteome=FAA_INPUT,
                 annot=ANNOT_INPUT,
+                org=ORG_NAME,
+                gbk=gbk_test,
+                gff=None,
+                gobasic='go-basic.obo')
+
+    compare_two_gbks(EXPECTED_GBK_NO_GFF, gbk_test)
+    os.remove(gbk_test)
+    return
+
+
+def test_gbk_no_gff_test_annot_v2():
+    """Test genomic mode without gff as input.
+    """
+    print("*** Test genomic mode without gff as input ***")
+    gbk_test = 'test_no_gff.gbk'
+    gbk_creation(genome=FNA_INPUT,
+                proteome=FAA_INPUT,
+                annot=ANNOT_INPUT_V2,
                 org=ORG_NAME,
                 gbk=gbk_test,
                 gff=None,
@@ -324,6 +343,7 @@ def check_gbks_from_dir(gbk_dir):
     
 if __name__ == "__main__":
     #test_gbk_no_gff_test()
+    test_gbk_no_gff_test_annot_v2()
     test_gbk_from_gff_test()
     #test_gbk_from_dir()
     #test_gbk_metagenomic_mode()
