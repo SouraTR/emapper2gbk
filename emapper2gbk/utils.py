@@ -1,14 +1,28 @@
-import sys
-import os
-import pandas as pa
+# Copyright (C) 2019-2021 Clémence Frioux & Arnaud Belcour - Inria Dyliss - Pleiade
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Lesser General Public License for more details.
+
+# You should have received a copy of the GNU Lesser General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>
+
 import csv
 import datetime
 import itertools
 import logging
 import numpy as np
+import os
+import pandas as pd
 import pronto
 import requests
 import shutil
+import sys
 
 from Bio.SeqRecord import SeqRecord
 from Bio import SeqFeature as sf
@@ -265,7 +279,7 @@ def read_annotation(eggnog_outfile:str):
 
     # Use chunk when reading eggnog file to cope with big file.
     chunksize = 10 ** 6
-    for annotation_data in pa.read_csv(eggnog_outfile, sep='\t', comment='#', header=None, dtype = str, chunksize = chunksize):
+    for annotation_data in pd.read_csv(eggnog_outfile, sep='\t', comment='#', header=None, dtype = str, chunksize = chunksize):
         annotation_data.replace(np.nan, '', inplace=True)
         # Assign the headers
         annotation_data.columns = headers_row
@@ -317,7 +331,11 @@ def create_cds_feature(id_gene, start_position, end_position, strand, annotation
         # Add EC annotation.
         if 'EC' in annotation_data[id_gene]:
             gene_ecs = annotation_data[id_gene]['EC'].split(',')
-            if gene_ecs != [""]:
+            if '' in gene_ecs:
+                gene_ecs.remove('')
+            if '-' in gene_ecs:
+                gene_ecs.remove('-')
+            if gene_ecs != []:
                 new_feature_cds.qualifiers['EC_number'] = gene_ecs
 
     if id_gene in gene_protein_seq:

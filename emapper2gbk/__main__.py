@@ -1,36 +1,60 @@
+# Copyright (C) 2019-2021 Clémence Frioux & Arnaud Belcour - Inria Dyliss - Pleiade
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Lesser General Public License for more details.
+
+# You should have received a copy of the GNU Lesser General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>
+
 """Console script for emapper2gbk."""
 import argparse
-import os
-from argparse import RawTextHelpFormatter
-import sys
-import pkg_resources
 import logging
+import pkg_resources
+import os
+import sys
 import time
+
+from argparse import RawTextHelpFormatter
 from emapper2gbk.emapper2gbk import gbk_creation
 from emapper2gbk.utils import is_valid_dir, is_valid_file, is_valid_path
 
 VERSION = pkg_resources.get_distribution("emapper2gbk").version
-LICENSE = """Copyright (C) Pleiade and Dyliss Inria projects
-MIT License - Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions. See LICENSE for more details \n
+LICENSE = """Copyright (C) Pleiade and Dyliss Inria projects\n
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.\n
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Lesser General Public License for more details.\n
+
+You should have received a copy of the GNU Lesser General Public License
+along with this program. If not, see <http://www.gnu.org/licenses/>\n
 """
+
 MESSAGE = """
 Starting from fasta and Eggnog-mapper annotation files, build a gbk file that is suitable for metabolic network reconstruction with Pathway Tools. Adds the GO terms and EC numbers annotations in the genbank file.\n
-Two modes: genomic (one genome/proteome/gff/annot file --> one gbk) or metagenomic with the annotation of the full gene catalogue and fasta files (proteome/genomes) corresponding to list of genes. \n
-Genomic mode can be used with or without gff files making it suitable to build a gbk from a list of genes and their annotation. \n
+Two modes:
+- genomes (one genome/proteome/gff/annot file --> one gbk).
+- genes with the annotation of the full gene catalogue and fasta files (nucleic and protein) corresponding to list of genes. \n
+
 Examples: \n
 * Genomic - single mode \n
-emapper2gbk genomic -fg genome.fna -fp proteome.faa [-gff genome.gff] -n "Escherichia coli" -o coli.gbk -a eggnog_annotation.tsv [-go go-basic.obo] \n
+emapper2gbk genomes -fg genome.fna -fp proteome.faa -gff genome.gff -n "Escherichia coli" -o coli.gbk -a eggnog_annotation.tsv [-go go-basic.obo] \n
 * Genomic - multiple mode, "bacteria" as default name \n
-emapper2gbk genomic -fg genome_dir/ -fp proteome_dir/ [-gff gff_dir/] -n metagenome -o gbk_dir/ -a eggnog_annotation_dir/ [-go go-basic.obo] \n
+emapper2gbk genes -fg genome_dir/ -fp proteome_dir/ -n metagenome -o gbk_dir/ -a eggnog_annotation_dir/ [-go go-basic.obo] \n
 * Genomic - multiple mode, tsv file for organism names \n
-emapper2gbk genomic -fg genome_dir/ -fp proteome_dir/ [-gff gff_dir/] -nf matching_genome_orgnames.tsv -o gbk_dir/ -a eggnog_annotation_dir/ [-go go-basic.obo] \n
+emapper2gbk genes -fg genome_dir/ -fp proteome_dir/ -nf matching_genome_orgnames.tsv -o gbk_dir/ -a eggnog_annotation_dir/ [-go go-basic.obo] \n
 * Metagenomic \n
-emapper2gbk metagenomic -fg genome_dir/ -fp proteome_dir/ -o gbk_dir/ -a gene_cat_ggnog_annotation.tsv [-go go-basic.obo]
+emapper2gbk genes -fg genome_dir/ -fp proteome_dir/ -o gbk_dir/ -a gene_cat_ggnog_annotation.tsv --one-annot-file [-go go-basic.obo]
 \n
 
 You can give the GO ontology as an input to the program, it will be otherwise downloaded during the run. You can download it here: http://purl.obolibrary.org/obo/go/go-basic.obo .
@@ -94,7 +118,7 @@ def cli():
     parent_parser_fna = argparse.ArgumentParser(add_help=False)
     parent_parser_fna.add_argument(
         "-fg",
-        "--fastagenome",
+        "--fastanucleic",
         help="fna file or directory",
         required=True,
         type=str
@@ -140,27 +164,37 @@ def cli():
         help="organism/genome name (col 2) associated to genome file basenames (col 1). Default = 'metagenome' for metagenomic and 'cellular organisms' for genomic",
         required=False,
         type=str)
+    parent_parser_merge = argparse.ArgumentParser(add_help=False)
+    parent_parser_merge.add_argument(
+        "--merge",
+        dest="merge",
+        help="Number of gene sequences to merge into fake contig from a same file in the genbank file.",
+        required=False,
+        type=int,
+        default=None
+    )
+
    # subparsers
     subparsers = parser.add_subparsers(
         title='subcommands',
         description='valid subcommands:',
         dest="cmd")
-    genomic_parser = subparsers.add_parser(
-        "genomic",
-        help="genomic mode : 1 annot, 1 faa, 1 fna, [1 gff] --> 1 gbk",
+    genes_parser = subparsers.add_parser(
+        "genes",
+        help="genomic mode : 1-n annot, 1-n faa, 1-n fna (gene sequences) --> 1 gbk",
         parents=[
-            parent_parser_fna, parent_parser_faa, parent_parser_gff, parent_parser_o,
+            parent_parser_fna, parent_parser_faa, parent_parser_o,
             parent_parser_ann, parent_parser_c, parent_parser_name, parent_parser_namef,
-            parent_parser_go, parent_parser_q
+            parent_parser_go, parent_parser_merge, parent_parser_q
         ],
         description=
         "Build a gbk file for each genome/set of genes with an annotation file for each"
     )
-    metagenomic_parser = subparsers.add_parser(
-        "metagenomic",
-        help="metagenomic mode : 1 annot, n faa, n fna --> n gbk",
+    genomes_parser = subparsers.add_parser(
+        "genomes",
+        help="genoems mode: 1 contig/chromosome fasta, 1 protein fasta, 1 GFF, 1 annot --> 1 gbk",
         parents=[
-            parent_parser_fna, parent_parser_faa, parent_parser_gff, parent_parser_o, parent_parser_namef, parent_parser_name,
+            parent_parser_fna, parent_parser_faa, parent_parser_o, parent_parser_gff, parent_parser_namef, parent_parser_name,
             parent_parser_ann, parent_parser_c, parent_parser_go, parent_parser_q
         ],
         description=
@@ -180,16 +214,13 @@ def cli():
             logger.critical("Impossible to access/create output directory/file")
             sys.exit(1)
     else:
-        logger.info("m2m " + VERSION + "\n" + LICENSE)
+        logger.info("emapper2gbk " + VERSION + "\n" + LICENSE)
         parser.print_help()
         sys.exit()
 
     # # add logger in file
     formatter = logging.Formatter('%(message)s')
-    # file_handler = logging.FileHandler(f'{args.out}/m2m_{args.cmd}.log', 'w+')
-    # file_handler.setLevel(logging.INFO)
-    # file_handler.setFormatter(formatter)
-    # logger.addHandler(file_handler)
+
     # set up the default console logger
     console_handler = logging.StreamHandler(sys.stdout)
     console_handler.setLevel(logging.INFO)
@@ -214,43 +245,35 @@ def cli():
     elif args.name:
         orgnames = args.name
     else:
-        if args.cmd == "genomic":
+        if args.cmd == "genomes":
             orgnames = "cellular organisms"
             logger.warning("The default organism name 'cellular organisms' is used.")
-        if args.cmd == "metagenomic":
+        if args.cmd == "genes":
             orgnames = "metagenome"
             logger.warning("The default organism name 'metagenome' is used.")
 
-    if args.cmd == "genomic":
-        # fna, faa, [gff], gbk, ann must all be files or dirs, not mix of both
-        types = {e: 'd' if os.path.isdir(e) else 'f' if os.path.isfile(e) else None for e in [args.fastaprot, args.fastagenome, args.annotation]}
-        if args.gff:
-            types[args.gff] = 'd' if os.path.isdir(args.gff) else 'f' if os.path.isfile(args.gff) else None
-        if not (all(e == 'd' for e in types.values()) or all(e == 'f' for e in types.values())):
-            logger.critical(f"In genomic mode, the arguments proteomes, genomes, output, annotation [and gff] must all be directories or single files but not a mix of both")
-            sys.exit(1)
-        else: # ensure outdir or outfile can be written
-            directory_mode = True if all(e == 'd' for e in types.values()) else False
-            if directory_mode and not is_valid_dir(args.out):
-                logger.critical(f"Output dir path is incorrect (does not exist or cannot be written)")
-                sys.exit(1)
-            elif not directory_mode and not is_valid_path(args.out):
-                logger.critical(f"Output file path cannot be accessed")
-                sys.exit(1)
-        # check names #2 
-        if args.namefile and not directory_mode:
+    # Check name.
+    if args.namefile:
+        if os.path.isfile(args.fastanucleic) and os.path.isfile(args.fastaprot):
             logger.error("Tabulated file for organisms name should not be used for single runs of genomic mode. Will use the --name argument or the default 'metagenome'for metagenomic or 'cellular organisms' for genomics name if None")
-            orgnames = args.name
+            if args.name:
+                orgnames = args.name
+            else:
+                if args.cmd == "genomes":
+                    orgnames = "cellular organisms"
+                    logger.warning("The default organism name 'cellular organisms' is used.")
+                if args.cmd == "genes":
+                    orgnames = "metagenome"
+                    logger.warning("The default organism name 'metagenome' is used.")
 
-        gbk_creation(genome=args.fastagenome, proteome=args.fastaprot, annot=args.annotation, gff=args.gff, org=orgnames, gbk=args.out, gobasic=args.gobasic, dirmode=directory_mode, cpu=args.cpu, metagenomic_mode=False)
-        #TODO fix the code in case we have a gff
+    if args.cmd == "genomes":
+        gbk_creation(nucleic_fasta=args.fastanucleic, protein_fasta=args.fastaprot, annot=args.annotation, gff=args.gff, org=orgnames,
+                        output_path=args.out, gobasic=args.gobasic, cpu=args.cpu)
 
-    elif args.cmd == "metagenomic":
-        # fna, faa, gbk must all dirs and annotation must be a single file
-        if not os.path.isdir(args.fastagenome) or not os.path.isdir(args.fastaprot) or not is_valid_dir(args.out) or not is_valid_file(args.annotation): 
-            logger.critical(f"In metagenomic mode, proteomes, genomes, output must be directories and annotation must be a single file")
-            sys.exit(1)
-        gbk_creation(genome=args.fastagenome, proteome=args.fastaprot, annot=args.annotation, gff=args.gff, org=orgnames, gbk=args.out, gobasic=args.gobasic, dirmode=True, metagenomic_mode=True, cpu=args.cpu)
+    elif args.cmd == "genes":
+        gbk_creation(nucleic_fasta=args.fastanucleic, protein_fasta=args.fastaprot, annot=args.annotation, org=orgnames,
+                        output_path=args.out, gobasic=args.gobasic, cpu=args.cpu, merge=args.merge)
+
 
     logger.info("--- Total runtime %.2f seconds ---" % (time.time() - start_time))
 
