@@ -16,7 +16,7 @@ emapper2gbk: creation of genbank files from Eggnog-mapper annotation outputs
 Starting from fasta and `Eggnog-mapper <http://eggnog-mapper.embl.de/>`__ annotation files, build a gbk file that is suitable for metabolic network reconstruction with `Pathway Tools <http://bioinformatics.ai.sri.com/ptools/>`__. Adds the GO terms and EC numbers annotations in the genbank file.
 There are two main modes:
 
-* **genes mode**: suitable when a list of isolated genes/proteins have been annotated with Eggnog-mapper, typically the gene catalogue of a metagenome. In that case, there is one annotation file and multiple genomes/proteomes that will contain a subset of the genes present in the annotated gene catalogue. The purpose is to create a genbank file with the genes and annotations that matches each genome (Metagenomic species core genome, Metagenomic-assembled genome...) content. The creation of genbanks can be performed in parallel by providing directories (with matching names for genome and proteome files) as inputs. In that case, you can give as organism name "metagenome" or "bacteria".
+* **genes mode**: suitable when a list of isolated genes/proteins have been annotated with Eggnog-mapper, typically the gene catalogue of a metagenome.
 
 * **genomes mode**: usually when focusing on a single organism, with a `.gff` file. The creation of genbanks can be performed in parallel by providing directories (with matching names for genomes, proteomes and annotation files) as inputs.
 
