@@ -47,19 +47,21 @@ Two modes:
 - genes with the annotation of the full gene catalogue and fasta files (nucleic and protein) corresponding to list of genes. \n
 
 Examples: \n
-* Genomic - single mode \n
+* One genome of "Escherichia coli" \n
 emapper2gbk genomes -fg genome.fna -fp proteome.faa -gff genome.gff -n "Escherichia coli" -o coli.gbk -a eggnog_annotation.tsv [-go go-basic.obo] \n
-* Genomic - multiple mode, "bacteria" as default name \n
+* Multiple genomes \n
 emapper2gbk genes -fg genome_dir/ -fp proteome_dir/ -n metagenome -o gbk_dir/ -a eggnog_annotation_dir/ [-go go-basic.obo] \n
-* Genomic - multiple mode, tsv file for organism names \n
-emapper2gbk genes -fg genome_dir/ -fp proteome_dir/ -nf matching_genome_orgnames.tsv -o gbk_dir/ -a eggnog_annotation_dir/ [-go go-basic.obo] \n
-* Metagenomic \n
-emapper2gbk genes -fg genome_dir/ -fp proteome_dir/ -o gbk_dir/ -a gene_cat_ggnog_annotation.tsv --one-annot-file [-go go-basic.obo]
+* One genes list \n
+emapper2gbk genes -fg genes.fna -fp genes.faa -o genes.gbk -a genes.emapper.annotation [-go go-basic.obo] \n
+* Multiple genes list \n
+emapper2gbk genes -fg genes_dir/ -fp proteomes_dir/ -nf matching_genome_orgnames.tsv -o gbk_dir/ -a eggnog_annotation_dir/ [-go go-basic.obo] \n
+* Multiple genes list with one annotation file \n
+emapper2gbk genes -fg genes_dir/ -fp proteomes_dir/ -o gbk_dir/ -a gene_cat_ggnog_annotation.tsv [-go go-basic.obo]
 \n
 
 You can give the GO ontology as an input to the program, it will be otherwise downloaded during the run. You can download it here: http://purl.obolibrary.org/obo/go/go-basic.obo .
-The program requests the NCBI database to retrieve taxonomic information of the organism. However, if the organism is "bacteria" or "metagenome", the taxonomic information will not have to be retrieved online.
-Hence, if you need to run the program from a cluster with no internet access, it is possible for a "bacteria" or "metagenome" organism, and by providing the GO-basic.obo file.
+The program requests the NCBI database to retrieve taxonomic information of the organism. However, if the organism is "bacteria", "metagenome", "archaea" or "eukaryota", the taxonomic information will not have to be retrieved online.
+Hence, if you need to run the program from a cluster with no internet access, it is possible for a "bacteria", "metagenome", "archaea" or "eukaryota" organism, and by providing the GO-basic.obo file.
 """
 
 logger = logging.getLogger()
@@ -128,7 +130,7 @@ def cli():
         "-g",
         "--gff",
         help="gff file or directory",
-        required=False,
+        required=True,
         type=str
     )
     parent_parser_ann = argparse.ArgumentParser(add_help=False)
@@ -188,7 +190,7 @@ def cli():
             parent_parser_go, parent_parser_merge, parent_parser_q
         ],
         description=
-        "Build a gbk file for each genome/set of genes with an annotation file for each"
+        "Use the annotation of a complete gene catalogue and build gbk files for each set of genes (fna) and proteins (faa) from input directories"
     )
     genomes_parser = subparsers.add_parser(
         "genomes",
@@ -198,7 +200,7 @@ def cli():
             parent_parser_ann, parent_parser_c, parent_parser_go, parent_parser_q
         ],
         description=
-        "Use the annotation of a complete gene catalogue and build gbk files for each set of genes (fna) and proteins (faa) from input directories"
+        "Build a gbk file for each genome with an annotation file for each"
     )
 
     args = parser.parse_args()

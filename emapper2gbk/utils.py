@@ -171,6 +171,10 @@ def create_taxonomic_data(species_name):
 
     if species_name == "bacteria":
         species_informations = {'db_xref': 'taxon:2', 'scientificName': 'Bacteria', 'commonName': 'eubacteria', 'formalName': 'false', 'rank': 'superkingdom', 'data_file_division': 'PRO', 'geneticCode': '11', 'submittable': 'false', 'description': 'bacteria genome', 'organism': 'bacteria', 'keywords': ['bacteria']} 
+    elif species_name == "archaea":
+        species_informations = {'db_xref': 'taxon:2157', 'scientificName': 'Archaea', 'formalName': 'false', 'rank': 'superkingdom', 'data_file_division': 'PRO', 'geneticCode': '11', 'submittable': 'false'}
+    elif species_name == "eukaryota":
+        species_informations = {'db_xref': 'taxon:2759', 'scientificName': 'Eukaryota', 'commonName': 'eucaryotes', 'formalName': 'false', 'rank': 'superkingdom', 'data_file_division': 'INV', 'geneticCode': '1', 'mitochondrialGeneticCode': '1', 'plastIdGeneticCode': '11', 'submittable': 'false'}
     elif species_name == "metagenome":
         species_informations = {'db_xref': 'taxon:256318', 'scientificName': 'metagenome', 'formalName': 'false', 'rank': 'species', 'division': 'UNC', 'lineage': 'unclassified sequences; metagenomes; ', 'geneticCode': '11', 'mitochondrialGeneticCode': '2', 'plastIdGeneticCode': '11', 'submittable': 'true'}
     elif species_name == 'cellular organisms':

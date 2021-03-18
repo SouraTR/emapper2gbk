@@ -30,33 +30,87 @@ Main inputs
 emapper2gbk genes
 ~~~~~~~~~~~~~~~~~
 
-For each annotated list of genes, inputs consist of:
+For each annotated list of genes, inputs are:
 
-* a nucleotide fasta file: containing the CDS sequence of each genes.
-* the translated sequences in amino-acids in fasta.
-* the annotation file obtained after Eggnog-mapper annotation (usually `xxx.emapper.annotation`).
-* the name of the considered organism (can be "bacteria" or "metagenome") or a file with organisms names (matching the genomes names).
+* a nucleotide fasta file containing the CDS sequence of each genes or a folder containing multiple nucleotide fasta files.
+* the translated sequences in amino-acids in fasta or a folder containing the corresponding protein sequences to the nucleotide sequences (must be the same name).
+* the annotation file obtained after Eggnog-mapper annotation (usually `xxx.emapper.annotation`) or a folder with multiple annotation files (must be the same name as nucleotide fasta file and ends with '.tsv' extension).
 
 In addition, as optional files:
 
+* the name of the considered organism (can be "bacteria" or "metagenome") or a file with organisms names (matching the genomes names).
 * the merge option to merge genes into fake contigs.
 * the number of available cores for multiprocessing (when working on multiple genomes).
 * a go-basic file of GO ontology (if not given, emapper2gbk will download a copy and use it).
 
+Example:
+
+Input with files:
+
+.. code-block:: text
+
+    nucleotide_sequences.fna
+    protein_sequence.faa
+    annotation.emapper.annotation
+
+Input with folders:
+
+.. code-block:: text
+
+    nucleotide_sequences
+    ├── gene_list_1.fna
+    ├── gene_list_2.fna
+    protein_sequence
+    ├── gene_list_1.faa
+    ├── gene_list_2.faa
+    annotation
+    ├── gene_list_1.tsv
+    ├── gene_list_2.tsv
+
+
 emapper2gbk genomes
 ~~~~~~~~~~~~~~~~~~~
 
-For each annotated list of genes, inputs consist of:
+For each genomes, inputs are:
 
-* a nucleotide fasta file: containing the CDS sequence of each contigs/chromosomes for the genome.
-* the proteome corresponding to the genome.
-* the annotation file obtained after Eggnog-mapper annotation (usually `xxx.emapper.annotation`).
-* the name of the considered organism (can be "bacteria") or a file with organisms names (matching the genomes names).
+* a nucleotide fasta file containing the sequence of each contigs/chromosomes for the genome or a folder containing multiple nucleotide fasta files.
+* the proteome corresponding to the genome or a folder containing the corresponding protein sequences to the nucleotide sequences (must be the same name).
+* the GFF file corresponding to the genome or a folder containing multiple GFF files (must be the same name as the nucleotide folder).
+* the annotation file obtained after Eggnog-mapper annotation (usually `xxx.emapper.annotation`) or a folder with multiple annotation files (must be the same name as nucleotide fasta file and ends with '.tsv' extension)
 
 In addition, as optional files:
 
+* the name of the considered organism (can be "bacteria") or a file with organisms names (matching the genomes names).
 * the number of available cores for multiprocessing (when working on multiple genomes).
 * a go-basic file of GO ontology (if not given, emapper2gbk will download a copy and use it).
+
+Example:
+
+Input with files:
+
+.. code-block:: text
+
+    nucleotide_sequences.fna
+    protein_sequence.faa
+    annotation.emapper.annotation
+    genome.gff
+
+Input with folders:
+
+.. code-block:: text
+
+    nucleotide_sequences
+    ├── genome_1.fna
+    ├── genome_2.fna
+    protein_sequence
+    ├── genome_1.faa
+    ├── genome_2.faa
+    annotation
+    ├── genome_1.tsv
+    ├── genome_2.tsv
+    gff
+    ├── genome_1.gff
+    ├── genome_2.gff
 
 Dependencies and installation
 -----------------------------
