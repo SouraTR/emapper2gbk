@@ -48,12 +48,15 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install .
-    - name: Test with pytest
+    - name: Test with pytest for macOS
+      if: matrix.platform == 'macos-latest'
       run: |
         pip install pytest
         cd tests
-         if [ "$RUNNER_OS" == "macOS" ]; then
-              OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES python test_emapper2gbk.py
-         else
-               pytest test_emapper2gbk.py
-         fi
+        OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES python test_emapper2gbk.py
+    - name: Test with pytest for Linux and Windows
+      if: matrix.platform != 'macos-latest'
+      run: |
+        pip install pytest
+        cd tests
+        python test_emapper2gbk.py
