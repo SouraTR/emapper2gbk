@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-"""Tests for `emapper2gbk` package."""
+"""Tests for emapper2gbk package."""
 
 import os
 import shutil
