@@ -53,7 +53,7 @@ jobs:
         pip install pytest
         cd tests
          if [ "$RUNNER_OS" == "macOS" ]; then
-              export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES python test_emapper2gbk.py
+              OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES python test_emapper2gbk.py
          else
                pytest test_emapper2gbk.py
          fi
