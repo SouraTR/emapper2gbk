@@ -12,7 +12,6 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>
 
-import csv
 import datetime
 import itertools
 import logging
@@ -21,6 +20,7 @@ import os
 import pandas as pd
 import pronto
 import requests
+import simplejson
 import shutil
 import sys
 
@@ -69,6 +69,7 @@ def get_extension(filepath):
     'important'
     """
     return os.path.splitext(os.path.basename(filepath))[1][1:]
+
 
 def is_valid_path(filepath):
     """Return True if filepath is valid.
@@ -125,11 +126,18 @@ def is_valid_dir(dirpath):
         return True
 
 
-def create_GO_namespaces_alternatives(gobasic_file = None):
+def create_GO_namespaces_alternatives(gobasic_file=None):
     """
     Use pronto to query the Gene Ontology and to create the Ontology.
     Create a dictionary which contains for all GO terms their GO namespaces (molecular_function, ..).
     Create a second dictionary containing alternative ID for some GO terms (deprecated ones).
+
+    Args:
+        gobasic_file (str): path of GO basic file (if not provided will be downloaded)
+
+    Returns:
+        go_namespaces (dict): dictionary of GO terms namespace (key: GO Term ID, value: namespace associated to GO Term)
+        go_alternatives (dict): dictionary of GO terms alternatives ID (key: GO Term ID, value: alternatives GO Term associated to GO Term)
     """
     go_basic_obo_url = 'http://purl.obolibrary.org/obo/go/go-basic.obo'
 
@@ -165,6 +173,12 @@ def create_taxonomic_data(species_name):
     """
     Query the EBI with the species name to create a dictionary containing taxon id,
     taxonomy and some other informations.
+
+    Args:
+        species_name (str): species name (must be with genus for example "Escherichia coli")
+
+    Returns:
+        species_informations (dict): dictionary containing information about species
     """
     species_informations = {}
     species_name_url = species_name.replace(' ', '%20')
@@ -182,7 +196,11 @@ def create_taxonomic_data(species_name):
     else:
         url = 'https://www.ebi.ac.uk/ena/data/taxonomy/v1/taxon/scientific-name/' + species_name_url
         response = requests.get(url)
-        temp_species_informations = response.json()[0]
+        try:
+            temp_species_informations = response.json()[0]
+        except simplejson.errors.JSONDecodeError:
+            logger.critical('No matching data for {} in https://www.ebi.ac.uk/ena/data/taxonomy/v1/taxon/scientific-name/'.format(species_name))
+            sys.exit()
         # print(temp_species_informations)
         for temp_species_information in temp_species_informations:
             # print(temp_species_information)
@@ -205,13 +223,20 @@ def create_taxonomic_data(species_name):
 
 
 def record_info(record_id, record_seq, species_informations):
-    """
-    Create SeqBio record informations from species_informations dictionary and record id and record seq.
+    """ Create SeqBio record informations from species_informations dictionary and record id and record seq.
+
+    Args:
+        record_id (str): ID of the record (either contig/scaffold/chromosome ID)
+        record_seq (Bio.Seq.Seq): Sequence associated to the record
+        species_informations (dict): Dictionary containing information about species
+
+    Returns:
+        record (Bio.SeqRecord.SeqRecord): New record containing the informations provided
     """
     if record_id.isnumeric():
         newname = f"_{record_id}"
     elif "|" in record_id:
-        newname = record_id.split("|")[0]
+        newname = record_id.split("|")[1]
     else:
         newname = record_id
 
@@ -262,7 +287,7 @@ def record_info(record_id, record_seq, species_informations):
 
 
 def read_annotation(eggnog_outfile:str):
-    """Read an eggno-mapper annotation file and retrieve EC numbers and GO terms by genes.
+    """Read an eggnog-mapper annotation file and retrieve EC numbers and GO terms by genes.
 
     Args:
         eggnog_outfile (str): path to eggnog-mapper annotation file
@@ -292,7 +317,22 @@ def read_annotation(eggnog_outfile:str):
             yield key, annotation_dict[key]
 
 
-def create_cds_feature(id_gene, start_position, end_position, strand, annotation_data, go_namespaces, go_alternatives, gene_protein_seq):
+def create_cds_feature(id_gene, start_position, end_position, strand, annot, go_namespaces, go_alternatives, gene_protein_seq):
+    """ Create Biopython CDS feature from gene ID, gene positions, gene sequecne and gene annotations.
+
+    Args:
+        id_gene (str): ID of the gene
+        start_position (int): start position of the gene
+        end_position (int): end position of the gene
+        strand (str): strand of teh gene
+        annot (dict): dictionary of eggnog-ammper annotation (key: gene_id, value: ['GOs','EC', 'Preferred_name'])
+        go_namespaces (dict): dictionary of GO terms namespace (key: GO Term ID, value: namespace associated to GO Term)
+        go_alternatives (dict): dictionary of GO terms alternatives ID (key: GO Term ID, value: alternatives GO Term associated to GO Term)
+        gene_protein_seq (dict): dictionary of protein sequence associated to genes (key: gene id, value: sequence)
+
+    Returns:
+        new_feature_cds (Bio.SeqFeature.SeqFeature): New SeqFeature containing the informations provided
+    """
     new_feature_cds = sf.SeqFeature(sf.FeatureLocation(start_position,
                                                         end_position,
                                                         strand),
@@ -301,14 +341,14 @@ def create_cds_feature(id_gene, start_position, end_position, strand, annotation
     new_feature_cds.qualifiers['locus_tag'] = id_gene
 
     # Add GO annotation according to the namespace.
-    if id_gene in annotation_data.keys():
+    if id_gene in annot.keys():
         # Add gene name.
-        if 'Preferred_name' in annotation_data[id_gene]:
-            if annotation_data[id_gene]['Preferred_name'] != "":
-                new_feature_cds.qualifiers['gene'] = annotation_data[id_gene]['Preferred_name']
+        if 'Preferred_name' in annot[id_gene]:
+            if annot[id_gene]['Preferred_name'] != "":
+                new_feature_cds.qualifiers['gene'] = annot[id_gene]['Preferred_name']
 
-        if 'GOs' in annotation_data[id_gene] :
-            gene_gos = annotation_data[id_gene]['GOs'].split(',')
+        if 'GOs' in annot[id_gene] :
+            gene_gos = annot[id_gene]['GOs'].split(',')
             if gene_gos != [""]:
                 go_components = []
                 go_functions = []
@@ -333,8 +373,8 @@ def create_cds_feature(id_gene, start_position, end_position, strand, annotation
 
 
         # Add EC annotation.
-        if 'EC' in annotation_data[id_gene]:
-            gene_ecs = annotation_data[id_gene]['EC'].split(',')
+        if 'EC' in annot[id_gene]:
+            gene_ecs = annot[id_gene]['EC'].split(',')
             if '' in gene_ecs:
                 gene_ecs.remove('')
             if '-' in gene_ecs:

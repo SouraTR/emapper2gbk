@@ -34,14 +34,9 @@ as value and adapt the condition used for the others annotations (EC, Go term).
 
 """
 
-import argparse
-import datetime
 import gffutils
-import numpy as np
 import logging
-import os
 import re
-import shutil
 import sys
 
 from Bio import SeqFeature as sf
@@ -57,6 +52,9 @@ def strand_change(input_strand):
     """
     The input is strand in str ('-', '+') modify it to be a strand in int (-1, +1) to 
     be compatible with SeqIO strand reading.
+
+    Args:
+        input_strand (str): input strand
     """
     if isinstance(input_strand, str):
         if input_strand == '-':
@@ -76,14 +74,18 @@ def strand_change(input_strand):
     return new_strand
 
 
-def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annotation_data:Union[str, dict], gff_file:str, species_name:str, gbk_out:str, gobasic:Union[None, str, dict]):
-    """
-    From a genome fasta (containing each contigs of the genome),
-    a protein fasta (containing each protein sequence),
-    an annotation table (containing gene name associated with GO terms, InterPro and EC),
-    a gff file (containing gene, exon, mRNA, ncRNA, tRNA),
-    a contig information table (containing species name, taxon ID, ..)
-    create a genbank file.
+def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
+                gff:str, org:str, output_path:str, gobasic:Union[None, str, dict]):
+    """ Create genbank file from nucleic, protein fasta and a gff file plus eggnog mapper annotation file.
+
+    Args:
+        nucleic_fasta (str): nucleic fasta file
+        protein_fasta (str): protein fasta file
+        annot (str): annotation file or dictionary
+        gff (str, optional): gff file
+        org (str): organims name or mapping file
+        output_path (str): output file or directory
+        gobasic (str, dict): path to go-basic.obo file or dictionary
     """
     genome_id = get_basename(nucleic_fasta)
 
@@ -91,7 +93,7 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annotation_data:Union[str, 
     # Create the gff database file.
     # gffutils use sqlite3 file-based database to access data inside GFF.
     # ':memory:' ask gffutils to keep database in memory instead of writting in a file.
-    gff_database = gffutils.create_db(gff_file, ':memory:', force=True, keep_order=True, merge_strategy='merge', sort_attribute_values=True)
+    gff_database = gffutils.create_db(gff, ':memory:', force=True, keep_order=True, merge_strategy='merge', sort_attribute_values=True)
 
     logger.info('Formatting fasta and annotation file for ' + genome_id)
     # Dictionary with region id (contig, chromosome) as key and sequence as value.
@@ -107,12 +109,12 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annotation_data:Union[str, 
         gene_protein_seq[record.id] = record.seq
 
     # Create a taxonomy dictionary querying the EBI.
-    species_informations = create_taxonomic_data(species_name)
+    species_informations = create_taxonomic_data(org)
 
     # Read the eggnog tsv file containing GO terms and EC associated with gene name.
     # if metagenomic mode, annotation is already read and given as a dict
-    if not type(annotation_data) is dict:
-        annotation_data = dict(read_annotation(annotation_data))
+    if not type(annot) is dict:
+        annot = dict(read_annotation(annot))
 
     # Query Gene Ontology to extract namespaces and alternative IDs.
     # go_namespaces: Dictionary GO id as term and GO namespace as value.
@@ -138,10 +140,10 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annotation_data:Union[str, 
         gene_region_id = [gene for gene in gff_database.features_of_type('gene') if gene.chrom == region_id]
         for gene in gene_region_id:
             id_gene = gene.id.replace('gene-','')
+
+            # If id is numeric, change it
             if id_gene.isnumeric():
                 id_gene = f"gene_{id_gene}"
-            elif "|" in id_gene:
-                id_gene = id_gene.split("|")[0]
             else:
                 id_gene = id_gene
             chrom_id = gene.chrom
@@ -161,11 +163,11 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annotation_data:Union[str, 
             # For each CDS in the GFF add a CDS in the genbank.
             for cds_object in gff_database.children(gene, featuretype="CDS", order_by='start'):
                 cds_id = cds_object.id.replace('cds-','')
-                start_position = cds_object.start -1
+                start_position = cds_object.start - 1
                 end_position = cds_object.end
                 strand = strand_change(cds_object.strand)
 
-                new_cds_feature = create_cds_feature(cds_id, start_position, end_position, strand, annotation_data, go_namespaces, go_alternatives, gene_protein_seq)
+                new_cds_feature = create_cds_feature(cds_id, start_position, end_position, strand, annot, go_namespaces, go_alternatives, gene_protein_seq)
                 new_cds_feature.qualifiers['locus_tag'] = id_gene
                 # Add CDS information to contig record
                 record.features.append(new_cds_feature)
@@ -173,14 +175,14 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annotation_data:Union[str, 
         seq_objects.append(record)
 
     # Create Genbank with the list of SeqRecord.
-    SeqIO.write(seq_objects, gbk_out, 'genbank')
+    SeqIO.write(seq_objects, output_path, 'genbank')
 
 
-def main(nucleic_fasta, protein_fasta, annotation_data, gff_file, species_name, gbk_out, gobasic=None):
+def main(nucleic_fasta, protein_fasta, annot, gff, org, output_path, gobasic=None):
     # check validity of inputs
     for elem in [nucleic_fasta, protein_fasta]:
         if not is_valid_file(elem):
             print(f"{elem} is not a valid path file.")
             sys.exit(1)
 
-    gff_to_gbk(nucleic_fasta, protein_fasta, annotation_data, gff_file, species_name, gbk_out, gobasic)
+    gff_to_gbk(nucleic_fasta, protein_fasta, annot, gff, org, output_path, gobasic)

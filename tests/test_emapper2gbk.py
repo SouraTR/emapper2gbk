@@ -267,7 +267,7 @@ def test_gbk_gene_mode_test_cli():
     gbk_test = 'test_no_gff.gbk'
 
     print("*** Test genes mode with file as input with cli***")
-    subprocess.call(['emapper2gbk', 'genes', '-fg', FNA_INPUT, '-fp', FAA_INPUT,
+    subprocess.call(['emapper2gbk', 'genes', '-fn', FNA_INPUT, '-fp', FAA_INPUT,
                         '-a', ANNOT_INPUT, '-o', gbk_test, '-go', GO_FILE, '-n', ORG_NAME])
 
     compare_two_gbks(EXPECTED_GBK_NO_GFF, gbk_test)
@@ -300,7 +300,7 @@ def test_gbk_genes_mode_annot_v2_cli():
     """
     gbk_test = 'test_no_gff.gbk'
     print("*** Test genes mode with file as input with v2 eggnog mapper annotation file with cli***")
-    subprocess.call(['emapper2gbk', 'genes', '-fg', FNA_INPUT, '-fp', FAA_INPUT,
+    subprocess.call(['emapper2gbk', 'genes', '-fn', FNA_INPUT, '-fp', FAA_INPUT,
                         '-a', ANNOT_INPUT_V2, '-o', gbk_test, '-go', GO_FILE, '-n', ORG_NAME])
 
     compare_two_gbks(EXPECTED_GBK_NO_GFF, gbk_test)
@@ -334,7 +334,7 @@ def test_gbk_genomes_mode_test_cli():
     """
     gbk_test = 'test_gff.gbk'
     print("*** Test genomes mode with file as input with cli***")
-    subprocess.call(['emapper2gbk', 'genomes', '-fg', GENOME_FNA_INPUT, '-fp', FAA_INPUT,
+    subprocess.call(['emapper2gbk', 'genomes', '-fn', GENOME_FNA_INPUT, '-fp', FAA_INPUT,
                         '-a', ANNOT_INPUT, '-g', GFF_INPUT, '-o', gbk_test, '-go', GO_FILE,
                         '-n', ORG_NAME])
 
@@ -369,7 +369,7 @@ def test_gbk_genomes_mode_folder_cli():
     gbk_dir_test = 'gbk_mg'
 
     print("*** Test genomes mode with folders as input with cli ***")
-    subprocess.call(['emapper2gbk', 'genomes', '-fg', GENOME_FNA_DIR, '-fp', FAA_DIR,
+    subprocess.call(['emapper2gbk', 'genomes', '-fn', GENOME_FNA_DIR, '-fp', FAA_DIR,
                         '-a', ANNOT_INPUT, '-g', GFF_DIR, '-o', gbk_dir_test, '-go', GO_FILE,
                         '-nf', ORG_FILE])
 
@@ -405,7 +405,7 @@ def test_gbk_genes_mode_folder_cli():
     gbk_dir_test = 'gbk_g'
 
     print("*** Test genes mode with folders as input with cli ***")
-    subprocess.call(['emapper2gbk', 'genes', '-fg', FNA_DIR, '-fp', FAA_DIR,
+    subprocess.call(['emapper2gbk', 'genes', '-fn', FNA_DIR, '-fp', FAA_DIR,
                         '-a', ANNOT_DIR, '-g', GFF_DIR, '-o', gbk_dir_test, '-go', GO_FILE,
                         '-nf', ORG_FILE])
 
@@ -441,7 +441,7 @@ def test_gbk_genes_mode_folder_one_annot_file_cli():
     gbk_dir_test = 'gbk_mg'
 
     print("*** Test genes mode with folders as input with one annotation file with cli ***")
-    subprocess.call(['emapper2gbk', 'genes', '-fg', FNA_DIR, '-fp', FAA_DIR,
+    subprocess.call(['emapper2gbk', 'genes', '-fn', FNA_DIR, '-fp', FAA_DIR,
                         '-a', ANNOT_INPUT, '-o', gbk_dir_test, '-go', GO_FILE,
                         '-nf', ORG_FILE])
 
@@ -463,7 +463,7 @@ def test_gbk_genes_mode_merge_fake_contig():
                 output_path=gbk_test,
                 gff=None,
                 gobasic=GO_FILE,
-                merge=5)
+                merge_genes_fake_contig=5)
 
     # Dictionary with gene id as key and nucleic sequence as value.
     expected_gene_nucleic_seqs = dict()

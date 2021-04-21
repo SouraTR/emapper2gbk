@@ -12,7 +12,6 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>
 
-"""Main module."""
 import logging
 import os
 import csv
@@ -25,8 +24,10 @@ from multiprocessing import Pool
 
 logger = logging.getLogger(__name__)
 
-def gbk_creation(nucleic_fasta:str, protein_fasta:str, annot:str, org:str, output_path:str, gobasic:str, cpu:int=1, gff:str=None, merge:int=None):
-    """Create gbk files from genomic information and eggnog-mapper annotation outputs.
+def gbk_creation(nucleic_fasta:str, protein_fasta:str, annot:str,
+                org:str, output_path:str, gobasic:str, cpu:int=1,
+                gff:str=None, merge_genes_fake_contig:int=None):
+    """Create gbk files from list of genes or genomes and eggnog-mapper annotation outputs.
 
     Args:
         nucleic_fasta (str): nucleic fasta file or dir
@@ -37,6 +38,7 @@ def gbk_creation(nucleic_fasta:str, protein_fasta:str, annot:str, org:str, outpu
         gobasic (str): path to go-basic.obo file
         cpu (int, optional): number of cpu, used for multi process in directory mode. Defaults to 1.
         gff (str, optional): gff file or dir. Defaults to None.
+        merge_genes_fake_contig (int, optional): merge genes into fake contig. The int associted to merge is the number of genes per fake contigs.
     """
     # Check if inputs are folders or files.
     types = {input_file: 'directory' if os.path.isdir(input_file)
@@ -71,9 +73,12 @@ def gbk_creation(nucleic_fasta:str, protein_fasta:str, annot:str, org:str, outpu
 
     if not directory_mode:
         if gff:
-            genomes_to_gbk.main(nucleic_fasta=nucleic_fasta, protein_fasta=protein_fasta, annotation_data=annot, gff_file=gff, species_name=org, gbk_out=output_path, gobasic=gobasic)
+            genomes_to_gbk.main(nucleic_fasta=nucleic_fasta, protein_fasta=protein_fasta, annot=annot,
+                                    gff=gff, org=org, output_path=output_path, gobasic=gobasic)
         else:
-            genes_to_gbk.main(nucleic_fasta=nucleic_fasta, protein_fasta=protein_fasta, annotation_data=annot, species_name=org, gbk_out=output_path, gobasic=gobasic, merge=merge)
+            genes_to_gbk.main(nucleic_fasta=nucleic_fasta, protein_fasta=protein_fasta, annot=annot,
+                                org=org, output_path=output_path, gobasic=gobasic,
+                                merge_genes_fake_contig=merge_genes_fake_contig)
     else:
         gbk_pool = Pool(processes=cpu)
 
@@ -95,7 +100,7 @@ def gbk_creation(nucleic_fasta:str, protein_fasta:str, annot:str, org:str, outpu
 
         # check that all data is here
         try:
-            assert set(org_mapping.keys()) == all_genomes
+            assert all_genomes.issubset(set(org_mapping.keys()))
         except AssertionError:
             logger.critical(f"Genomes in {nucleic_fasta} do not match the genomes IDs of {org} (first column, no extension to the genome names).")
             sys.exit(1)
@@ -177,10 +182,11 @@ def gbk_creation(nucleic_fasta:str, protein_fasta:str, annot:str, org:str, outpu
                 gbk_output_path = os.path.join(output_path, genome_id+'.gbk')
                 multiprocess_data.append([nucleic_fasta_path, protein_fasta_path, annot_path,
                                             org_mapping[genome_id], gbk_output_path,
-                                            (go_namespaces, go_alternatives), merge])
+                                            (go_namespaces, go_alternatives), merge_genes_fake_contig])
             gbk_pool.starmap(genes_to_gbk.faa_to_gbk, multiprocess_data)
 
         elif not gff and one_annot_file:
+            all_genomes = set(all_genomes) - set(os.listdir(output_path))
             # read annotation of gene catalogue
             annot_genecat = dict(read_annotation(annot))
             for genome_id in all_genomes:
@@ -189,7 +195,7 @@ def gbk_creation(nucleic_fasta:str, protein_fasta:str, annot:str, org:str, outpu
                 gbk_output_path = os.path.join(output_path, genome_id+'.gbk')
                 multiprocess_data.append([nucleic_fasta_path, protein_fasta_path, annot_genecat,
                                             org_mapping[genome_id], gbk_output_path,
-                                            (go_namespaces, go_alternatives), merge])
+                                            (go_namespaces, go_alternatives), merge_genes_fake_contig])
             gbk_pool.starmap(genes_to_gbk.main, multiprocess_data)
 
         gbk_pool.close()

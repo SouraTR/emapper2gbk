@@ -48,15 +48,15 @@ Two modes:
 
 Examples: \n
 * One genome of "Escherichia coli" \n
-emapper2gbk genomes -fg genome.fna -fp proteome.faa -gff genome.gff -n "Escherichia coli" -o coli.gbk -a eggnog_annotation.tsv [-go go-basic.obo] \n
+emapper2gbk genomes -fn genome.fna -fp proteome.faa -gff genome.gff -n "Escherichia coli" -o coli.gbk -a eggnog_annotation.tsv [-go go-basic.obo] \n
 * Multiple genomes \n
-emapper2gbk genes -fg genome_dir/ -fp proteome_dir/ -n metagenome -o gbk_dir/ -a eggnog_annotation_dir/ [-go go-basic.obo] \n
+emapper2gbk genes -fn genome_dir/ -fp proteome_dir/ -n metagenome -o gbk_dir/ -a eggnog_annotation_dir/ [-go go-basic.obo] \n
 * One genes list \n
-emapper2gbk genes -fg genes.fna -fp genes.faa -o genes.gbk -a genes.emapper.annotation [-go go-basic.obo] \n
+emapper2gbk genes -fn genes.fna -fp genes.faa -o genes.gbk -a genes.emapper.annotation [-go go-basic.obo] \n
 * Multiple genes list \n
-emapper2gbk genes -fg genes_dir/ -fp proteomes_dir/ -nf matching_genome_orgnames.tsv -o gbk_dir/ -a eggnog_annotation_dir/ [-go go-basic.obo] \n
+emapper2gbk genes -fn genes_dir/ -fp proteomes_dir/ -nf matching_genome_orgnames.tsv -o gbk_dir/ -a eggnog_annotation_dir/ [-go go-basic.obo] \n
 * Multiple genes list with one annotation file \n
-emapper2gbk genes -fg genes_dir/ -fp proteomes_dir/ -o gbk_dir/ -a gene_cat_ggnog_annotation.tsv [-go go-basic.obo]
+emapper2gbk genes -fn genes_dir/ -fp proteomes_dir/ -o gbk_dir/ -a gene_cat_ggnog_annotation.tsv [-go go-basic.obo]
 \n
 
 You can give the GO ontology as an input to the program, it will be otherwise downloaded during the run. You can download it here: http://purl.obolibrary.org/obo/go/go-basic.obo .
@@ -119,7 +119,7 @@ def cli():
     )
     parent_parser_fna = argparse.ArgumentParser(add_help=False)
     parent_parser_fna.add_argument(
-        "-fg",
+        "-fn",
         "--fastanucleic",
         help="fna file or directory",
         required=True,
@@ -274,7 +274,7 @@ def cli():
 
     elif args.cmd == "genes":
         gbk_creation(nucleic_fasta=args.fastanucleic, protein_fasta=args.fastaprot, annot=args.annotation, org=orgnames,
-                        output_path=args.out, gobasic=args.gobasic, cpu=args.cpu, merge=args.merge)
+                        output_path=args.out, gobasic=args.gobasic, cpu=args.cpu, merge_genes_fake_contig=args.merge)
 
 
     logger.info("--- Total runtime %.2f seconds ---" % (time.time() - start_time))

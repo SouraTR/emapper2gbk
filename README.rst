@@ -161,19 +161,19 @@ Convert GFF, fastas, annotation table and species name into Genbank.
 
     * Genomic - single mode
 
-    emapper2gbk genomes -fg genome.fna -fp proteome.faa -gff genome.gff -n "Escherichia coli" -o coli.gbk -a eggnog_annotation.tsv [-go go-basic.obo]
+    emapper2gbk genomes -fn genome.fna -fp proteome.faa -gff genome.gff -n "Escherichia coli" -o coli.gbk -a eggnog_annotation.tsv [-go go-basic.obo]
 
     * Genomic - multiple mode, "bacteria" as default name
 
-    emapper2gbk genes -fg genome_dir/ -fp proteome_dir/ -n metagenome -o gbk_dir/ -a eggnog_annotation_dir/ [-go go-basic.obo]
+    emapper2gbk genes -fn genome_dir/ -fp proteome_dir/ -n metagenome -o gbk_dir/ -a eggnog_annotation_dir/ [-go go-basic.obo]
 
     * Genomic - multiple mode, tsv file for organism names
 
-    emapper2gbk genes -fg genome_dir/ -fp proteome_dir/ -nf matching_genome_orgnames.tsv -o gbk_dir/ -a eggnog_annotation_dir/ [-go go-basic.obo]
+    emapper2gbk genes -fn genome_dir/ -fp proteome_dir/ -nf matching_genome_orgnames.tsv -o gbk_dir/ -a eggnog_annotation_dir/ [-go go-basic.obo]
 
     * Metagenomic
 
-    emapper2gbk genes -fg genome_dir/ -fp proteome_dir/ -o gbk_dir/ -a gene_cat_ggnog_annotation.tsv --one-annot-file [-go go-basic.obo]
+    emapper2gbk genes -fn genome_dir/ -fp proteome_dir/ -o gbk_dir/ -a gene_cat_ggnog_annotation.tsv --one-annot-file [-go go-basic.obo]
 
     You can give the GO ontology as an input to the program, it will be otherwise downloaded during the run. You can download it here: http://purl.obolibrary.org/obo/go/go-basic.obo .
     The program requests the NCBI database to retrieve taxonomic information of the organism. However, if the organism is "bacteria" or "metagenome", the taxonomic information will not have to be retrieved online.
@@ -198,7 +198,7 @@ Convert GFF, fastas, annotation table and species name into Genbank.
 
     .. code-block:: sh
 
-        usage: emapper2gbk genomes [-h] -fg FASTANUCLEIC -fp FASTAPROT -o OUPUT_DIR [-g GFF] [-nf NAMEFILE] [-n NAME] -a
+        usage: emapper2gbk genomes [-h] -fn FASTANUCLEIC -fp FASTAPROT -o OUPUT_DIR [-g GFF] [-nf NAMEFILE] [-n NAME] -a
                                 ANNOTATION [-c CPU] [-go GOBASIC] [-q]
 
         Use the annotation of a complete gene catalogue and build gbk files for each set of genes (fna) and proteins (faa)
@@ -206,7 +206,7 @@ Convert GFF, fastas, annotation table and species name into Genbank.
 
         optional arguments:
         -h, --help            show this help message and exit
-        -fg FASTANUCLEIC, --fastanucleic FASTANUCLEIC
+        -fn FASTANUCLEIC, --fastanucleic FASTANUCLEIC
                                 fna file or directory
         -fp FASTAPROT, --fastaprot FASTAPROT
                                 faa file or directory
@@ -231,7 +231,7 @@ Convert GFF, fastas, annotation table and species name into Genbank.
 
     .. code:: sh
 
-      emapper2gbk genomes -fg genome.fna -fp proteome.faa -gff genome.gff -n "Escherichia coli" -o coli.gbk -a eggnog_annotation.tsv [-go go-basic.obo]
+      emapper2gbk genomes -fn genome.fna -fp proteome.faa -gff genome.gff -n "Escherichia coli" -o coli.gbk -a eggnog_annotation.tsv [-go go-basic.obo]
 
     * Genomic - multiple mode, "bacteria" as default name
 
@@ -241,14 +241,14 @@ Convert GFF, fastas, annotation table and species name into Genbank.
 
     .. code-block:: sh
 
-        usage: emapper2gbk genes [-h] -fg FASTANUCLEIC -fp FASTAPROT -o OUPUT_DIR [--one-annot-file] -a ANNOTATION [-c CPU]
+        usage: emapper2gbk genes [-h] -fn FASTANUCLEIC -fp FASTAPROT -o OUPUT_DIR [--one-annot-file] -a ANNOTATION [-c CPU]
                                 [-n NAME] [-nf NAMEFILE] [-go GOBASIC] [--merge MERGE] [-q]
 
         Build a gbk file for each genome/set of genes with an annotation file for each
 
         optional arguments:
         -h, --help            show this help message and exit
-        -fg FASTANUCLEIC, --fastanucleic FASTANUCLEIC
+        -fn FASTANUCLEIC, --fastanucleic FASTANUCLEIC
                                 fna file or directory
         -fp FASTAPROT, --fastaprot FASTAPROT
                                 faa file or directory
@@ -272,5 +272,5 @@ Convert GFF, fastas, annotation table and species name into Genbank.
 
     .. code:: sh
 
-      emapper2gbk genes -fg genome_dir/ -fp proteome_dir/ -o gbk_dir/ -a gene_cat_ggnog_annotation.tsv [-go go-basic.obo]
+      emapper2gbk genes -fn genome_dir/ -fp proteome_dir/ -o gbk_dir/ -a gene_cat_ggnog_annotation.tsv [-go go-basic.obo]
 
