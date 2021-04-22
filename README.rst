@@ -30,8 +30,6 @@ Main inputs
 emapper2gbk genes
 ~~~~~~~~~~~~~~~~~
 
-.. image:: pictures/emapper2gbk_genes.svg
-
 For each annotated list of genes, inputs are:
 
 * a nucleotide fasta file containing the CDS sequence of each genes or a folder containing multiple nucleotide fasta files.
@@ -69,11 +67,12 @@ Input with folders:
     ├── gene_list_1.tsv
     ├── gene_list_2.tsv
 
+.. image:: pictures/emapper2gbk_genes.svg
+
+To work the ID of the genes in the nucleic fasta file (`-fn`) must be the same than the ID of the proteins in the protein fasta file (`-fp`) and in the annotation file (`-a`).
 
 emapper2gbk genomes
 ~~~~~~~~~~~~~~~~~~~
-
-.. image:: pictures/emapper2gbk_genomes.svg
 
 For each genomes, inputs are:
 
@@ -115,6 +114,12 @@ Input with folders:
     gff
     ├── genome_1.gff
     ├── genome_2.gff
+
+.. image:: pictures/emapper2gbk_genomes.svg
+
+The ID in the chromosome/contigs/scaffolds fasta file (`-fn`) must correspond to region in the gff file (`-g`).
+Then the genes in the region will be found and the child CDS associated to the genes wil be extracted.
+The CDS ID must be the same than the ID in the protein fasta file (`-fp`) and the ID in the eggnog-mapper annotation file (`-a`).
 
 Dependencies and installation
 -----------------------------
