@@ -9,17 +9,23 @@ import subprocess
 from Bio import SeqIO
 from emapper2gbk.emapper2gbk import gbk_creation
 
-GFF_INPUT = 'betaox.gff'
-FAA_INPUT = 'betaox.faa'
-FAA_DIR = 'faa'
-FNA_INPUT = 'betaox.fna'
-FNA_DIR = 'fna'
+
+FAA_INPUT = 'betaox_genes.faa'
+FNA_INPUT = 'betaox_genes.fna'
+
 GENOME_FNA_DIR = 'fna_genomes_mode'
-GENOME_FNA_INPUT = 'genome_betaox.fna'
+GENOME_FNA_INPUT = 'betaox_genomes.fna'
+GENOME_FAA_INPUT = 'betaox_genomes.faa'
+GENOME_GFF_INPUT = 'betaox_genomes.gff'
+
 ANNOT_INPUT = 'betaox_annotation.tsv'
 ANNOT_INPUT_V2 = 'betaox_v2.emapper.annotations'
 ANNOT_DIR = 'ann'
+
+FAA_DIR = 'faa'
+FNA_DIR = 'fna'
 GFF_DIR = 'gff'
+
 ORG_NAME = 'Escherichia coli'
 ORG_FILE = 'organism_names.tsv'
 GO_FILE = 'go-basic.obo'
@@ -316,9 +322,9 @@ def test_gbk_genomes_mode_test():
     gbk_test = 'test_gff.gbk'
 
     gbk_creation(nucleic_fasta=GENOME_FNA_INPUT,
-                protein_fasta=FAA_INPUT,
+                protein_fasta=GENOME_FAA_INPUT,
                 annot=ANNOT_INPUT,
-                gff=GFF_INPUT,
+                gff=GENOME_GFF_INPUT,
                 org=ORG_NAME,
                 output_path=gbk_test,
                 gobasic=GO_FILE)
@@ -334,8 +340,8 @@ def test_gbk_genomes_mode_test_cli():
     """
     gbk_test = 'test_gff.gbk'
     print("*** Test genomes mode with file as input with cli***")
-    subprocess.call(['emapper2gbk', 'genomes', '-fn', GENOME_FNA_INPUT, '-fp', FAA_INPUT,
-                        '-a', ANNOT_INPUT, '-g', GFF_INPUT, '-o', gbk_test, '-go', GO_FILE,
+    subprocess.call(['emapper2gbk', 'genomes', '-fn', GENOME_FNA_INPUT, '-fp', GENOME_FAA_INPUT,
+                        '-a', ANNOT_INPUT, '-g', GENOME_GFF_INPUT, '-o', gbk_test, '-go', GO_FILE,
                         '-n', ORG_NAME])
 
     compare_two_gbks(EXPECTED_GBK_WITH_GFF, gbk_test)

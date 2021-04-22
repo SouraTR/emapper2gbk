@@ -30,6 +30,8 @@ Main inputs
 emapper2gbk genes
 ~~~~~~~~~~~~~~~~~
 
+.. image:: pictures/emapper2gbk_genes.svg
+
 For each annotated list of genes, inputs are:
 
 * a nucleotide fasta file containing the CDS sequence of each genes or a folder containing multiple nucleotide fasta files.
@@ -70,6 +72,8 @@ Input with folders:
 
 emapper2gbk genomes
 ~~~~~~~~~~~~~~~~~~~
+
+.. image:: pictures/emapper2gbk_genomes.svg
 
 For each genomes, inputs are:
 
