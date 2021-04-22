@@ -6,11 +6,35 @@
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="1280"
    height="1096"
    overflow="hidden"
    version="1.1"
-   id="svg135">
+   id="svg135"
+   sodipodi:docname="emapper2gbk_genes.svg"
+   inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1001"
+     id="namedview77"
+     showgrid="false"
+     inkscape:zoom="1.0709829"
+     inkscape:cx="800.05796"
+     inkscape:cy="1052.3378"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g133" />
   <metadata
      id="metadata139">
     <rdf:RDF>
@@ -19,7 +43,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -135,11 +159,11 @@
      clip-path="url(#clip0)"
      id="g133">
     <rect
-       x="0"
-       y="0"
+       x="26.409639"
+       y="-15.185542"
        width="1280"
        height="1096"
-       fill="#FFFFFF"
+       fill="#ffffff"
        id="rect35" />
     <g
        clip-path="url(#clip1)"
@@ -189,22 +213,6 @@
            id="use49" />
       </g>
     </g>
-    <text
-       font-family="Calibri,Calibri_MSFontService,sans-serif"
-       font-weight="400"
-       font-size="24"
-       transform="translate(122.6 27)"
-       id="text59">Genes Nucleic Fasta (<tspan
-   font-weight="700"
-   font-size="24"
-   x="206.627"
-   y="0"
-   id="tspan55">-</tspan><tspan
-   font-weight="700"
-   font-size="24"
-   x="213.96"
-   y="0"
-   id="tspan57">fn</tspan>)</text>
     <rect
        x="28"
        y="31"
@@ -233,42 +241,6 @@
        fill="none"
        fill-rule="evenodd"
        id="path65" />
-    <text
-       font-family="Calibri,Calibri_MSFontService,sans-serif"
-       font-weight="400"
-       font-size="24"
-       transform="translate(381.1 96)"
-       id="text81">1) Get genes linked <tspan
-   font-size="24"
-   x="0"
-   y="29"
-   id="tspan67">to protein sequences</tspan><tspan
-   font-size="24"
-   x="384.833"
-   y="270"
-   id="tspan69">Eggnog</tspan><tspan
-   font-size="24"
-   x="456.053"
-   y="270"
-   id="tspan71">-</tspan><tspan
-   font-size="24"
-   x="463.387"
-   y="270"
-   id="tspan73">mapper annotation (</tspan><tspan
-   font-weight="700"
-   font-size="24"
-   x="665.373"
-   y="270"
-   id="tspan75">-</tspan><tspan
-   font-weight="700"
-   font-size="24"
-   x="672.707"
-   y="270"
-   id="tspan77">a</tspan><tspan
-   font-size="24"
-   x="684.54"
-   y="270"
-   id="tspan79">)</tspan></text>
     <rect
        x="31"
        y="35"
@@ -297,34 +269,6 @@
        fill="none"
        fill-rule="evenodd"
        id="path87" />
-    <text
-       font-family="Calibri,Calibri_MSFontService,sans-serif"
-       font-weight="400"
-       font-size="24"
-       transform="translate(406.267 356)"
-       id="text99">2) Get <tspan
-   font-size="24"
-   x="0"
-   y="29"
-   id="tspan89">annotation </tspan><tspan
-   font-size="24"
-   x="0"
-   y="58"
-   id="tspan91">linked to genes</tspan><tspan
-   font-size="24"
-   x="367.667"
-   y="-319"
-   id="tspan93">Protein Fasta (</tspan><tspan
-   font-weight="700"
-   font-size="24"
-   x="506.98"
-   y="-319"
-   id="tspan95">-</tspan><tspan
-   font-weight="700"
-   font-size="24"
-   x="514.313"
-   y="-319"
-   id="tspan97">fp</tspan>)</text>
     <path
        d="M1259 611C1259 634.189 1255.87 652.987 1252 652.987L655.601 652.987C651.737 652.987 648.604 671.785 648.604 694.974 648.604 671.785 645.471 652.987 641.607 652.987L27.9969 652.987C24.1327 652.987 21.0001 634.189 21.0001 611"
        stroke="#000000"
@@ -333,26 +277,6 @@
        fill="none"
        fill-rule="evenodd"
        id="path101" />
-    <text
-       font-family="Calibri,Calibri_MSFontService,sans-serif"
-       font-weight="400"
-       font-size="24"
-       transform="translate(565.267 736)"
-       id="text109">Genbank Output (<tspan
-   font-weight="700"
-   font-size="24"
-   x="175.667"
-   y="0"
-   id="tspan103">-</tspan><tspan
-   font-weight="700"
-   font-size="24"
-   x="183"
-   y="0"
-   id="tspan105">o</tspan><tspan
-   font-size="24"
-   x="195.833"
-   y="0"
-   id="tspan107">)</tspan></text>
     <g
        clip-path="url(#clip10)"
        transform="matrix(0.000104987 0 0 0.000104987 468 743)"
@@ -449,5 +373,87 @@
        stroke-miterlimit="8"
        fill="none"
        id="rect131" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;"
+       x="84.510841"
+       y="21.787952"
+       id="text904"><tspan
+         sodipodi:role="line"
+         id="tspan902"
+         x="84.510841"
+         y="21.787952"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:21.3333px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">Genes Nucleic Fasta (<tspan
+   style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:21.3333px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
+   id="tspan906">-fn</tspan>)</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+       x="888.02405"
+       y="43.575905"
+       id="text910"><tspan
+         sodipodi:role="line"
+         id="tspan908"
+         x="888.02405"
+         y="43.575905"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:21.3333px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal">Protein Fasta (<tspan
+   style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:21.3333px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
+   id="tspan912">-fp</tspan>)</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:21.3333px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+       x="394.8241"
+       y="364.453"
+       id="text916"><tspan
+         sodipodi:role="line"
+         id="tspan914"
+         x="394.8241"
+         y="364.453">2) Get</tspan><tspan
+         sodipodi:role="line"
+         x="394.8241"
+         y="391.11963"
+         id="tspan920">annotation</tspan><tspan
+         sodipodi:role="line"
+         x="394.8241"
+         y="417.78625"
+         id="tspan918">linked to genes</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:21.3333px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
+       x="374.42242"
+       y="98.974503"
+       id="text924"><tspan
+         sodipodi:role="line"
+         id="tspan922"
+         x="374.42242"
+         y="98.974503">1) Get genes linked</tspan><tspan
+         sodipodi:role="line"
+         x="374.42242"
+         y="125.64113"
+         id="tspan926">to protein sequences</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:21.3333px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;"
+       x="746.97736"
+       y="360.4166"
+       id="text930"><tspan
+         sodipodi:role="line"
+         id="tspan928"
+         x="746.97736"
+         y="360.4166">Eggnog-mapper annotation (<tspan
+   style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:21.3333px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
+   id="tspan932">-a</tspan>)</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:21.3333px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;"
+       x="535.02252"
+       y="730.17041"
+       id="text936"><tspan
+         sodipodi:role="line"
+         id="tspan934"
+         x="535.02252"
+         y="730.17041">Genbank Output (<tspan
+   style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:21.3333px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal"
+   id="tspan938">-o</tspan>)</tspan></text>
   </g>
 </svg>

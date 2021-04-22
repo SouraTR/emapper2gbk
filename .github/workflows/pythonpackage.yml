@@ -8,6 +8,7 @@ on:
     branches: '*'
     paths-ignore:
       - 'docs/**'
+      - 'pictures/**'
       - 'AUTHORS.rst'
       - 'HISTORY.rst'
       - 'README.rst'
@@ -15,6 +16,7 @@ on:
     branches: [ master ]
     paths-ignore:
       - 'docs/**'
+      - 'pictures/**'
       - 'AUTHORS.rst'
       - 'HISTORY.rst'
       - 'README.rst'
