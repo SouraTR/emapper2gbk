@@ -18,7 +18,7 @@ There are two main modes:
 
 * **genes mode**: suitable when a list of isolated genes/proteins have been annotated with Eggnog-mapper, typically the gene catalogue of a metagenome.
 
-* **genomes mode**: usually when focusing on a single organism, with a `.gff` file. The creation of genbanks can be performed in parallel by providing directories (with matching names for genomes, proteomes and annotation files) as inputs.
+* **genomes mode**: usually when focusing on a single organism, with a ``.gff`` file. The creation of genbanks can be performed in parallel by providing directories (with matching names for genomes, proteomes and annotation files) as inputs.
 
 **If you use emapper2gbk, please cite**
 
@@ -34,7 +34,7 @@ For each annotated list of genes, inputs are:
 
 * a nucleotide fasta file containing the CDS sequence of each genes or a folder containing multiple nucleotide fasta files.
 * the translated sequences in amino-acids in fasta or a folder containing the corresponding protein sequences to the nucleotide sequences (must be the same name).
-* the annotation file obtained after Eggnog-mapper annotation (usually `xxx.emapper.annotation`) or a folder with multiple annotation files (must be the same name as nucleotide fasta file and ends with '.tsv' extension).
+* the annotation file obtained after Eggnog-mapper annotation (usually ``xxx.emapper.annotation``) or a folder with multiple annotation files (must be the same name as nucleotide fasta file and ends with '.tsv' extension).
 
 In addition, as optional files:
 
@@ -69,7 +69,7 @@ Input with folders:
 
 .. image:: pictures/emapper2gbk_genes.svg
 
-To work the ID of the genes in the nucleic fasta file (`-fn`) must be the same than the ID of the proteins in the protein fasta file (`-fp`) and in the annotation file (`-a`).
+To work the ID of the genes in the nucleic fasta file (``-fn``) must be the same than the ID of the proteins in the protein fasta file (``-fp``) and in the annotation file (``-a``).
 
 emapper2gbk genomes
 ~~~~~~~~~~~~~~~~~~~
@@ -79,7 +79,7 @@ For each genomes, inputs are:
 * a nucleotide fasta file containing the sequence of each contigs/chromosomes for the genome or a folder containing multiple nucleotide fasta files.
 * the proteome corresponding to the genome or a folder containing the corresponding protein sequences to the nucleotide sequences (must be the same name).
 * the GFF file corresponding to the genome or a folder containing multiple GFF files (must be the same name as the nucleotide folder).
-* the annotation file obtained after Eggnog-mapper annotation (usually `xxx.emapper.annotation`) or a folder with multiple annotation files (must be the same name as nucleotide fasta file and ends with '.tsv' extension)
+* the annotation file obtained after Eggnog-mapper annotation (usually ``xxx.emapper.annotation``) or a folder with multiple annotation files (must be the same name as nucleotide fasta file and ends with '.tsv' extension)
 
 In addition, as optional files:
 
@@ -117,9 +117,9 @@ Input with folders:
 
 .. image:: pictures/emapper2gbk_genomes.svg
 
-The ID in the chromosome/contigs/scaffolds fasta file (`-fn`) must correspond to region in the gff file (`-g`).
+The ID in the chromosome/contigs/scaffolds fasta file (``-fn``) must correspond to region in the gff file (``-g``).
 Then the genes in the region will be found and the child CDS associated to the genes wil be extracted.
-The CDS ID must be the same than the ID in the protein fasta file (`-fp`) and the ID in the eggnog-mapper annotation file (`-a`).
+The CDS ID must be the same than the ID in the protein fasta file (``-fp``) and the ID in the eggnog-mapper annotation file (``-a``).
 
 Dependencies and installation
 -----------------------------
