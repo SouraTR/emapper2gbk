@@ -312,7 +312,10 @@ def read_annotation(eggnog_outfile:str):
         annotation_data.replace(np.nan, '', inplace=True)
         # Assign the headers
         annotation_data.columns = headers_row
-        annotation_dict = annotation_data.set_index('query_name')[['GOs','EC', 'Preferred_name']].to_dict('index')
+        if 'query_name' in annotation_data.columns:
+            annotation_dict = annotation_data.set_index('query_name')[['GOs','EC', 'Preferred_name']].to_dict('index')
+        elif 'query' in annotation_data.columns:
+            annotation_dict = annotation_data.set_index('query')[['GOs','EC', 'Preferred_name']].to_dict('index')
         for key in annotation_dict:
             yield key, annotation_dict[key]
 
@@ -344,12 +347,12 @@ def create_cds_feature(id_gene, start_position, end_position, strand, annot, go_
     if id_gene in annot.keys():
         # Add gene name.
         if 'Preferred_name' in annot[id_gene]:
-            if annot[id_gene]['Preferred_name'] != "":
+            if annot[id_gene]['Preferred_name'] != '' and annot[id_gene]['Preferred_name'] != '-':
                 new_feature_cds.qualifiers['gene'] = annot[id_gene]['Preferred_name']
 
-        if 'GOs' in annot[id_gene] :
+        if 'GOs' in annot[id_gene]:
             gene_gos = annot[id_gene]['GOs'].split(',')
-            if gene_gos != [""]:
+            if gene_gos != ['-'] and gene_gos != ['-']:
                 go_components = []
                 go_functions = []
                 go_process = []

@@ -103,10 +103,10 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
         genome_nucleic_sequence[region_id] = record.seq
 
     # Dictionary with gene id as key and protein sequence as value.
-    gene_protein_seq = {}
+    gene_protein_seqs = {}
 
     for record in SeqIO.parse(protein_fasta, "fasta"):
-        gene_protein_seq[record.id] = record.seq
+        gene_protein_seqs[record.id] = record.seq
 
     # Create a taxonomy dictionary querying the EBI.
     species_informations = create_taxonomic_data(org)
@@ -162,12 +162,12 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
             # Iterate through gene childs to find CDS object.
             # For each CDS in the GFF add a CDS in the genbank.
             for cds_object in gff_database.children(gene, featuretype="CDS", order_by='start'):
-                cds_id = cds_object.id.replace('cds-','')
+                cds_id = cds_object.id
                 start_position = cds_object.start - 1
                 end_position = cds_object.end
                 strand = strand_change(cds_object.strand)
 
-                new_cds_feature = create_cds_feature(cds_id, start_position, end_position, strand, annot, go_namespaces, go_alternatives, gene_protein_seq)
+                new_cds_feature = create_cds_feature(cds_id, start_position, end_position, strand, annot, go_namespaces, go_alternatives, gene_protein_seqs)
                 new_cds_feature.qualifiers['locus_tag'] = id_gene
                 # Add CDS information to contig record
                 record.features.append(new_cds_feature)

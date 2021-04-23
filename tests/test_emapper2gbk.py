@@ -19,6 +19,7 @@ GENOME_FAA_INPUT = 'betaox_genomes.faa'
 GENOME_GFF_INPUT = 'betaox_genomes.gff'
 
 ANNOT_INPUT = 'betaox_annotation.tsv'
+GENOME_ANNOT_INPUT = 'betaox_annotation_genomes.tsv'
 ANNOT_INPUT_V2 = 'betaox_v2.emapper.annotations'
 ANNOT_DIR = 'ann'
 
@@ -323,7 +324,7 @@ def test_gbk_genomes_mode_test():
 
     gbk_creation(nucleic_fasta=GENOME_FNA_INPUT,
                 protein_fasta=GENOME_FAA_INPUT,
-                annot=ANNOT_INPUT,
+                annot=GENOME_ANNOT_INPUT,
                 gff=GENOME_GFF_INPUT,
                 org=ORG_NAME,
                 output_path=gbk_test,
@@ -341,7 +342,7 @@ def test_gbk_genomes_mode_test_cli():
     gbk_test = 'test_gff.gbk'
     print("*** Test genomes mode with file as input with cli***")
     subprocess.call(['emapper2gbk', 'genomes', '-fn', GENOME_FNA_INPUT, '-fp', GENOME_FAA_INPUT,
-                        '-a', ANNOT_INPUT, '-g', GENOME_GFF_INPUT, '-o', gbk_test, '-go', GO_FILE,
+                        '-a', GENOME_ANNOT_INPUT, '-g', GENOME_GFF_INPUT, '-o', gbk_test, '-go', GO_FILE,
                         '-n', ORG_NAME])
 
     compare_two_gbks(EXPECTED_GBK_WITH_GFF, gbk_test)

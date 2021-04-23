@@ -21,7 +21,7 @@ from Bio.Seq import Seq
 from collections import OrderedDict
 from typing import Union
 
-from emapper2gbk.utils import is_valid_file, create_GO_namespaces_alternatives, read_annotation, create_taxonomic_data, get_basename, record_info
+from emapper2gbk.utils import create_cds_feature, is_valid_file, create_GO_namespaces_alternatives, read_annotation, create_taxonomic_data, get_basename, record_info
 
 logger = logging.getLogger(__name__)
 
@@ -138,62 +138,11 @@ def create_genbank(gene_nucleic_seqs, gene_protein_seqs, annot,
         # Add gene information to contig record.
         record.features.append(new_feature_gene)
 
-        new_feature_cds = sf.SeqFeature(sf.FeatureLocation(start_position,
-                                                            end_position,
-                                                            strand),
-                                                            type="CDS")
-
-        # Add gene ID in locus_tag.
-        new_feature_cds.qualifiers['locus_tag'] = id_gene
-
-        # Add functional annotations.
-        if gene_nucleic_id in annot.keys():
-            # Add gene name.
-            if 'Preferred_name' in annot[gene_nucleic_id]:
-                if annot[gene_nucleic_id]['Preferred_name'] != "":
-                    new_feature_cds.qualifiers['gene'] = annot[gene_nucleic_id]['Preferred_name']
-
-            # Add GO annotation according to the namespace.
-            if 'GOs' in annot[gene_nucleic_id]:
-                gene_gos = annot[gene_nucleic_id]['GOs'].split(',')
-                if gene_gos != [""]:
-                    go_components = []
-                    go_functions = []
-                    go_process = []
-
-                    for go in gene_gos:
-                        # Check if GO term is not a deprecated one.
-                        # If yes take the corresponding one in alternative GO.
-                        if go not in go_namespaces:
-                            go_test = go_alternatives[go]
-                        else:
-                            go_test = go
-                        if go_namespaces[go_test] == 'cellular_component':
-                                go_components.append(go)
-                        if go_namespaces[go_test] == 'molecular_function':
-                            go_functions.append(go)
-                        if go_namespaces[go_test] == 'biological_process':
-                            go_process.append(go)
-                    new_feature_cds.qualifiers['go_component'] = go_components
-                    new_feature_cds.qualifiers['go_function'] = go_functions
-                    new_feature_cds.qualifiers['go_process'] = go_process
-
-            # Add EC annotation.
-            if 'EC' in annot[gene_nucleic_id]:
-                gene_ecs = annot[gene_nucleic_id]['EC'].split(',')
-                if '' in gene_ecs:
-                    gene_ecs.remove('')
-                if '-' in gene_ecs:
-                    gene_ecs.remove('-')
-                if gene_ecs != []:
-                    new_feature_cds.qualifiers['EC_number'] = gene_ecs
-
-        if gene_nucleic_id in gene_protein_seqs.keys():
-            # Add protein sequence.
-            new_feature_cds.qualifiers['translation'] = gene_protein_seqs[gene_nucleic_id]
+        new_cds_feature = create_cds_feature(id_gene, start_position, end_position, strand, annot, go_namespaces, go_alternatives, gene_protein_seqs)
+        new_cds_feature.qualifiers['locus_tag'] = id_gene
 
         # Add CDS information to contig record
-        record.features.append(new_feature_cds)
+        record.features.append(new_cds_feature)
 
         records.append(record)
 
@@ -257,62 +206,11 @@ def create_genbank_fake_contig(gene_nucleic_seqs, gene_protein_seqs, annot,
             # Add gene information to contig record.
             record.features.append(new_feature_gene)
 
-            new_feature_cds = sf.SeqFeature(sf.FeatureLocation(start_position,
-                                                                end_position,
-                                                                strand),
-                                                                type="CDS")
-
-            # Add gene ID in locus_tag.
-            new_feature_cds.qualifiers['locus_tag'] = id_gene
-
-            # Add functional annotations.
-            if id_gene in annot.keys():
-                # Add gene name.
-                if 'Preferred_name' in annot[id_gene]:
-                    if annot[id_gene]['Preferred_name'] != "":
-                        new_feature_cds.qualifiers['gene'] = annot[id_gene]['Preferred_name']
-
-                # Add GO annotation according to the namespace.
-                if 'GOs' in annot[id_gene]:
-                    gene_gos = annot[id_gene]['GOs'].split(',')
-                    if gene_gos != [""]:
-                        go_components = []
-                        go_functions = []
-                        go_process = []
-
-                        for go in gene_gos:
-                            # Check if GO term is not a deprecated one.
-                            # If yes take the corresponding one in alternative GO.
-                            if go not in go_namespaces:
-                                go_test = go_alternatives[go]
-                            else:
-                                go_test = go
-                            if go_namespaces[go_test] == 'cellular_component':
-                                    go_components.append(go)
-                            if go_namespaces[go_test] == 'molecular_function':
-                                go_functions.append(go)
-                            if go_namespaces[go_test] == 'biological_process':
-                                go_process.append(go)
-                        new_feature_cds.qualifiers['go_component'] = go_components
-                        new_feature_cds.qualifiers['go_function'] = go_functions
-                        new_feature_cds.qualifiers['go_process'] = go_process
-
-                # Add EC annotation.
-                if 'EC' in annot[id_gene]:
-                    gene_ecs = annot[id_gene]['EC'].split(',')
-                    if '' in gene_ecs:
-                        gene_ecs.remove('')
-                    if '-' in gene_ecs:
-                        gene_ecs.remove('-')
-                    if gene_ecs != []:
-                        new_feature_cds.qualifiers['EC_number'] = gene_ecs
-
-            if id_gene in gene_protein_seqs.keys():
-                # Add protein sequence.
-                new_feature_cds.qualifiers['translation'] = gene_protein_seqs[id_gene]
+            new_cds_feature = create_cds_feature(id_gene, start_position, end_position, strand, annot, go_namespaces, go_alternatives, gene_protein_seqs)
+            new_cds_feature.qualifiers['locus_tag'] = id_gene
 
             # Add CDS information to contig record
-            record.features.append(new_feature_cds)
+            record.features.append(new_cds_feature)
 
         records.append(record)
     SeqIO.write(records, output_path, 'genbank')
