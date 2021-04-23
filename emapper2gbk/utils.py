@@ -314,6 +314,7 @@ def read_annotation(eggnog_outfile:str):
         annotation_data.columns = headers_row
         if 'query_name' in annotation_data.columns:
             annotation_dict = annotation_data.set_index('query_name')[['GOs','EC', 'Preferred_name']].to_dict('index')
+        # 'query' added for compatibility with eggnog-mapper 2.1.2
         elif 'query' in annotation_data.columns:
             annotation_dict = annotation_data.set_index('query')[['GOs','EC', 'Preferred_name']].to_dict('index')
         for key in annotation_dict:
@@ -352,6 +353,7 @@ def create_cds_feature(id_gene, start_position, end_position, strand, annot, go_
 
         if 'GOs' in annot[id_gene]:
             gene_gos = annot[id_gene]['GOs'].split(',')
+            # '-' added for compatibility with eggnog-mapper 2.1.2
             if gene_gos != ['-'] and gene_gos != ['-']:
                 go_components = []
                 go_functions = []

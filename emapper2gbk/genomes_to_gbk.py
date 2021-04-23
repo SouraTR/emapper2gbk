@@ -139,7 +139,7 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
         record = record_info(region_id, genome_nucleic_sequence[region_id], species_informations)
         gene_region_id = [gene for gene in gff_database.features_of_type('gene') if gene.chrom == region_id]
         for gene in gene_region_id:
-            id_gene = gene.id.replace('gene-','')
+            id_gene = gene.id
 
             # If id is numeric, change it
             if id_gene.isnumeric():
