@@ -121,6 +121,24 @@ The ID in the chromosome/contigs/scaffolds fasta file (``-fn``) must correspond 
 Then the genes in the region will be found and the child CDS associated to the genes wil be extracted.
 The CDS ID must be the same than the ID in the protein fasta file (``-fp``) and the ID in the eggnog-mapper annotation file (``-a``).
 
+By default emapper2gbk searches for inheritance between genes and CDS in the GFF files.
+A gene feature is required and the CDS feature must have the gene feature as a parent, like in this example:
+
+.. code-block:: text
+
+    ##gff file
+    region_1	RefSeq	region	1	12642	.	+	.	ID=region_1
+    region_1	RefSeq	gene	1	2445	.	-	.	ID=gene_1
+    region_1	RefSeq	CDS	1	2445	.	-	0	ID=cds_1;Parent=gene_1
+
+But some GFF files can be formatted differently, so by using the argument ``-gt cds_only``, it is possible to use GFF fiel with only CDS, like:
+
+.. code-block:: text
+
+    ##gff file
+    region_1	RefSeq	region	1	12642	.	+	.	ID=region_1
+    region_1	RefSeq	CDS	1	2445	.	-	0	ID=cds_1
+
 Dependencies and installation
 -----------------------------
 
@@ -197,8 +215,8 @@ Convert GFF, fastas, annotation table and species name into Genbank.
     valid subcommands:
 
     {genes,genomes}
-        genes          genomic mode : 1-n annot, 1-n faa, 1-n fna (gene sequences) --> 1 gbk
-        genomes        genoems mode: 1 contig/chromosome fasta, 1 protein fasta, 1 GFF, 1 annot --> 1 gbk
+        genes          genes mode : 1-n annot, 1-n faa, 1-n fna (gene sequences) --> 1 gbk
+        genomes        genomes mode: 1-n contig/chromosome fasta, 1-n protein fasta, 1-n GFF, 1-n annot --> 1 gbk
 
 
 * Genomes mode
@@ -207,11 +225,10 @@ Convert GFF, fastas, annotation table and species name into Genbank.
 
     .. code-block:: sh
 
-        usage: emapper2gbk genomes [-h] -fn FASTANUCLEIC -fp FASTAPROT -o OUPUT_DIR [-g GFF] [-nf NAMEFILE] [-n NAME] -a
-                                ANNOTATION [-c CPU] [-go GOBASIC] [-q]
+        usage: emapper2gbk genomes [-h] -fn FASTANUCLEIC -fp FASTAPROT -o OUPUT_DIR -g GFF [-gt GFF_TYPE] [-nf NAMEFILE]
+                                [-n NAME] -a ANNOTATION [-c CPU] [-go GOBASIC] [-q]
 
-        Use the annotation of a complete gene catalogue and build gbk files for each set of genes (fna) and proteins (faa)
-        from input directories
+        Build a gbk file for each genome with an annotation file for each
 
         optional arguments:
         -h, --help            show this help message and exit
@@ -222,6 +239,9 @@ Convert GFF, fastas, annotation table and species name into Genbank.
         -o OUPUT_DIR, --out OUPUT_DIR
                                 output directory/file path
         -g GFF, --gff GFF     gff file or directory
+        -gt GFF_TYPE, --gff-type GFF_TYPE
+                                gff type, by default emapper2gbk search for CDS with gene as Parent in the GFF, but by using
+                                the '-gt cds_only' option emapper2gbk will only use the CDS information from the genome
         -nf NAMEFILE, --namefile NAMEFILE
                                 organism/genome name (col 2) associated to genome file basenames (col 1). Default =
                                 'metagenome' for metagenomic and 'cellular organisms' for genomic

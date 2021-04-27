@@ -133,6 +133,14 @@ def cli():
         required=True,
         type=str
     )
+    parent_parser_gff_type = argparse.ArgumentParser(add_help=False)
+    parent_parser_gff_type.add_argument(
+        "-gt",
+        "--gff-type",
+        help="gff type, by default emapper2gbk search for CDS with gene as Parent in the GFF, but by using the '-gt cds_only' option emapper2gbk will only use the CDS information from the genome",
+        required=False,
+        type=str
+    )
     parent_parser_ann = argparse.ArgumentParser(add_help=False)
     parent_parser_ann.add_argument(
         "-a",
@@ -183,7 +191,7 @@ def cli():
         dest="cmd")
     genes_parser = subparsers.add_parser(
         "genes",
-        help="genomic mode : 1-n annot, 1-n faa, 1-n fna (gene sequences) --> 1 gbk",
+        help="genes mode : 1-n annot, 1-n faa, 1-n fna (gene sequences) --> 1 gbk",
         parents=[
             parent_parser_fna, parent_parser_faa, parent_parser_o,
             parent_parser_ann, parent_parser_c, parent_parser_name, parent_parser_namef,
@@ -194,10 +202,11 @@ def cli():
     )
     genomes_parser = subparsers.add_parser(
         "genomes",
-        help="genoems mode: 1 contig/chromosome fasta, 1 protein fasta, 1 GFF, 1 annot --> 1 gbk",
+        help="genomes mode: 1-n contig/chromosome fasta, 1-n protein fasta, 1-n GFF, 1-n annot --> 1 gbk",
         parents=[
-            parent_parser_fna, parent_parser_faa, parent_parser_o, parent_parser_gff, parent_parser_namef, parent_parser_name,
-            parent_parser_ann, parent_parser_c, parent_parser_go, parent_parser_q
+            parent_parser_fna, parent_parser_faa, parent_parser_o, parent_parser_gff, parent_parser_gff_type,
+            parent_parser_namef, parent_parser_name, parent_parser_ann,
+            parent_parser_c, parent_parser_go, parent_parser_q
         ],
         description=
         "Build a gbk file for each genome with an annotation file for each"
@@ -269,8 +278,12 @@ def cli():
                     logger.warning("The default organism name 'metagenome' is used.")
 
     if args.cmd == "genomes":
-        gbk_creation(nucleic_fasta=args.fastanucleic, protein_fasta=args.fastaprot, annot=args.annotation, gff=args.gff, org=orgnames,
-                        output_path=args.out, gobasic=args.gobasic, cpu=args.cpu)
+        if not args.gff_type:
+            gff_type = 'default'
+        else:
+            gff_type = args.gff_type
+        gbk_creation(nucleic_fasta=args.fastanucleic, protein_fasta=args.fastaprot, annot=args.annotation, gff=args.gff, gff_type=gff_type,
+                        org=orgnames, output_path=args.out, gobasic=args.gobasic, cpu=args.cpu)
 
     elif args.cmd == "genes":
         gbk_creation(nucleic_fasta=args.fastanucleic, protein_fasta=args.fastaprot, annot=args.annotation, org=orgnames,

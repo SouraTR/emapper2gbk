@@ -75,14 +75,15 @@ def strand_change(input_strand):
 
 
 def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
-                gff:str, org:str, output_path:str, gobasic:Union[None, str, dict]):
+                gff:str, gff_type:str, org:str, output_path:str, gobasic:Union[None, str, dict]):
     """ Create genbank file from nucleic, protein fasta and a gff file plus eggnog mapper annotation file.
 
     Args:
         nucleic_fasta (str): nucleic fasta file
         protein_fasta (str): protein fasta file
         annot (str): annotation file or dictionary
-        gff (str, optional): gff file
+        gff (str): gff file
+        gff_type (str): format of the gff file (default, prodigal)
         org (str): organims name or mapping file
         output_path (str): output file or directory
         gobasic (str, dict): path to go-basic.obo file or dictionary
@@ -137,38 +138,65 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
     # Then look if protein informations are available.
     for region_id in genome_nucleic_sequence:
         record = record_info(region_id, genome_nucleic_sequence[region_id], species_informations)
-        gene_region_id = [gene for gene in gff_database.features_of_type('gene') if gene.chrom == region_id]
-        for gene in gene_region_id:
-            id_gene = gene.id
+        if gff_type == 'default':
+            gene_region_id = [gene for gene in gff_database.features_of_type('gene') if gene.chrom == region_id]
+            for gene in gene_region_id:
+                id_gene = gene.id
 
-            # If id is numeric, change it
-            if id_gene.isnumeric():
-                id_gene = f"gene_{id_gene}"
-            else:
-                id_gene = id_gene
-            chrom_id = gene.chrom
+                # If id is numeric, change it
+                if id_gene.isnumeric():
+                    id_gene = f"gene_{id_gene}"
+                else:
+                    id_gene = id_gene
 
-            start_position = gene.start -1
-            end_position = gene.end
-            strand = strand_change(gene.strand)
-            new_feature_gene = sf.SeqFeature(sf.FeatureLocation(start_position,
-                                                                end_position,
-                                                                strand),
-                                                                type="gene")
-            new_feature_gene.qualifiers['locus_tag'] = id_gene
-            # Add gene information to contig record.
-            record.features.append(new_feature_gene)
+                start_position = gene.start -1
+                end_position = gene.end
+                strand = strand_change(gene.strand)
+                new_feature_gene = sf.SeqFeature(sf.FeatureLocation(start_position,
+                                                                    end_position,
+                                                                    strand),
+                                                                    type="gene")
+                new_feature_gene.qualifiers['locus_tag'] = id_gene
+                # Add gene information to contig record.
+                record.features.append(new_feature_gene)
 
-            # Iterate through gene childs to find CDS object.
-            # For each CDS in the GFF add a CDS in the genbank.
-            for cds_object in gff_database.children(gene, featuretype="CDS", order_by='start'):
-                cds_id = cds_object.id
-                start_position = cds_object.start - 1
-                end_position = cds_object.end
-                strand = strand_change(cds_object.strand)
+                # Iterate through gene childs to find CDS object.
+                # For each CDS in the GFF add a CDS in the genbank.
+                for cds_object in gff_database.children(gene, featuretype="CDS", order_by='start'):
+                    cds_id = cds_object.id
+                    start_position = cds_object.start - 1
+                    end_position = cds_object.end
+                    strand = strand_change(cds_object.strand)
 
-                new_cds_feature = create_cds_feature(cds_id, start_position, end_position, strand, annot, go_namespaces, go_alternatives, gene_protein_seqs)
-                new_cds_feature.qualifiers['locus_tag'] = id_gene
+                    new_cds_feature = create_cds_feature(cds_id, start_position, end_position, strand, annot, go_namespaces, go_alternatives, gene_protein_seqs)
+                    new_cds_feature.qualifiers['locus_tag'] = cds_id
+                    # Add CDS information to contig record
+                    record.features.append(new_cds_feature)
+
+        elif gff_type == 'cds_only':
+            cds_region_id = [gene for gene in gff_database.features_of_type('CDS') if gene.chrom == region_id]
+            for cds in cds_region_id:
+                id_cds = cds.id
+
+                # If id is numeric, change it
+                if id_cds.isnumeric():
+                    id_cds = f"gene_{id_cds}"
+                else:
+                    id_cds = id_cds
+
+                start_position = cds.start -1
+                end_position = cds.end
+                strand = strand_change(cds.strand)
+                new_feature_gene = sf.SeqFeature(sf.FeatureLocation(start_position,
+                                                                    end_position,
+                                                                    strand),
+                                                                    type="gene")
+                new_feature_gene.qualifiers['locus_tag'] = id_cds
+                # Add gene information to contig record.
+                record.features.append(new_feature_gene)
+
+                new_cds_feature = create_cds_feature(id_cds, start_position, end_position, strand, annot, go_namespaces, go_alternatives, gene_protein_seqs)
+                new_cds_feature.qualifiers['locus_tag'] = id_cds
                 # Add CDS information to contig record
                 record.features.append(new_cds_feature)
 
@@ -178,11 +206,11 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
     SeqIO.write(seq_objects, output_path, 'genbank')
 
 
-def main(nucleic_fasta, protein_fasta, annot, gff, org, output_path, gobasic=None):
+def main(nucleic_fasta, protein_fasta, annot, gff, gff_type, org, output_path, gobasic=None):
     # check validity of inputs
     for elem in [nucleic_fasta, protein_fasta]:
         if not is_valid_file(elem):
             print(f"{elem} is not a valid path file.")
             sys.exit(1)
 
-    gff_to_gbk(nucleic_fasta, protein_fasta, annot, gff, org, output_path, gobasic)
+    gff_to_gbk(nucleic_fasta, protein_fasta, annot, gff, gff_type, org, output_path, gobasic)
