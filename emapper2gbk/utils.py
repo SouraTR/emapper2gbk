@@ -353,8 +353,12 @@ def create_cds_feature(id_gene, start_position, end_position, strand, annot, go_
 
         if 'GOs' in annot[id_gene]:
             gene_gos = annot[id_gene]['GOs'].split(',')
+            if '' in gene_gos:
+                gene_gos.remove('')
             # '-' added for compatibility with eggnog-mapper 2.1.2
-            if gene_gos != ['-'] and gene_gos != ['-']:
+            if '-' in gene_gos:
+                gene_gos.remove('-')
+            if gene_gos != []:
                 go_components = []
                 go_functions = []
                 go_process = []
