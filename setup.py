@@ -66,6 +66,6 @@ setup(
     setup_requires=setup_requirements,
     test_suite='tests',
     tests_require=test_requirements,
-    url='https://github.com/AuReMe/emapper_to_gbk',
+    url='https://github.com/AuReMe/emapper2gbk',
     zip_safe=False,
 )
