@@ -75,7 +75,8 @@ def strand_change(input_strand):
 
 
 def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
-                gff:str, gff_type:str, org:str, output_path:str, gobasic:Union[None, str, dict]):
+                gff:str, gff_type:str, org:str, output_path:str, gobasic:Union[None, str, dict],
+                keep_gff_annot:Union[None,bool]):
     """ Create genbank file from nucleic, protein fasta and a gff file plus eggnog mapper annotation file.
 
     Args:
@@ -87,6 +88,7 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
         org (str): organims name or mapping file
         output_path (str): output file or directory
         gobasic (str, dict): path to go-basic.obo file or dictionary
+        keep_gff_annot (bool): copy the annotation present in the GFF file into the Genbank file.
     """
     genome_id = get_basename(nucleic_fasta)
 
@@ -133,6 +135,7 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
 
     logger.info('Assembling Genbank informations for ' + genome_id)
 
+    annotations_in_gff = ['product']
     # Iterate through each contig.
     # Then iterate through gene and throug RNA linked with the gene.
     # Then look if protein informations are available.
@@ -168,7 +171,16 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
                     end_position = cds_object.end
                     strand = strand_change(cds_object.strand)
 
-                    new_cds_feature = create_cds_feature(cds_id, start_position, end_position, strand, annot, go_namespaces, go_alternatives, gene_protein_seqs)
+                    if keep_gff_annot:
+                        gff_extracted_annotations = {annotation: cds_object.attributes[annotation]
+                                                        for annotation in annotations_in_gff
+                                                        if annotation in cds_object.attributes}
+                    else:
+                        gff_extracted_annotations = None
+
+                    new_cds_feature = create_cds_feature(cds_id, start_position, end_position,
+                                                        strand, annot, go_namespaces, go_alternatives,
+                                                        gene_protein_seqs, gff_extracted_annotations)
                     new_cds_feature.qualifiers['locus_tag'] = cds_id
                     # Add CDS information to contig record
                     record.features.append(new_cds_feature)
@@ -206,11 +218,11 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
     SeqIO.write(seq_objects, output_path, 'genbank')
 
 
-def main(nucleic_fasta, protein_fasta, annot, gff, gff_type, org, output_path, gobasic=None):
+def main(nucleic_fasta, protein_fasta, annot, gff, gff_type, org, output_path, gobasic=None, keep_gff_annot=None):
     # check validity of inputs
     for elem in [nucleic_fasta, protein_fasta]:
         if not is_valid_file(elem):
             print(f"{elem} is not a valid path file.")
             sys.exit(1)
 
-    gff_to_gbk(nucleic_fasta, protein_fasta, annot, gff, gff_type, org, output_path, gobasic)
+    gff_to_gbk(nucleic_fasta, protein_fasta, annot, gff, gff_type, org, output_path, gobasic, keep_gff_annot)

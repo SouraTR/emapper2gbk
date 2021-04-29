@@ -226,7 +226,7 @@ Convert GFF, fastas, annotation table and species name into Genbank.
     .. code-block:: sh
 
         usage: emapper2gbk genomes [-h] -fn FASTANUCLEIC -fp FASTAPROT -o OUPUT_DIR -g GFF [-gt GFF_TYPE] [-nf NAMEFILE]
-                                [-n NAME] -a ANNOTATION [-c CPU] [-go GOBASIC] [-q]
+                                [-n NAME] -a ANNOTATION [-c CPU] [-go GOBASIC] [-q] [--keep-gff-annotation]
 
         Build a gbk file for each genome with an annotation file for each
 
@@ -253,6 +253,8 @@ Convert GFF, fastas, annotation table and species name into Genbank.
                                 go ontology, GOBASIC is either the name of an existing file containing the GO Ontology or the
                                 name of the file that will be created by emapper2gbk containing the GO Ontology
         -q, --quiet           quiet mode, only warning, errors logged into console
+        --keep-gff-annotation
+                                Copy the annotation from teh GFF (product) into the genbank output file.
 
   * Examples
 

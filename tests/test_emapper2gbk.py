@@ -354,7 +354,7 @@ def test_gbk_genomes_mode_test_cli():
 def test_gbk_genomes_mode_cds_only_test():
     """Test genomes mode with file as input.
     """
-    print("*** Test genomes mode with file as input ***")
+    print("*** Test genomes mode with file as input and using cds_only option ***")
     gbk_test = 'test_gff.gbk'
 
     gbk_creation(nucleic_fasta=GENOME_FNA_INPUT,
@@ -365,6 +365,27 @@ def test_gbk_genomes_mode_cds_only_test():
                 org=ORG_NAME,
                 output_path=gbk_test,
                 gobasic=GO_FILE)
+
+    compare_two_gbks(EXPECTED_GBK_WITH_GFF, gbk_test)
+    os.remove(gbk_test)
+
+    return
+
+
+def test_gbk_genomes_mode_keep_gff_annot_test():
+    """Test genomes mode with file as input.
+    """
+    print("*** Test genomes mode with file as input and using keep_gff_annotation option***")
+    gbk_test = 'test_gff.gbk'
+
+    gbk_creation(nucleic_fasta=GENOME_FNA_INPUT,
+                protein_fasta=GENOME_FAA_INPUT,
+                annot=GENOME_ANNOT_INPUT,
+                gff=GENOME_GFF_INPUT,
+                org=ORG_NAME,
+                output_path=gbk_test,
+                gobasic=GO_FILE,
+                keep_gff_annot=True)
 
     compare_two_gbks(EXPECTED_GBK_WITH_GFF, gbk_test)
     os.remove(gbk_test)

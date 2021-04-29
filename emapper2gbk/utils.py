@@ -321,7 +321,7 @@ def read_annotation(eggnog_outfile:str):
             yield key, annotation_dict[key]
 
 
-def create_cds_feature(id_gene, start_position, end_position, strand, annot, go_namespaces, go_alternatives, gene_protein_seq):
+def create_cds_feature(id_gene, start_position, end_position, strand, annot, go_namespaces, go_alternatives, gene_protein_seq, gff_extracted_annotations=None):
     """ Create Biopython CDS feature from gene ID, gene positions, gene sequecne and gene annotations.
 
     Args:
@@ -333,6 +333,7 @@ def create_cds_feature(id_gene, start_position, end_position, strand, annot, go_
         go_namespaces (dict): dictionary of GO terms namespace (key: GO Term ID, value: namespace associated to GO Term)
         go_alternatives (dict): dictionary of GO terms alternatives ID (key: GO Term ID, value: alternatives GO Term associated to GO Term)
         gene_protein_seq (dict): dictionary of protein sequence associated to genes (key: gene id, value: sequence)
+        gff_extracted_annotations (dict): dictionary of annotation to copy from the GFF file into the Genbank file.
 
     Returns:
         new_feature_cds (Bio.SeqFeature.SeqFeature): New SeqFeature containing the informations provided
@@ -344,12 +345,24 @@ def create_cds_feature(id_gene, start_position, end_position, strand, annot, go_
 
     new_feature_cds.qualifiers['locus_tag'] = id_gene
 
+    if gff_extracted_annotations:
+        if 'product' in gff_extracted_annotations:
+            gff_product = gff_extracted_annotations['product']
+        else:
+            gff_product = None
+    else:
+        gff_product = None
+
     # Add GO annotation according to the namespace.
     if id_gene in annot.keys():
         # Add gene name.
         if 'Preferred_name' in annot[id_gene]:
             if annot[id_gene]['Preferred_name'] != '' and annot[id_gene]['Preferred_name'] != '-':
                 new_feature_cds.qualifiers['gene'] = annot[id_gene]['Preferred_name']
+
+        # Add product name from GFF.
+        if gff_product:
+            new_feature_cds.qualifiers['product'] = gff_product
 
         if 'GOs' in annot[id_gene]:
             gene_gos = annot[id_gene]['GOs'].split(',')

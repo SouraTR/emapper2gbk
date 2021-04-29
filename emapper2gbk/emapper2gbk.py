@@ -26,7 +26,8 @@ logger = logging.getLogger(__name__)
 
 def gbk_creation(nucleic_fasta:str, protein_fasta:str, annot:str,
                 org:str, output_path:str, gobasic:str, cpu:int=1,
-                gff:str=None, gff_type:str='default', merge_genes_fake_contig:int=None):
+                gff:str=None, gff_type:str='default', merge_genes_fake_contig:int=None,
+                keep_gff_annot:bool=None):
     """Create gbk files from list of genes or genomes and eggnog-mapper annotation outputs.
 
     Args:
@@ -40,6 +41,7 @@ def gbk_creation(nucleic_fasta:str, protein_fasta:str, annot:str,
         gff (str, optional): gff file or dir. Defaults to None.
         gff_type (str, optional): format of gff file or dir. Defaults to None.
         merge_genes_fake_contig (int, optional): merge genes into fake contig. The int associted to merge is the number of genes per fake contigs.
+        keep_gff_annot (bool): copy the annotation present in the GFF file into the Genbank file.
     """
     # Check if inputs are folders or files.
     types = {input_file: 'directory' if os.path.isdir(input_file)
@@ -75,7 +77,8 @@ def gbk_creation(nucleic_fasta:str, protein_fasta:str, annot:str,
     if not directory_mode:
         if gff:
             genomes_to_gbk.main(nucleic_fasta=nucleic_fasta, protein_fasta=protein_fasta, annot=annot,
-                                    gff=gff, gff_type=gff_type, org=org, output_path=output_path, gobasic=gobasic)
+                                    gff=gff, gff_type=gff_type, org=org, output_path=output_path, gobasic=gobasic,
+                                    keep_gff_annot=keep_gff_annot)
         else:
             genes_to_gbk.main(nucleic_fasta=nucleic_fasta, protein_fasta=protein_fasta, annot=annot,
                                 org=org, output_path=output_path, gobasic=gobasic,

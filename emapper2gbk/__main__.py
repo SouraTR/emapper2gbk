@@ -183,6 +183,15 @@ def cli():
         type=int,
         default=None
     )
+    parent_parser_keep_gff_annot = argparse.ArgumentParser(add_help=False)
+    parent_parser_keep_gff_annot.add_argument(
+        "--keep-gff-annotation",
+        dest="keep_gff_annotation",
+        help="Copy the annotation from teh GFF (product) into the genbank output file.",
+        required=False,
+        action="store_true",
+        default=None,
+    )
 
    # subparsers
     subparsers = parser.add_subparsers(
@@ -206,7 +215,7 @@ def cli():
         parents=[
             parent_parser_fna, parent_parser_faa, parent_parser_o, parent_parser_gff, parent_parser_gff_type,
             parent_parser_namef, parent_parser_name, parent_parser_ann,
-            parent_parser_c, parent_parser_go, parent_parser_q
+            parent_parser_c, parent_parser_go, parent_parser_q, parent_parser_keep_gff_annot
         ],
         description=
         "Build a gbk file for each genome with an annotation file for each"
@@ -283,7 +292,7 @@ def cli():
         else:
             gff_type = args.gff_type
         gbk_creation(nucleic_fasta=args.fastanucleic, protein_fasta=args.fastaprot, annot=args.annotation, gff=args.gff, gff_type=gff_type,
-                        org=orgnames, output_path=args.out, gobasic=args.gobasic, cpu=args.cpu)
+                        org=orgnames, output_path=args.out, gobasic=args.gobasic, cpu=args.cpu, keep_gff_annot=args.keep_gff_annotation)
 
     elif args.cmd == "genes":
         gbk_creation(nucleic_fasta=args.fastanucleic, protein_fasta=args.fastaprot, annot=args.annotation, org=orgnames,
