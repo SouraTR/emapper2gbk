@@ -306,6 +306,16 @@ def read_annotation(eggnog_outfile:str):
     if len(headers_row) == 17:
         headers_row.extend(['tax_scope', 'eggNOG_OGs', 'bestOG', 'COG_functional_category', 'eggNOG_free_text'])
 
+    to_extract_annotations = ['GOs','EC', 'Preferred_name']
+    if 'PFAMs' in headers_row:
+        to_extract_annotations.append('PFAMs')
+    if 'BiGG_Reaction' in headers_row:
+        to_extract_annotations.append('BiGG_Reaction')
+    if 'KEGG_Reaction' in headers_row:
+        to_extract_annotations.append('KEGG_Reaction')
+    if 'CAZy' in headers_row:
+        to_extract_annotations.append('CAZy')
+
     # Use chunk when reading eggnog file to cope with big file.
     chunksize = 10 ** 6
     for annotation_data in pd.read_csv(eggnog_outfile, sep='\t', comment='#', header=None, dtype = str, chunksize = chunksize):
@@ -313,10 +323,10 @@ def read_annotation(eggnog_outfile:str):
         # Assign the headers
         annotation_data.columns = headers_row
         if 'query_name' in annotation_data.columns:
-            annotation_dict = annotation_data.set_index('query_name')[['GOs','EC', 'Preferred_name']].to_dict('index')
+            annotation_dict = annotation_data.set_index('query_name')[to_extract_annotations].to_dict('index')
         # 'query' added for compatibility with eggnog-mapper 2.1.2
         elif 'query' in annotation_data.columns:
-            annotation_dict = annotation_data.set_index('query')[['GOs','EC', 'Preferred_name']].to_dict('index')
+            annotation_dict = annotation_data.set_index('query')[to_extract_annotations].to_dict('index')
         for key in annotation_dict:
             yield key, annotation_dict[key]
 
@@ -364,6 +374,7 @@ def create_cds_feature(id_gene, start_position, end_position, strand, annot, go_
         if gff_product:
             new_feature_cds.qualifiers['product'] = gff_product
 
+        # Add GO terms.
         if 'GOs' in annot[id_gene]:
             gene_gos = annot[id_gene]['GOs'].split(',')
             if '' in gene_gos:
@@ -403,6 +414,46 @@ def create_cds_feature(id_gene, start_position, end_position, strand, annot, go_
                 gene_ecs.remove('-')
             if gene_ecs != []:
                 new_feature_cds.qualifiers['EC_number'] = gene_ecs
+
+        # Add Pfam dbxref.
+        if 'PFAMs' in annot[id_gene]:
+            gene_pfams = annot[id_gene]['PFAMs'].split(',')
+            if '' in gene_pfams:
+                gene_pfams.remove('')
+            if '-' in gene_pfams:
+                gene_pfams.remove('-')
+            if gene_pfams != []:
+                new_feature_cds.qualifiers['dbxref'] = ['PFAM:'+pfam for pfam in gene_pfams]
+
+        # Add CAZ dbxref.
+        if 'CAZy' in annot[id_gene]:
+            gene_cazys = annot[id_gene]['CAZy'].split(',')
+            if '' in gene_cazys:
+                gene_cazys.remove('')
+            if '-' in gene_cazys:
+                gene_cazys.remove('-')
+            if gene_cazys != []:
+                new_feature_cds.qualifiers['dbxref'] = ['CAZY:'+kegg for kegg in gene_cazys]
+
+        # Add bigg dbxref.
+        if 'BiGG_Reaction' in annot[id_gene]:
+            gene_reaction_biggs = annot[id_gene]['BiGG_Reaction'].split(',')
+            if '' in gene_reaction_biggs:
+                gene_reaction_biggs.remove('')
+            if '-' in gene_reaction_biggs:
+                gene_reaction_biggs.remove('-')
+            if gene_reaction_biggs != []:
+                new_feature_cds.qualifiers['dbxref'] = ['BIGG:'+bigg for bigg in gene_reaction_biggs]
+
+        # Add kegg dbxref.
+        if 'KEGG_Reaction' in annot[id_gene]:
+            gene_reaction_keggs = annot[id_gene]['KEGG_Reaction'].split(',')
+            if '' in gene_reaction_keggs:
+                gene_reaction_keggs.remove('')
+            if '-' in gene_reaction_keggs:
+                gene_reaction_keggs.remove('-')
+            if gene_reaction_keggs != []:
+                new_feature_cds.qualifiers['dbxref'] = ['KEGG:'+kegg for kegg in gene_reaction_keggs]
 
     if id_gene in gene_protein_seq:
         new_feature_cds.qualifiers['translation'] = gene_protein_seq[id_gene]
