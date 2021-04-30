@@ -21,7 +21,7 @@ from Bio.Seq import Seq
 from collections import OrderedDict
 from typing import Union
 
-from emapper2gbk.utils import create_cds_feature, is_valid_file, create_GO_namespaces_alternatives, read_annotation, create_taxonomic_data, get_basename, record_info
+from emapper2gbk.utils import create_cds_feature, check_valid_path, is_valid_file, create_GO_namespaces_alternatives, read_annotation, create_taxonomic_data, get_basename, record_info
 
 logger = logging.getLogger(__name__)
 
@@ -53,6 +53,8 @@ def faa_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
         gobasic (str): path to go-basic.obo file or dictionary
         merge_genes_fake_contig (int): merge genes into fake contig. The int associted to merge is the number of genes per fake contigs.
     """
+    check_valid_path([nucleic_fasta, protein_fasta])
+
     genome_id = get_basename(nucleic_fasta)
 
     logger.info('Formatting fasta and annotation file for ' + genome_id)
@@ -214,12 +216,3 @@ def create_genbank_fake_contig(gene_nucleic_seqs, gene_protein_seqs, annot,
 
         records.append(record)
     SeqIO.write(records, output_path, 'genbank')
-
-def main(nucleic_fasta, protein_fasta, annot, org, output_path, gobasic=None, merge_genes_fake_contig=None):
-    # check validity of inputs
-    for elem in [nucleic_fasta, protein_fasta]:
-        if not is_valid_file(elem):
-            logger.critical(f"{elem} is not a valid path file.")
-            sys.exit(1)
-
-    faa_to_gbk(nucleic_fasta, protein_fasta, annot, org, output_path, gobasic, merge_genes_fake_contig)

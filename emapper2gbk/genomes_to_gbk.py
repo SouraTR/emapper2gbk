@@ -42,7 +42,7 @@ import sys
 from Bio import SeqFeature as sf
 from Bio import SeqIO
 from collections import OrderedDict
-from emapper2gbk.utils import is_valid_file, create_GO_namespaces_alternatives, read_annotation, create_taxonomic_data, get_basename, record_info, create_cds_feature
+from emapper2gbk.utils import check_valid_path, is_valid_file, create_GO_namespaces_alternatives, read_annotation, create_taxonomic_data, get_basename, record_info, create_cds_feature
 from typing import Union
 
 logger = logging.getLogger(__name__)
@@ -90,6 +90,8 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
         gobasic (str, dict): path to go-basic.obo file or dictionary
         keep_gff_annot (bool): copy the annotation present in the GFF file into the Genbank file.
     """
+    check_valid_path([nucleic_fasta, protein_fasta, gff])
+
     genome_id = get_basename(nucleic_fasta)
 
     logger.info('Creating GFF database (gffutils) for ' + genome_id)
@@ -216,13 +218,3 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
 
     # Create Genbank with the list of SeqRecord.
     SeqIO.write(seq_objects, output_path, 'genbank')
-
-
-def main(nucleic_fasta, protein_fasta, annot, gff, gff_type, org, output_path, gobasic=None, keep_gff_annot=None):
-    # check validity of inputs
-    for elem in [nucleic_fasta, protein_fasta]:
-        if not is_valid_file(elem):
-            print(f"{elem} is not a valid path file.")
-            sys.exit(1)
-
-    gff_to_gbk(nucleic_fasta, protein_fasta, annot, gff, gff_type, org, output_path, gobasic, keep_gff_annot)

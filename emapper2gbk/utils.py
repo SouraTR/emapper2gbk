@@ -125,6 +125,18 @@ def is_valid_dir(dirpath):
     else:
         return True
 
+def check_valid_path(file_paths):
+    """ Check validity of inputs.
+
+    Args:
+        file_paths (list): list of paths of input files to check
+
+    """
+    for elem in file_paths:
+        if not is_valid_file(elem):
+            logger.critical(f"{elem} is not a valid path file.")
+            sys.exit(1)
+
 
 def create_GO_namespaces_alternatives(gobasic_file=None):
     """
