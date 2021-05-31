@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 def gbk_creation(nucleic_fasta:str, protein_fasta:str, annot:str,
                 org:str, output_path:str, gobasic:str, cpu:int=1,
                 gff:str=None, gff_type:str='default', merge_genes_fake_contig:int=None,
-                keep_gff_annot:bool=None):
+                keep_gff_annot:bool=None, ete_option:bool=None):
     """Create gbk files from list of genes or genomes and eggnog-mapper annotation outputs.
 
     Args:
@@ -42,6 +42,7 @@ def gbk_creation(nucleic_fasta:str, protein_fasta:str, annot:str,
         gff_type (str, optional): format of gff file or dir. Defaults to None.
         merge_genes_fake_contig (int, optional): merge genes into fake contig. The int associted to merge is the number of genes per fake contigs.
         keep_gff_annot (bool): copy the annotation present in the GFF file into the Genbank file.
+        ete_option (bool): to use ete3 NCBITaxa database for taxonomic ID assignation instead of request on the EBI taxonomy database.
     """
     # Check if inputs are folders or files.
     types = {input_file: 'directory' if os.path.isdir(input_file)
@@ -78,11 +79,11 @@ def gbk_creation(nucleic_fasta:str, protein_fasta:str, annot:str,
         if gff:
             gbk_result = genomes_to_gbk.gff_to_gbk(nucleic_fasta=nucleic_fasta, protein_fasta=protein_fasta, annot=annot,
                                     gff=gff, gff_type=gff_type, org=org, output_path=output_path, gobasic=gobasic,
-                                    keep_gff_annot=keep_gff_annot)
+                                    keep_gff_annot=keep_gff_annot, ete_option=ete_option)
         else:
             gbk_result = genes_to_gbk.faa_to_gbk(nucleic_fasta=nucleic_fasta, protein_fasta=protein_fasta, annot=annot,
                                 org=org, output_path=output_path, gobasic=gobasic,
-                                merge_genes_fake_contig=merge_genes_fake_contig)
+                                merge_genes_fake_contig=merge_genes_fake_contig, ete_option=ete_option)
         if gbk_result is False:
             logger.critical('/!\\ Error in the creation of {} genbank.'.format(output_path))
     else:
@@ -166,7 +167,7 @@ def gbk_creation(nucleic_fasta:str, protein_fasta:str, annot:str,
                 multiprocess_data.append([nucleic_fasta_path, protein_fasta_path, annot_path,
                                             gff_path, gff_type, org_mapping[genome_id],
                                             gbk_output_path, (go_namespaces, go_alternatives),
-                                            keep_gff_annot])
+                                            keep_gff_annot, ete_option])
             gbk_results = gbk_pool.starmap(genomes_to_gbk.gff_to_gbk, multiprocess_data)
 
         elif gff and one_annot_file:
@@ -179,7 +180,7 @@ def gbk_creation(nucleic_fasta:str, protein_fasta:str, annot:str,
                 multiprocess_data.append([nucleic_fasta_path, protein_fasta_path, annot_genecat,
                                             gff_path, gff_type, org_mapping[genome_id],
                                             gbk_output_path, (go_namespaces, go_alternatives),
-                                            keep_gff_annot])
+                                            keep_gff_annot, ete_option])
             gbk_results = gbk_pool.starmap(genomes_to_gbk.gff_to_gbk, multiprocess_data)
 
         elif not gff and not one_annot_file:
@@ -190,7 +191,8 @@ def gbk_creation(nucleic_fasta:str, protein_fasta:str, annot:str,
                 gbk_output_path = os.path.join(output_path, genome_id+'.gbk')
                 multiprocess_data.append([nucleic_fasta_path, protein_fasta_path, annot_path,
                                             org_mapping[genome_id], gbk_output_path,
-                                            (go_namespaces, go_alternatives), merge_genes_fake_contig])
+                                            (go_namespaces, go_alternatives), merge_genes_fake_contig,
+                                            ete_option])
             gbk_results = gbk_pool.starmap(genes_to_gbk.faa_to_gbk, multiprocess_data)
 
         elif not gff and one_annot_file:
@@ -203,7 +205,8 @@ def gbk_creation(nucleic_fasta:str, protein_fasta:str, annot:str,
                 gbk_output_path = os.path.join(output_path, genome_id+'.gbk')
                 multiprocess_data.append([nucleic_fasta_path, protein_fasta_path, annot_genecat,
                                             org_mapping[genome_id], gbk_output_path,
-                                            (go_namespaces, go_alternatives), merge_genes_fake_contig])
+                                            (go_namespaces, go_alternatives), merge_genes_fake_contig,
+                                            ete_option])
             gbk_results = gbk_pool.starmap(genes_to_gbk.faa_to_gbk, multiprocess_data)
 
         if gbk_results is not None:

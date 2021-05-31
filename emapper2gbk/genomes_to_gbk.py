@@ -42,7 +42,7 @@ import sys
 from Bio import SeqFeature as sf
 from Bio import SeqIO
 from collections import OrderedDict
-from emapper2gbk.utils import check_valid_path, is_valid_file, create_GO_namespaces_alternatives, read_annotation, create_taxonomic_data, get_basename, record_info, create_cds_feature
+from emapper2gbk.utils import check_valid_path, is_valid_file, create_GO_namespaces_alternatives, read_annotation, create_taxonomic_data, create_taxonomic_data_ete, get_basename, record_info, create_cds_feature
 from typing import Union
 
 logger = logging.getLogger(__name__)
@@ -76,7 +76,7 @@ def strand_change(input_strand):
 
 def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
                 gff:str, gff_type:str, org:str, output_path:str, gobasic:Union[None, str, dict],
-                keep_gff_annot:Union[None,bool]):
+                keep_gff_annot:Union[None,bool], ete_option:bool):
     """ Create genbank file from nucleic, protein fasta and a gff file plus eggnog mapper annotation file.
 
     Args:
@@ -89,6 +89,7 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
         output_path (str): output file or directory
         gobasic (str, dict): path to go-basic.obo file or dictionary
         keep_gff_annot (bool): copy the annotation present in the GFF file into the Genbank file.
+        ete_option (bool): to use ete3 NCBITaxa database for taxonomic ID assignation instead of request on the EBI taxonomy database.
     """
     check_valid_path([nucleic_fasta, protein_fasta, gff])
 
@@ -100,7 +101,6 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
     # ':memory:' ask gffutils to keep database in memory instead of writting in a file.
     gff_database = gffutils.create_db(gff, ':memory:', force=True, keep_order=True, merge_strategy='merge', sort_attribute_values=True)
 
-    logger.info('Formatting fasta and annotation file for ' + genome_id)
     # Dictionary with region id (contig, chromosome) as key and sequence as value.
     genome_nucleic_sequence = OrderedDict()
     for record in SeqIO.parse(nucleic_fasta, "fasta"):
@@ -114,7 +114,10 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
         gene_protein_seqs[record.id] = record.seq
 
     # Create a taxonomy dictionary querying the EBI.
-    species_informations = create_taxonomic_data(org)
+    if ete_option:
+        species_informations = create_taxonomic_data_ete(org)
+    else:
+        species_informations = create_taxonomic_data(org)
     if species_informations is None:
         return False
 

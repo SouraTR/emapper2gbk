@@ -192,6 +192,15 @@ def cli():
         action="store_true",
         default=None,
     )
+    parent_parser_ete = argparse.ArgumentParser(add_help=False)
+    parent_parser_ete.add_argument(
+        "--ete",
+        dest="ete",
+        help="use ete3 NCBITaxa instead of query on the EBI Taxonomy Database for taxonomic ID assignation (useful if no itnernet access, except that ete3 NCBITaxa databse msut have been downloaded before).",
+        required=False,
+        action="store_true",
+        default=None,
+    )
 
    # subparsers
     subparsers = parser.add_subparsers(
@@ -204,7 +213,7 @@ def cli():
         parents=[
             parent_parser_fna, parent_parser_faa, parent_parser_o,
             parent_parser_ann, parent_parser_c, parent_parser_name, parent_parser_namef,
-            parent_parser_go, parent_parser_merge, parent_parser_q
+            parent_parser_go, parent_parser_merge, parent_parser_q, parent_parser_ete
         ],
         description=
         "Use the annotation of a complete gene catalogue and build gbk files for each set of genes (fna) and proteins (faa) from input directories"
@@ -215,7 +224,8 @@ def cli():
         parents=[
             parent_parser_fna, parent_parser_faa, parent_parser_o, parent_parser_gff, parent_parser_gff_type,
             parent_parser_namef, parent_parser_name, parent_parser_ann,
-            parent_parser_c, parent_parser_go, parent_parser_q, parent_parser_keep_gff_annot
+            parent_parser_c, parent_parser_go, parent_parser_q, parent_parser_keep_gff_annot,
+            parent_parser_ete
         ],
         description=
         "Build a gbk file for each genome with an annotation file for each"
@@ -292,11 +302,13 @@ def cli():
         else:
             gff_type = args.gff_type
         gbk_creation(nucleic_fasta=args.fastanucleic, protein_fasta=args.fastaprot, annot=args.annotation, gff=args.gff, gff_type=gff_type,
-                        org=orgnames, output_path=args.out, gobasic=args.gobasic, cpu=args.cpu, keep_gff_annot=args.keep_gff_annotation)
+                        org=orgnames, output_path=args.out, gobasic=args.gobasic, cpu=args.cpu, keep_gff_annot=args.keep_gff_annotation,
+                        ete_option=args.ete)
 
     elif args.cmd == "genes":
         gbk_creation(nucleic_fasta=args.fastanucleic, protein_fasta=args.fastaprot, annot=args.annotation, org=orgnames,
-                        output_path=args.out, gobasic=args.gobasic, cpu=args.cpu, merge_genes_fake_contig=args.merge)
+                        output_path=args.out, gobasic=args.gobasic, cpu=args.cpu, merge_genes_fake_contig=args.merge,
+                        ete_option=args.ete)
 
 
     logger.info("--- Total runtime %.2f seconds ---" % (time.time() - start_time))

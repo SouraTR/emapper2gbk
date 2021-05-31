@@ -26,6 +26,7 @@ import sys
 
 from Bio.SeqRecord import SeqRecord
 from Bio import SeqFeature as sf
+from ete3 import NCBITaxa
 
 try:
     # Import to be compatible with biopython version lesser than 1.78
@@ -193,6 +194,12 @@ def create_taxonomic_data(species_name):
         species_informations (dict): dictionary containing information about species
     """
     species_informations = {}
+
+    compatible_species_name = species_name.replace('/', '_')
+    species_informations['description'] = compatible_species_name + ' genome'
+    species_informations['organism'] = compatible_species_name
+    species_informations['keywords'] = [compatible_species_name]
+
     species_name_url = species_name.replace(' ', '%20')
 
     if species_name == "bacteria":
@@ -207,13 +214,22 @@ def create_taxonomic_data(species_name):
         species_informations = {'db_xref': 'taxon:131567', 'scientificName': 'cellular organisms', 'formalName': 'false', 'rank': 'no rank', 'division': 'UNC', 'geneticCode': '1', 'submittable': 'false'}
     else:
         url = 'https://www.ebi.ac.uk/ena/data/taxonomy/v1/taxon/scientific-name/' + species_name_url
-        response = requests.get(url)
+
+        try:
+            response = requests.get(url)
+        except requests.exceptions.ConnectionError:
+            logger.critical('/!\\ No internet connection, check the connection or use the --ete option (if you have the NCBITaxa database already downloaded).')
+            return None
+
+        # Check if there is taxonomy information in the EBI response JSON.
         try:
             temp_species_informations = response.json()[0]
         except simplejson.errors.JSONDecodeError:
-            logger.critical('/!\\ No matching data for {} in https://www.ebi.ac.uk/ena/data/taxonomy/v1/taxon/scientific-name/'.format(species_name))
+            logger.critical('/!\\ Error with {} this taxa has not been found in https://www.ebi.ac.uk/ena/data/taxonomy/v1/taxon/scientific-name/'.format(species_name))
+            logger.critical('/!\\ Check the name of the taxa and its presence in the EBI taxonomy database.')
             logger.critical('/!\\ No genbank will be created for {}.'.format(species_name))
             return None
+
         for temp_species_information in temp_species_informations:
             if temp_species_information == 'lineage':
                 species_informations['taxonomy'] = temp_species_informations[temp_species_information].split('; ')[:-1]
@@ -224,10 +240,38 @@ def create_taxonomic_data(species_name):
             else:
                 species_informations[temp_species_information] = temp_species_informations[temp_species_information]
 
+    return species_informations
+
+
+def create_taxonomic_data_ete(species_name):
+    """
+    Query ete taxonomy with the species name to create a dictionary containing taxon id,
+    taxonomy and some other informations.
+    Useful when no internet connection is available and the NCBITaxa database have already been downloaded.
+
+    Args:
+        species_name (str): species name (must be with genus for example "Escherichia coli")
+
+    Returns:
+        species_informations (dict): dictionary containing information about species
+    """
+    species_informations = {}
+
     compatible_species_name = species_name.replace('/', '_')
     species_informations['description'] = compatible_species_name + ' genome'
     species_informations['organism'] = compatible_species_name
     species_informations['keywords'] = [compatible_species_name]
+
+    ncbi = NCBITaxa()
+    species_taxids = ncbi.get_name_translator([species_name])
+    if species_name in species_taxids:
+        species_taxid = species_taxids[species_name][-1]
+        species_informations['db_xref'] = 'taxon:' + str(species_taxid)
+    else:
+        logger.critical('/!\\ Error with {} this taxa has not been found in ete3 NCBITaxa Database'.format(species_name))
+        logger.critical('/!\\ Check the name of the taxa and its presence in the NCBITaxa database.')
+        logger.critical('/!\\ No genbank will be created for {}.'.format(species_name))
+        return None
 
     return species_informations
 

@@ -58,9 +58,11 @@ jobs:
         pip install pytest
         cd tests
         OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES python test_emapper2gbk.py
+        OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES python test_emapper2gbk_ete.py
     - name: Test with pytest for Linux and Windows
       if: matrix.platform != 'macos-latest'
       run: |
         pip install pytest
         cd tests
         python test_emapper2gbk.py
+        python test_emapper2gbk_ete.py

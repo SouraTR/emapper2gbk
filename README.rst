@@ -131,7 +131,7 @@ A gene feature is required and the CDS feature must have the gene feature as a p
     region_1	RefSeq	gene	1	2445	.	-	.	ID=gene_1
     region_1	RefSeq	CDS	1	2445	.	-	0	ID=cds_1;Parent=gene_1
 
-But some GFF files can be formatted differently, so by using the argument ``-gt cds_only``, it is possible to use GFF fiel with only CDS, like:
+But some GFF files can be formatted differently, so by using the argument ``-gt cds_only``, it is possible to use GFF file with only CDS, like:
 
 .. code-block:: text
 

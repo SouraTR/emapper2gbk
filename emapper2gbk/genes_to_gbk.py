@@ -21,7 +21,7 @@ from Bio.Seq import Seq
 from collections import OrderedDict
 from typing import Union
 
-from emapper2gbk.utils import create_cds_feature, check_valid_path, is_valid_file, create_GO_namespaces_alternatives, read_annotation, create_taxonomic_data, get_basename, record_info
+from emapper2gbk.utils import create_cds_feature, check_valid_path, is_valid_file, create_GO_namespaces_alternatives, read_annotation, create_taxonomic_data, create_taxonomic_data_ete, get_basename, record_info
 
 logger = logging.getLogger(__name__)
 
@@ -41,7 +41,7 @@ as value and adapt the condition used for the others annotations (EC, Go term).
 
 def faa_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
                 org:str, output_path:str, gobasic:Union[None, str, dict],
-                merge_genes_fake_contig:int):
+                merge_genes_fake_contig:int, ete_option:bool):
     """ Create genbank file from nucleic and protein fasta plus eggnog mapper annotation file.
 
     Args:
@@ -52,12 +52,11 @@ def faa_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
         output_path (str): output file or directory
         gobasic (str): path to go-basic.obo file or dictionary
         merge_genes_fake_contig (int): merge genes into fake contig. The int associted to merge is the number of genes per fake contigs.
+        ete_option (bool): to use ete3 NCBITaxa database for taxonomic ID assignation instead of request on the EBI taxonomy database.
     """
     check_valid_path([nucleic_fasta, protein_fasta])
 
     genome_id = get_basename(nucleic_fasta)
-
-    logger.info('Formatting fasta and annotation file for ' + genome_id)
 
     # Dictionary with gene id as key and nucleic sequence as value.
     gene_nucleic_seqs = OrderedDict()
@@ -72,7 +71,10 @@ def faa_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
         gene_protein_seqs[record.id] = record.seq
 
     # Create a taxonomy dictionary querying the EBI.
-    species_informations = create_taxonomic_data(org)
+    if ete_option:
+        species_informations = create_taxonomic_data_ete(org)
+    else:
+        species_informations = create_taxonomic_data(org)
     if species_informations is None:
         return False
 

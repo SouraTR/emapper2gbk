@@ -24,6 +24,7 @@ with open('README.rst') as readme_file:
 
 requirements = [
     "biopython",
+    "ete3",
     "gffutils",
     "pandas",
     "pronto",
