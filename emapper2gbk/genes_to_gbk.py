@@ -73,6 +73,8 @@ def faa_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
 
     # Create a taxonomy dictionary querying the EBI.
     species_informations = create_taxonomic_data(org)
+    if species_informations is None:
+        return False
 
     # Read the eggnog tsv file containing GO terms and EC associated with gene name.
     # if metagenomic mode, annotation is already read and given as a dict
@@ -98,6 +100,7 @@ def faa_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
     else:
         create_genbank(gene_nucleic_seqs, gene_protein_seqs, annot, go_namespaces, go_alternatives, output_path, species_informations)
 
+    return True
 
 def create_genbank(gene_nucleic_seqs, gene_protein_seqs, annot,
                     go_namespaces, go_alternatives, output_path,

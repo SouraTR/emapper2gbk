@@ -115,6 +115,8 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
 
     # Create a taxonomy dictionary querying the EBI.
     species_informations = create_taxonomic_data(org)
+    if species_informations is None:
+        return False
 
     # Read the eggnog tsv file containing GO terms and EC associated with gene name.
     # if metagenomic mode, annotation is already read and given as a dict
@@ -218,3 +220,5 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
 
     # Create Genbank with the list of SeqRecord.
     SeqIO.write(seq_objects, output_path, 'genbank')
+
+    return True

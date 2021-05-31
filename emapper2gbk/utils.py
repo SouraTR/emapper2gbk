@@ -211,12 +211,10 @@ def create_taxonomic_data(species_name):
         try:
             temp_species_informations = response.json()[0]
         except simplejson.errors.JSONDecodeError:
-            logger.critical('No matching data for {} in https://www.ebi.ac.uk/ena/data/taxonomy/v1/taxon/scientific-name/'.format(species_name))
-            sys.exit()
-        # print(temp_species_informations)
+            logger.critical('/!\\ No matching data for {} in https://www.ebi.ac.uk/ena/data/taxonomy/v1/taxon/scientific-name/'.format(species_name))
+            logger.critical('/!\\ No genbank will be created for {}.'.format(species_name))
+            return None
         for temp_species_information in temp_species_informations:
-            # print(temp_species_information)
-            # print(temp_species_informations[temp_species_information])
             if temp_species_information == 'lineage':
                 species_informations['taxonomy'] = temp_species_informations[temp_species_information].split('; ')[:-1]
             elif temp_species_information == 'division':
