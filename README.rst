@@ -254,7 +254,7 @@ Convert GFF, fastas, annotation table and species name into Genbank.
                                 name of the file that will be created by emapper2gbk containing the GO Ontology
         -q, --quiet           quiet mode, only warning, errors logged into console
         --keep-gff-annotation
-                                Copy the annotation from teh GFF (product) into the genbank output file.
+                                Copy the annotation from the GFF (product) into the genbank output file.
 
   * Examples
 

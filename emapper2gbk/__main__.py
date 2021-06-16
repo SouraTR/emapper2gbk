@@ -187,7 +187,7 @@ def cli():
     parent_parser_keep_gff_annot.add_argument(
         "--keep-gff-annotation",
         dest="keep_gff_annotation",
-        help="Copy the annotation from teh GFF (product) into the genbank output file.",
+        help="Copy the annotation from the GFF (product) into the genbank output file.",
         required=False,
         action="store_true",
         default=None,
