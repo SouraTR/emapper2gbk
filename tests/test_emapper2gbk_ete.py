@@ -250,33 +250,14 @@ def check_gbks_from_dir_genome_mode(gbk_dir):
     return
 
 
-def test_gbk_genes_mode_test():
-    """Test genes mode with file as input.
-    """
-    print("*** Test genes mode with file as input ***")
-    gbk_test = 'test_no_gff.gbk'
-    gbk_creation(nucleic_fasta=FNA_INPUT,
-                protein_fasta=FAA_INPUT,
-                annot=ANNOT_INPUT,
-                org=ORG_NAME,
-                output_path=gbk_test,
-                gff=None,
-                gobasic=GO_FILE)
-
-    compare_two_gbks(EXPECTED_GBK_NO_GFF, gbk_test)
-    os.remove(gbk_test)
-
-    return
-
-
-def test_gbk_gene_mode_test_cli():
-    """Test genes mode  with file as input.
+def test_gbk_gene_mode_test_cli_ete():
+    """Test genes mode  with file as input and using ete3 for taxonomic assignation.
     """
     gbk_test = 'test_no_gff.gbk'
 
     print("*** Test genes mode with file as input with cli***")
     subprocess.call(['emapper2gbk', 'genes', '-fn', FNA_INPUT, '-fp', FAA_INPUT,
-                        '-a', ANNOT_INPUT, '-o', gbk_test, '-go', GO_FILE, '-n', ORG_NAME])
+                        '-a', ANNOT_INPUT, '-o', gbk_test, '-go', GO_FILE, '-n', ORG_NAME, '--ete'])
 
     compare_two_gbks(EXPECTED_GBK_NO_GFF, gbk_test)
     os.remove(gbk_test)
@@ -284,67 +265,14 @@ def test_gbk_gene_mode_test_cli():
     return
 
 
-def test_gbk_genes_mode_annot_v2():
-    """Test genes mode with file as input with v2 eggnog mapper annotation file.
-    """
-    print("*** Test genes mode with file as input with v2 eggnog mapper annotation file***")
-    gbk_test = 'test_no_gff.gbk'
-    gbk_creation(nucleic_fasta=FNA_INPUT,
-                protein_fasta=FAA_INPUT,
-                annot=ANNOT_INPUT_V2,
-                org=ORG_NAME,
-                output_path=gbk_test,
-                gff=None,
-                gobasic=GO_FILE)
-
-    compare_two_gbks(EXPECTED_GBK_NO_GFF, gbk_test)
-    os.remove(gbk_test)
-
-    return
-
-
-def test_gbk_genes_mode_annot_v2_cli():
-    """Test genes mode with file as input with v2 eggnog mapper annotation file with cli.
-    """
-    gbk_test = 'test_no_gff.gbk'
-    print("*** Test genes mode with file as input with v2 eggnog mapper annotation file with cli***")
-    subprocess.call(['emapper2gbk', 'genes', '-fn', FNA_INPUT, '-fp', FAA_INPUT,
-                        '-a', ANNOT_INPUT_V2, '-o', gbk_test, '-go', GO_FILE, '-n', ORG_NAME])
-
-    compare_two_gbks(EXPECTED_GBK_NO_GFF, gbk_test)
-    os.remove(gbk_test)
-
-    return
-
-
-def test_gbk_genomes_mode_test():
-    """Test genomes mode with file as input.
-    """
-    print("*** Test genomes mode with file as input ***")
-    gbk_test = 'test_gff.gbk'
-
-    gbk_creation(nucleic_fasta=GENOME_FNA_INPUT,
-                protein_fasta=GENOME_FAA_INPUT,
-                annot=GENOME_ANNOT_INPUT,
-                gff=GENOME_GFF_INPUT,
-                org=ORG_NAME,
-                output_path=gbk_test,
-                gobasic=GO_FILE)
-
-    compare_two_gbks(EXPECTED_GBK_WITH_GFF, gbk_test)
-    os.remove(gbk_test)
-
-    return
-
-
-def test_gbk_genomes_mode_test_cli():
-    """Test genomes mode with file as input with cli
+def test_gbk_genomes_mode_test_cli_ete():
+    """Test genomes mode with file as input with cli and using ete3 for taxonomic assignation.
     """
     gbk_test = 'test_gff.gbk'
     print("*** Test genomes mode with file as input with cli***")
     subprocess.call(['emapper2gbk', 'genomes', '-fn', GENOME_FNA_INPUT, '-fp', GENOME_FAA_INPUT,
                         '-a', GENOME_ANNOT_INPUT, '-g', GENOME_GFF_INPUT, '-o', gbk_test, '-go', GO_FILE,
-                        '-n', ORG_NAME])
+                        '-n', ORG_NAME, '--ete'])
 
     compare_two_gbks(EXPECTED_GBK_WITH_GFF, gbk_test)
     os.remove(gbk_test)
@@ -352,76 +280,15 @@ def test_gbk_genomes_mode_test_cli():
     return
 
 
-def test_gbk_genomes_mode_cds_only_test():
-    """Test genomes mode with file as input.
-    """
-    print("*** Test genomes mode with file as input and using cds_only option ***")
-    gbk_test = 'test_gff.gbk'
-
-    gbk_creation(nucleic_fasta=GENOME_FNA_INPUT,
-                protein_fasta=GENOME_FAA_INPUT,
-                annot=GENOME_ANNOT_INPUT,
-                gff=GENOME_GFF_INPUT,
-                gff_type='cds_only',
-                org=ORG_NAME,
-                output_path=gbk_test,
-                gobasic=GO_FILE)
-
-    compare_two_gbks(EXPECTED_GBK_WITH_GFF, gbk_test)
-    os.remove(gbk_test)
-
-    return
-
-
-def test_gbk_genomes_mode_keep_gff_annot_test():
-    """Test genomes mode with file as input.
-    """
-    print("*** Test genomes mode with file as input and using keep_gff_annotation option***")
-    gbk_test = 'test_gff.gbk'
-
-    gbk_creation(nucleic_fasta=GENOME_FNA_INPUT,
-                protein_fasta=GENOME_FAA_INPUT,
-                annot=GENOME_ANNOT_INPUT,
-                gff=GENOME_GFF_INPUT,
-                org=ORG_NAME,
-                output_path=gbk_test,
-                gobasic=GO_FILE,
-                keep_gff_annot=True)
-
-    compare_two_gbks(EXPECTED_GBK_WITH_GFF, gbk_test)
-    os.remove(gbk_test)
-
-    return
-
-
-def test_gbk_genomes_mode_folder():
-    """Test genomes mode with folders as input
-    """
-    print("*** Test genomes mode with folders as input ***")
-    gbk_dir_test = 'gbk_mg'
-    gbk_creation(nucleic_fasta=GENOME_FNA_DIR,
-                protein_fasta=FAA_DIR,
-                annot=ANNOT_INPUT,
-                org=ORG_FILE,
-                gff=GFF_DIR,
-                output_path=gbk_dir_test,
-                gobasic=GO_FILE)
-
-    check_gbks_from_dir_genome_mode(gbk_dir_test)
-    shutil.rmtree(gbk_dir_test)
-
-    return
-
-
-def test_gbk_genomes_mode_folder_cli():
-    """Test genomes mode with folders as input with cli
+def test_gbk_genomes_mode_folder_cli_ete():
+    """Test genomes mode with folders as input with cli and using ete3 for taxonomic assignation.
     """
     gbk_dir_test = 'gbk_mg'
 
     print("*** Test genomes mode with folders as input with cli ***")
     subprocess.call(['emapper2gbk', 'genomes', '-fn', GENOME_FNA_DIR, '-fp', FAA_DIR,
                         '-a', ANNOT_INPUT, '-g', GFF_DIR, '-o', gbk_dir_test, '-go', GO_FILE,
-                        '-nf', ORG_FILE])
+                        '-nf', ORG_FILE, '--ete'])
 
     check_gbks_from_dir_genome_mode(gbk_dir_test)
     shutil.rmtree(gbk_dir_test)
@@ -429,125 +296,18 @@ def test_gbk_genomes_mode_folder_cli():
     return
 
 
-def test_gbk_genes_mode_folder():
-    """Test genes mode with folders as input
-    """
-    print("*** Test genes mode with folders as input ***")
-    gbk_dir_test = 'gbk_g'
-
-    gbk_creation(nucleic_fasta=FNA_DIR,
-                protein_fasta=FAA_DIR,
-                annot=ANNOT_DIR,
-                org=ORG_FILE,
-                gff=None,
-                output_path=gbk_dir_test,
-                gobasic=GO_FILE)
-
-    check_gbks_from_dir_genes_mode(gbk_dir_test)
-    shutil.rmtree(gbk_dir_test)
-
-    return
-
-
-def test_gbk_genes_mode_folder_cli():
-    """Test genes mode with folders as input with cli
-    """
-    gbk_dir_test = 'gbk_g'
-
-    print("*** Test genes mode with folders as input with cli ***")
-    subprocess.call(['emapper2gbk', 'genes', '-fn', FNA_DIR, '-fp', FAA_DIR,
-                        '-a', ANNOT_DIR, '-g', GFF_DIR, '-o', gbk_dir_test, '-go', GO_FILE,
-                        '-nf', ORG_FILE])
-
-    check_gbks_from_dir_genes_mode(gbk_dir_test)
-    shutil.rmtree(gbk_dir_test)
-
-    return
-
-
-def test_gbk_genes_mode_folder_one_annot_file():
-    """Test genes mode with folders as input with one annotation file
-    """
-    print("*** Test genes mode with folders as input with one annotation file ***")
-    gbk_dir_test = 'gbk_mg'
-
-    gbk_creation(nucleic_fasta=FNA_DIR,
-                protein_fasta=FAA_DIR,
-                annot=ANNOT_INPUT,
-                org=ORG_FILE,
-                gff=None,
-                output_path=gbk_dir_test,
-                gobasic=GO_FILE)
-
-    check_gbks_from_dir_genes_mode(gbk_dir_test)
-    shutil.rmtree(gbk_dir_test)
-
-    return
-
-
-def test_gbk_genes_mode_folder_one_annot_file_cli():
-    """Test genes mode with folders as input with one annotation file with cli
+def test_gbk_genes_mode_folder_one_annot_file_cli_ete():
+    """Test genes mode with folders as input with one annotation file with cli and using ete3 for taxonomic assignation.
     """
     gbk_dir_test = 'gbk_mg'
 
     print("*** Test genes mode with folders as input with one annotation file with cli ***")
     subprocess.call(['emapper2gbk', 'genes', '-fn', FNA_DIR, '-fp', FAA_DIR,
                         '-a', ANNOT_INPUT, '-o', gbk_dir_test, '-go', GO_FILE,
-                        '-nf', ORG_FILE])
+                        '-nf', ORG_FILE, '--ete'])
 
     check_gbks_from_dir_genes_mode(gbk_dir_test)
     shutil.rmtree(gbk_dir_test)
 
     return
 
-
-def test_gbk_genes_mode_merge_fake_contig():
-    """Test genes mode with files as input and merge genes in fake contig
-    """
-    print("*** Test genes mode with files as input and merge genes in fake contig ***")
-    gbk_test = 'test_merged.gbk'
-    gbk_creation(nucleic_fasta=FNA_INPUT,
-                protein_fasta=FAA_INPUT,
-                annot=ANNOT_INPUT,
-                org=ORG_NAME,
-                output_path=gbk_test,
-                gff=None,
-                gobasic=GO_FILE,
-                merge_genes_fake_contig=5)
-
-    # Dictionary with gene id as key and nucleic sequence as value.
-    expected_gene_nucleic_seqs = dict()
-    for record in SeqIO.parse(FNA_INPUT, 'fasta'):
-        expected_gene_nucleic_seqs[record.id] = record.seq
-
-    # Fasta sequence form genbank
-    found_gene_nucleic_seq = dict()
-    for record in SeqIO.parse(gbk_test, 'genbank'):
-        for feature in record.features:
-            if feature.type == 'gene':
-                expected_gene_nucleic_seqs[feature.qualifiers['locus_tag'][0]] = feature.extract(record.seq)
-
-    # Check if the sequences from the genbank are corrects.
-    for gene_id in expected_gene_nucleic_seqs:
-        assert expected_gene_nucleic_seqs[gene_id] == expected_gene_nucleic_seqs[gene_id]
-
-    compare_two_gbks(EXPECTED_GBK_NO_GFF_MERGED, gbk_test)
-    os.remove(gbk_test)
-
-    return
-
-    
-if __name__ == "__main__":
-    test_gbk_genes_mode_test()
-    test_gbk_gene_mode_test_cli()
-    test_gbk_genes_mode_annot_v2()
-    test_gbk_genes_mode_annot_v2_cli()
-    test_gbk_genomes_mode_test()
-    test_gbk_genomes_mode_test_cli()
-    test_gbk_genomes_mode_folder()
-    test_gbk_genomes_mode_folder_cli()
-    test_gbk_genes_mode_folder()
-    test_gbk_genes_mode_folder_cli()
-    test_gbk_genes_mode_folder_one_annot_file()
-    test_gbk_genes_mode_folder_one_annot_file_cli()
-    test_gbk_genes_mode_merge_fake_contig()

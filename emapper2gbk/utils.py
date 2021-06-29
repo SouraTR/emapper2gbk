@@ -1,17 +1,32 @@
-import sys
-import os
-import pandas as pa
-import csv
+# Copyright (C) 2019-2021 Clémence Frioux & Arnaud Belcour - Inria Dyliss - Pleiade
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Lesser General Public License for more details.
+
+# You should have received a copy of the GNU Lesser General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>
+
 import datetime
 import itertools
 import logging
 import numpy as np
+import os
+import pandas as pd
 import pronto
 import requests
+import simplejson
 import shutil
+import sys
 
 from Bio.SeqRecord import SeqRecord
 from Bio import SeqFeature as sf
+from ete3 import NCBITaxa
 
 try:
     # Import to be compatible with biopython version lesser than 1.78
@@ -55,6 +70,7 @@ def get_extension(filepath):
     'important'
     """
     return os.path.splitext(os.path.basename(filepath))[1][1:]
+
 
 def is_valid_path(filepath):
     """Return True if filepath is valid.
@@ -110,12 +126,31 @@ def is_valid_dir(dirpath):
     else:
         return True
 
+def check_valid_path(file_paths):
+    """ Check validity of inputs.
 
-def create_GO_namespaces_alternatives(gobasic_file = None):
+    Args:
+        file_paths (list): list of paths of input files to check
+
+    """
+    for elem in file_paths:
+        if not is_valid_file(elem):
+            logger.critical(f"{elem} is not a valid path file.")
+            sys.exit(1)
+
+
+def create_GO_namespaces_alternatives(gobasic_file=None):
     """
     Use pronto to query the Gene Ontology and to create the Ontology.
     Create a dictionary which contains for all GO terms their GO namespaces (molecular_function, ..).
     Create a second dictionary containing alternative ID for some GO terms (deprecated ones).
+
+    Args:
+        gobasic_file (str): path of GO basic file (if not provided will be downloaded)
+
+    Returns:
+        go_namespaces (dict): dictionary of GO terms namespace (key: GO Term ID, value: namespace associated to GO Term)
+        go_alternatives (dict): dictionary of GO terms alternatives ID (key: GO Term ID, value: alternatives GO Term associated to GO Term)
     """
     go_basic_obo_url = 'http://purl.obolibrary.org/obo/go/go-basic.obo'
 
@@ -151,24 +186,51 @@ def create_taxonomic_data(species_name):
     """
     Query the EBI with the species name to create a dictionary containing taxon id,
     taxonomy and some other informations.
+
+    Args:
+        species_name (str): species name (must be with genus for example "Escherichia coli")
+
+    Returns:
+        species_informations (dict): dictionary containing information about species
     """
     species_informations = {}
+
+    compatible_species_name = species_name.replace('/', '_')
+    species_informations['description'] = compatible_species_name + ' genome'
+    species_informations['organism'] = compatible_species_name
+    species_informations['keywords'] = [compatible_species_name]
+
     species_name_url = species_name.replace(' ', '%20')
 
     if species_name == "bacteria":
         species_informations = {'db_xref': 'taxon:2', 'scientificName': 'Bacteria', 'commonName': 'eubacteria', 'formalName': 'false', 'rank': 'superkingdom', 'data_file_division': 'PRO', 'geneticCode': '11', 'submittable': 'false', 'description': 'bacteria genome', 'organism': 'bacteria', 'keywords': ['bacteria']} 
+    elif species_name == "archaea":
+        species_informations = {'db_xref': 'taxon:2157', 'scientificName': 'Archaea', 'formalName': 'false', 'rank': 'superkingdom', 'data_file_division': 'PRO', 'geneticCode': '11', 'submittable': 'false'}
+    elif species_name == "eukaryota":
+        species_informations = {'db_xref': 'taxon:2759', 'scientificName': 'Eukaryota', 'commonName': 'eucaryotes', 'formalName': 'false', 'rank': 'superkingdom', 'data_file_division': 'INV', 'geneticCode': '1', 'mitochondrialGeneticCode': '1', 'plastIdGeneticCode': '11', 'submittable': 'false'}
     elif species_name == "metagenome":
         species_informations = {'db_xref': 'taxon:256318', 'scientificName': 'metagenome', 'formalName': 'false', 'rank': 'species', 'division': 'UNC', 'lineage': 'unclassified sequences; metagenomes; ', 'geneticCode': '11', 'mitochondrialGeneticCode': '2', 'plastIdGeneticCode': '11', 'submittable': 'true'}
     elif species_name == 'cellular organisms':
         species_informations = {'db_xref': 'taxon:131567', 'scientificName': 'cellular organisms', 'formalName': 'false', 'rank': 'no rank', 'division': 'UNC', 'geneticCode': '1', 'submittable': 'false'}
     else:
         url = 'https://www.ebi.ac.uk/ena/data/taxonomy/v1/taxon/scientific-name/' + species_name_url
-        response = requests.get(url)
-        temp_species_informations = response.json()[0]
-        # print(temp_species_informations)
+
+        try:
+            response = requests.get(url)
+        except requests.exceptions.ConnectionError:
+            logger.critical('/!\\ No internet connection, check the connection or use the --ete option (if you have the NCBITaxa database already downloaded).')
+            return None
+
+        # Check if there is taxonomy information in the EBI response JSON.
+        try:
+            temp_species_informations = response.json()[0]
+        except simplejson.errors.JSONDecodeError:
+            logger.critical('/!\\ Error with {} this taxa has not been found in https://www.ebi.ac.uk/ena/data/taxonomy/v1/taxon/scientific-name/'.format(species_name))
+            logger.critical('/!\\ Check the name of the taxa and its presence in the EBI taxonomy database.')
+            logger.critical('/!\\ No genbank will be created for {}.'.format(species_name))
+            return None
+
         for temp_species_information in temp_species_informations:
-            # print(temp_species_information)
-            # print(temp_species_informations[temp_species_information])
             if temp_species_information == 'lineage':
                 species_informations['taxonomy'] = temp_species_informations[temp_species_information].split('; ')[:-1]
             elif temp_species_information == 'division':
@@ -178,22 +240,57 @@ def create_taxonomic_data(species_name):
             else:
                 species_informations[temp_species_information] = temp_species_informations[temp_species_information]
 
+    return species_informations
+
+
+def create_taxonomic_data_ete(species_name):
+    """
+    Query ete taxonomy with the species name to create a dictionary containing taxon id,
+    taxonomy and some other informations.
+    Useful when no internet connection is available and the NCBITaxa database have already been downloaded.
+
+    Args:
+        species_name (str): species name (must be with genus for example "Escherichia coli")
+
+    Returns:
+        species_informations (dict): dictionary containing information about species
+    """
+    species_informations = {}
+
     compatible_species_name = species_name.replace('/', '_')
     species_informations['description'] = compatible_species_name + ' genome'
     species_informations['organism'] = compatible_species_name
     species_informations['keywords'] = [compatible_species_name]
 
+    ncbi = NCBITaxa()
+    species_taxids = ncbi.get_name_translator([species_name])
+    if species_name in species_taxids:
+        species_taxid = species_taxids[species_name][-1]
+        species_informations['db_xref'] = 'taxon:' + str(species_taxid)
+    else:
+        logger.critical('/!\\ Error with {} this taxa has not been found in ete3 NCBITaxa Database'.format(species_name))
+        logger.critical('/!\\ Check the name of the taxa and its presence in the NCBITaxa database.')
+        logger.critical('/!\\ No genbank will be created for {}.'.format(species_name))
+        return None
+
     return species_informations
 
 
 def record_info(record_id, record_seq, species_informations):
-    """
-    Create SeqBio record informations from species_informations dictionary and record id and record seq.
+    """ Create SeqBio record informations from species_informations dictionary and record id and record seq.
+
+    Args:
+        record_id (str): ID of the record (either contig/scaffold/chromosome ID)
+        record_seq (Bio.Seq.Seq): Sequence associated to the record
+        species_informations (dict): Dictionary containing information about species
+
+    Returns:
+        record (Bio.SeqRecord.SeqRecord): New record containing the informations provided
     """
     if record_id.isnumeric():
         newname = f"_{record_id}"
     elif "|" in record_id:
-        newname = record_id.split("|")[0]
+        newname = record_id.split("|")[1]
     else:
         newname = record_id
 
@@ -244,7 +341,7 @@ def record_info(record_id, record_seq, species_informations):
 
 
 def read_annotation(eggnog_outfile:str):
-    """Read an eggno-mapper annotation file and retrieve EC numbers and GO terms by genes.
+    """Read an eggnog-mapper annotation file and retrieve EC numbers and GO terms by genes.
 
     Args:
         eggnog_outfile (str): path to eggnog-mapper annotation file
@@ -252,27 +349,59 @@ def read_annotation(eggnog_outfile:str):
     Returns:
         dict: dict of genes and their annotations as {gene1:{EC:'..,..', GOs:'..,..,'}}
     """
-    # Retrieve headers name at line 4.
-    colnames_linenb = 3
+    # Look at the twentieth first rows to find the header.
     with open(eggnog_outfile, 'r') as f:
-        headers_row = next(itertools.islice(csv.reader(f), colnames_linenb, None))[0].lstrip("#").strip().split('\t')
+        twentieth_first_rows = list(itertools.islice(f, 20))
+        first_row_after_header = min([index for index, str_row in enumerate(twentieth_first_rows) if not str_row.startswith('#')])
+        header_row = first_row_after_header - 1
+        headers_row = twentieth_first_rows[header_row].lstrip("#").strip().split('\t')
 
     # Fix issue when header is incomplete (eggnog before version 2.0).
     if len(headers_row) == 17:
         headers_row.extend(['tax_scope', 'eggNOG_OGs', 'bestOG', 'COG_functional_category', 'eggNOG_free_text'])
 
+    to_extract_annotations = ['GOs','EC', 'Preferred_name']
+    if 'PFAMs' in headers_row:
+        to_extract_annotations.append('PFAMs')
+    if 'BiGG_Reaction' in headers_row:
+        to_extract_annotations.append('BiGG_Reaction')
+    if 'KEGG_Reaction' in headers_row:
+        to_extract_annotations.append('KEGG_Reaction')
+    if 'CAZy' in headers_row:
+        to_extract_annotations.append('CAZy')
+
     # Use chunk when reading eggnog file to cope with big file.
     chunksize = 10 ** 6
-    for annotation_data in pa.read_csv(eggnog_outfile, sep='\t', comment='#', header=None, dtype = str, chunksize = chunksize):
+    for annotation_data in pd.read_csv(eggnog_outfile, sep='\t', comment='#', header=None, dtype = str, chunksize = chunksize):
         annotation_data.replace(np.nan, '', inplace=True)
         # Assign the headers
         annotation_data.columns = headers_row
-        annotation_dict = annotation_data.set_index('query_name')[['GOs','EC', 'Preferred_name']].to_dict('index')
+        if 'query_name' in annotation_data.columns:
+            annotation_dict = annotation_data.set_index('query_name')[to_extract_annotations].to_dict('index')
+        # 'query' added for compatibility with eggnog-mapper 2.1.2
+        elif 'query' in annotation_data.columns:
+            annotation_dict = annotation_data.set_index('query')[to_extract_annotations].to_dict('index')
         for key in annotation_dict:
             yield key, annotation_dict[key]
 
 
-def create_cds_feature(id_gene, start_position, end_position, strand, annotation_data, go_namespaces, go_alternatives, gene_protein_seq):
+def create_cds_feature(id_gene, start_position, end_position, strand, annot, go_namespaces, go_alternatives, gene_protein_seq, gff_extracted_annotations=None):
+    """ Create Biopython CDS feature from gene ID, gene positions, gene sequecne and gene annotations.
+
+    Args:
+        id_gene (str): ID of the gene
+        start_position (int): start position of the gene
+        end_position (int): end position of the gene
+        strand (str): strand of teh gene
+        annot (dict): dictionary of eggnog-ammper annotation (key: gene_id, value: ['GOs','EC', 'Preferred_name'])
+        go_namespaces (dict): dictionary of GO terms namespace (key: GO Term ID, value: namespace associated to GO Term)
+        go_alternatives (dict): dictionary of GO terms alternatives ID (key: GO Term ID, value: alternatives GO Term associated to GO Term)
+        gene_protein_seq (dict): dictionary of protein sequence associated to genes (key: gene id, value: sequence)
+        gff_extracted_annotations (dict): dictionary of annotation to copy from the GFF file into the Genbank file.
+
+    Returns:
+        new_feature_cds (Bio.SeqFeature.SeqFeature): New SeqFeature containing the informations provided
+    """
     new_feature_cds = sf.SeqFeature(sf.FeatureLocation(start_position,
                                                         end_position,
                                                         strand),
@@ -280,16 +409,34 @@ def create_cds_feature(id_gene, start_position, end_position, strand, annotation
 
     new_feature_cds.qualifiers['locus_tag'] = id_gene
 
-    # Add GO annotation according to the namespace.
-    if id_gene in annotation_data.keys():
-        # Add gene name.
-        if 'Preferred_name' in annotation_data[id_gene]:
-            if annotation_data[id_gene]['Preferred_name'] != "":
-                new_feature_cds.qualifiers['gene'] = annotation_data[id_gene]['Preferred_name']
+    if gff_extracted_annotations:
+        if 'product' in gff_extracted_annotations:
+            gff_product = gff_extracted_annotations['product']
+        else:
+            gff_product = None
+    else:
+        gff_product = None
 
-        if 'GOs' in annotation_data[id_gene] :
-            gene_gos = annotation_data[id_gene]['GOs'].split(',')
-            if gene_gos != [""]:
+    # Add GO annotation according to the namespace.
+    if id_gene in annot.keys():
+        # Add gene name.
+        if 'Preferred_name' in annot[id_gene]:
+            if annot[id_gene]['Preferred_name'] != '' and annot[id_gene]['Preferred_name'] != '-':
+                new_feature_cds.qualifiers['gene'] = annot[id_gene]['Preferred_name']
+
+        # Add product name from GFF.
+        if gff_product:
+            new_feature_cds.qualifiers['product'] = gff_product
+
+        # Add GO terms.
+        if 'GOs' in annot[id_gene]:
+            gene_gos = annot[id_gene]['GOs'].split(',')
+            if '' in gene_gos:
+                gene_gos.remove('')
+            # '-' added for compatibility with eggnog-mapper 2.1.2
+            if '-' in gene_gos:
+                gene_gos.remove('-')
+            if gene_gos != []:
                 go_components = []
                 go_functions = []
                 go_process = []
@@ -313,10 +460,54 @@ def create_cds_feature(id_gene, start_position, end_position, strand, annotation
 
 
         # Add EC annotation.
-        if 'EC' in annotation_data[id_gene]:
-            gene_ecs = annotation_data[id_gene]['EC'].split(',')
-            if gene_ecs != [""]:
+        if 'EC' in annot[id_gene]:
+            gene_ecs = annot[id_gene]['EC'].split(',')
+            if '' in gene_ecs:
+                gene_ecs.remove('')
+            if '-' in gene_ecs:
+                gene_ecs.remove('-')
+            if gene_ecs != []:
                 new_feature_cds.qualifiers['EC_number'] = gene_ecs
+
+        # Add Pfam dbxref.
+        if 'PFAMs' in annot[id_gene]:
+            gene_pfams = annot[id_gene]['PFAMs'].split(',')
+            if '' in gene_pfams:
+                gene_pfams.remove('')
+            if '-' in gene_pfams:
+                gene_pfams.remove('-')
+            if gene_pfams != []:
+                new_feature_cds.qualifiers['dbxref'] = ['PFAM:'+pfam for pfam in gene_pfams]
+
+        # Add CAZ dbxref.
+        if 'CAZy' in annot[id_gene]:
+            gene_cazys = annot[id_gene]['CAZy'].split(',')
+            if '' in gene_cazys:
+                gene_cazys.remove('')
+            if '-' in gene_cazys:
+                gene_cazys.remove('-')
+            if gene_cazys != []:
+                new_feature_cds.qualifiers['dbxref'] = ['CAZY:'+kegg for kegg in gene_cazys]
+
+        # Add bigg dbxref.
+        if 'BiGG_Reaction' in annot[id_gene]:
+            gene_reaction_biggs = annot[id_gene]['BiGG_Reaction'].split(',')
+            if '' in gene_reaction_biggs:
+                gene_reaction_biggs.remove('')
+            if '-' in gene_reaction_biggs:
+                gene_reaction_biggs.remove('-')
+            if gene_reaction_biggs != []:
+                new_feature_cds.qualifiers['dbxref'] = ['BIGG:'+bigg for bigg in gene_reaction_biggs]
+
+        # Add kegg dbxref.
+        if 'KEGG_Reaction' in annot[id_gene]:
+            gene_reaction_keggs = annot[id_gene]['KEGG_Reaction'].split(',')
+            if '' in gene_reaction_keggs:
+                gene_reaction_keggs.remove('')
+            if '-' in gene_reaction_keggs:
+                gene_reaction_keggs.remove('-')
+            if gene_reaction_keggs != []:
+                new_feature_cds.qualifiers['dbxref'] = ['KEGG:'+kegg for kegg in gene_reaction_keggs]
 
     if id_gene in gene_protein_seq:
         new_feature_cds.qualifiers['translation'] = gene_protein_seq[id_gene]

@@ -7,4 +7,4 @@
 ##species https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=511145
 NC_000913_3	RefSeq	region	1	12642	.	+	.	ID=id0;Dbxref=taxon:511145;Is_circular=true;Name=ANONYMOUS;gbkey=Src;genome=chromosome;mol_type=genomic DNA;strain=K-12;substrain=MG1655
 NC_000913_3	RefSeq	gene	4147	5832	.	-	.	ID=gene1887;Dbxref=ASAP:ABE-0006005,ECOCYC:EG11530,EcoGene:EG11530,GeneID:946327;Name=fadD;gbkey=Gene;gene=fadD;gene_biotype=protein_coding;gene_synonym=ECK1803,oldD;locus_tag=b1805
-NC_000913_3	RefSeq	CDS	4147	5832	.	-	0	ID=cds1827;Parent=gene1887;Dbxref=UniProtKB/Swiss-Prot:P69451,Genbank:NP_416319.1,ASAP:ABE-0006005,ECOCYC:EG11530,EcoGene:EG11530,GeneID:946327;Name=NP_416319.1;gbkey=CDS;gene=fadD;orig_transcript_id=gnl|b1805|mrna.b1805;product=fatty acyl-CoA synthetase;protein_id=NP_416319.1;transl_table=11
+NC_000913_3	RefSeq	CDS	4147	5832	.	-	0	ID=cds-gene1887;Parent=gene1887;Dbxref=UniProtKB/Swiss-Prot:P69451,Genbank:NP_416319.1,ASAP:ABE-0006005,ECOCYC:EG11530,EcoGene:EG11530,GeneID:946327;Name=NP_416319.1;gbkey=CDS;gene=fadD;orig_transcript_id=gnl|b1805|mrna.b1805;product=fatty acyl-CoA synthetase;protein_id=NP_416319.1;transl_table=11
