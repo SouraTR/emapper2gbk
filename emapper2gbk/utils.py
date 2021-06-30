@@ -162,7 +162,7 @@ def create_GO_namespaces_alternatives(gobasic_file=None):
             response = requests.get(go_basic_obo_url, stream=True)
             with open(gobasic_file, 'wb') as go_basic_file_write:
                 shutil.copyfileobj(response.raw, go_basic_file_write)
-            go_ontology = pronto.Ontology(go_basic_obo_url)
+            go_ontology = pronto.Ontology(gobasic_file)
     else:
         go_ontology = pronto.Ontology(go_basic_obo_url)
 
