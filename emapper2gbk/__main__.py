@@ -196,7 +196,7 @@ def cli():
     parent_parser_ete.add_argument(
         "--ete",
         dest="ete",
-        help="use ete3 NCBITaxa instead of query on the EBI Taxonomy Database for taxonomic ID assignation (useful if no itnernet access, except that ete3 NCBITaxa databse msut have been downloaded before).",
+        help="Use ete3 NCBITaxa instead of query on the EBI Taxonomy Database for taxonomic ID assignation (useful if there is no internet access, except that ete3 NCBITaxa database must have been downloaded before).",
         required=False,
         action="store_true",
         default=None,
