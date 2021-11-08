@@ -42,7 +42,7 @@ import sys
 from Bio import SeqFeature as sf
 from Bio import SeqIO
 from collections import OrderedDict
-from emapper2gbk.utils import check_valid_path, is_valid_file, create_GO_namespaces_alternatives, read_annotation, create_taxonomic_data, create_taxonomic_data_ete, get_basename, record_info, create_cds_feature
+from emapper2gbk.utils import check_valid_path, create_GO_namespaces_alternatives, read_annotation, create_taxonomic_data, create_taxonomic_data_ete, get_basename, record_info, create_cds_feature
 from typing import Union
 
 logger = logging.getLogger(__name__)
@@ -101,6 +101,13 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
     # ':memory:' ask gffutils to keep database in memory instead of writting in a file.
     gff_database = gffutils.create_db(gff, ':memory:', force=True, keep_order=True, merge_strategy='merge', sort_attribute_values=True)
 
+    cds_ids = set([cds.id for cds in gff_database.features_of_type('CDS')])
+    cds_number = len(cds_ids)
+
+    if cds_number == 0:
+        logger.critical('No CDS inside the GFF file of ' + genome_id)
+        return False
+
     # Dictionary with region id (contig, chromosome) as key and sequence as value.
     genome_nucleic_sequence = OrderedDict()
     for record in SeqIO.parse(nucleic_fasta, "fasta"):
@@ -110,8 +117,15 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
     # Dictionary with gene id as key and protein sequence as value.
     gene_protein_seqs = {}
 
+    seq_protein_in_gff = 0
     for record in SeqIO.parse(protein_fasta, "fasta"):
         gene_protein_seqs[record.id] = record.seq
+        if record.id in cds_ids:
+            seq_protein_in_gff += 1
+
+    if seq_protein_in_gff == 0:
+        logger.critical('No corresponding protein ID between GFF (-g/gff) and Fasta protein (-fp/protein_fasta) sequence for ' + genome_id)
+        return False
 
     # Create a taxonomy dictionary querying the EBI.
     if ete_option:
@@ -125,6 +139,11 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
     # if metagenomic mode, annotation is already read and given as a dict
     if not type(annot) is dict:
         annot = dict(read_annotation(annot))
+        annot_protein_in_gff = len([prot_id for prot_id in annot if prot_id in cds_ids])
+
+    if annot_protein_in_gff == 0:
+        logger.critical('No corresponding protein ID between GFF (-g/gff) and annotation file (-a/annot) for ' + genome_id)
+        return False
 
     # Query Gene Ontology to extract namespaces and alternative IDs.
     # go_namespaces: Dictionary GO id as term and GO namespace as value.

@@ -170,14 +170,17 @@ def create_GO_namespaces_alternatives(gobasic_file=None):
     go_namespaces = {}
     for go_term in go_ontology:
         if 'GO:' in go_term:
-            go_namespaces[go_term] = go_ontology[go_term].namespace
+            go = go_ontology[go_term]
+            go_namespaces[go_term] = go.namespace
 
     # For each GO terms look if there is an alternative ID fo them.
     go_alternative = {}
     for go_term in go_ontology:
-        if go_ontology[go_term].alternate_ids != frozenset():
-            for go_alt in go_ontology[go_term].alternate_ids:
-                go_alternative[go_alt] = go_term
+        if 'GO:' in go_term:
+            go = go_ontology[go_term]
+            if go.alternate_ids != frozenset():
+                for go_alt in go.alternate_ids:
+                    go_alternative[go_alt] = go_term
 
     return go_namespaces, go_alternative
 
