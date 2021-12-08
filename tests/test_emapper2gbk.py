@@ -461,7 +461,7 @@ def test_gbk_genes_mode_folder_cli():
 
     print("*** Test genes mode with folders as input with cli ***")
     subprocess.call(['emapper2gbk', 'genes', '-fn', FNA_DIR, '-fp', FAA_DIR,
-                        '-a', ANNOT_DIR, '-g', GFF_DIR, '-o', gbk_dir_test, '-go', GO_FILE,
+                        '-a', ANNOT_DIR, '-o', gbk_dir_test, '-go', GO_FILE,
                         '-nf', ORG_FILE])
 
     check_gbks_from_dir_genes_mode(gbk_dir_test)
