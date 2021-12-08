@@ -105,7 +105,7 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
     cds_number = len(cds_ids)
 
     if cds_number == 0:
-        logger.critical('No CDS inside the GFF file of ' + genome_id)
+        logger.critical('No CDS inside the GFF file or incorrect GFF format of ' + genome_id)
         return False
 
     # Dictionary with region id (contig, chromosome) as key and sequence as value.
@@ -124,7 +124,7 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
             seq_protein_in_gff += 1
 
     if seq_protein_in_gff == 0:
-        logger.critical('No corresponding protein ID between GFF (-g/gff) and Fasta protein (-fp/protein_fasta) sequence for ' + genome_id)
+        logger.critical('No corresponding protein ID between GFF {0} (-g/gff) and Fasta protein {1} (-fp/protein_fasta) sequence for {2}'.format(gff, protein_fasta, genome_id))
         return False
 
     # Create a taxonomy dictionary querying the EBI.
@@ -139,10 +139,11 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
     # if metagenomic mode, annotation is already read and given as a dict
     if not type(annot) is dict:
         annot = dict(read_annotation(annot))
-        annot_protein_in_gff = len([prot_id for prot_id in annot if prot_id in cds_ids])
+
+    annot_protein_in_gff = len([prot_id for prot_id in annot if prot_id in cds_ids])
 
     if annot_protein_in_gff == 0:
-        logger.critical('No corresponding protein ID between GFF (-g/gff) and annotation file (-a/annot) for ' + genome_id)
+        logger.critical('No corresponding protein ID between GFF {0} (-g/gff) and annotation file (-a/annot) for {1}.'.format(gff, genome_id))
         return False
 
     # Query Gene Ontology to extract namespaces and alternative IDs.

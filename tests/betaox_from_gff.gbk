@@ -14,7 +14,7 @@ FEATURES             Location/Qualifiers
      gene            complement(1..2445)
                      /locus_tag="gene226"
      CDS             complement(1..2445)
-                     /locus_tag="gene226"
+                     /locus_tag="cds-gene226"
                      /gene="fadE"
                      /go_component="GO:0005575"
                      /go_component="GO:0005623"
@@ -75,7 +75,7 @@ FEATURES             Location/Qualifiers
      gene            2446..4146
                      /locus_tag="gene1781"
      CDS             2446..4146
-                     /locus_tag="gene1781"
+                     /locus_tag="cds-gene1781"
                      /gene="fadK"
                      /go_component="GO:0005575"
                      /go_component="GO:0005623"
@@ -104,7 +104,7 @@ FEATURES             Location/Qualifiers
      gene            complement(4147..5832)
                      /locus_tag="gene1887"
      CDS             complement(4147..5832)
-                     /locus_tag="gene1887"
+                     /locus_tag="cds-gene1887"
                      /gene="fadD"
                      /go_component="GO:0005575"
                      /go_component="GO:0005622"
@@ -225,7 +225,7 @@ FEATURES             Location/Qualifiers
      gene            complement(5833..7977)
                      /locus_tag="gene2441"
      CDS             complement(5833..7977)
-                     /locus_tag="gene2441"
+                     /locus_tag="cds-gene2441"
                      /gene="fadJ"
                      /go_function="GO:0003674"
                      /go_function="GO:0003824"
@@ -321,7 +321,7 @@ FEATURES             Location/Qualifiers
      gene            complement(7978..9288)
                      /locus_tag="gene2442"
      CDS             complement(7978..9288)
-                     /locus_tag="gene2442"
+                     /locus_tag="cds-gene2442"
                      /gene="fadI"
                      /go_component="GO:0005575"
                      /go_component="GO:0005622"
@@ -388,7 +388,7 @@ FEATURES             Location/Qualifiers
      gene            complement(9289..10452)
                      /locus_tag="gene3987"
      CDS             complement(9289..10452)
-                     /locus_tag="gene3987"
+                     /locus_tag="cds-gene3987"
                      /gene="fadA"
                      /go_component="GO:0005575"
                      /go_component="GO:0005622"
@@ -443,7 +443,7 @@ FEATURES             Location/Qualifiers
      gene            complement(10453..12642)
                      /locus_tag="gene3988"
      CDS             complement(10453..12642)
-                     /locus_tag="gene3988"
+                     /locus_tag="cds-gene3988"
                      /gene="fadB"
                      /go_function="GO:0003674"
                      /go_function="GO:0003824"
