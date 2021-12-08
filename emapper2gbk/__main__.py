@@ -216,7 +216,8 @@ def cli():
             parent_parser_go, parent_parser_merge, parent_parser_q, parent_parser_ete
         ],
         description=
-        "Use the annotation of a complete gene catalogue and build gbk files for each set of genes (fna) and proteins (faa) from input directories"
+        "Use the annotation of a complete gene catalogue and build gbk files for each set of genes (fna) and proteins (faa) from input directories",
+        allow_abbrev=False
     )
     genomes_parser = subparsers.add_parser(
         "genomes",
@@ -228,7 +229,8 @@ def cli():
             parent_parser_ete
         ],
         description=
-        "Build a gbk file for each genome with an annotation file for each"
+        "Build a gbk file for each genome with an annotation file for each",
+        allow_abbrev=False
     )
 
     args = parser.parse_args()
