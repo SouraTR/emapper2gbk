@@ -199,9 +199,6 @@ def create_taxonomic_data(species_name):
     species_informations = {}
 
     compatible_species_name = species_name.replace('/', '_')
-    species_informations['description'] = compatible_species_name + ' genome'
-    species_informations['organism'] = compatible_species_name
-    species_informations['keywords'] = [compatible_species_name]
 
     species_name_url = species_name.replace(' ', '%20')
 
@@ -242,6 +239,10 @@ def create_taxonomic_data(species_name):
                 species_informations['db_xref'] = 'taxon:' + str(temp_species_informations[temp_species_information])
             else:
                 species_informations[temp_species_information] = temp_species_informations[temp_species_information]
+
+    species_informations['description'] = compatible_species_name + ' genome'
+    species_informations['organism'] = compatible_species_name
+    species_informations['keywords'] = [compatible_species_name]
 
     return species_informations
 
