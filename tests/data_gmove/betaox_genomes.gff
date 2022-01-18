@@ -1,0 +1,14 @@
+NC_000913_3	Gmove	mRNA	1	2445	.	-	.	ID=mRNA_gene226;Name=mRNA_gene226
+NC_000913_3	Gmove	CDS	1	2445	.	-	.	Parent=mRNA_gene226
+NC_000913_3	Gmove	mRNA	2446	4146	.	+	.	ID=mRNA_gene1781;Name=mRNA_gene1781
+NC_000913_3	Gmove	CDS	2446	4146	.	+	.	Parent=mRNA_gene1781
+NC_000913_3	Gmove	mRNA	4147	5832	.	-	.	ID=mRNA_gene1887;Name=mRNA_gene1887
+NC_000913_3	Gmove	CDS	4147	5832	.	-	.	Parent=mRNA_gene1887
+NC_000913_3	Gmove	mRNA	5833	7977	.	-	.	ID=mRNA_gene2441;Name=mRNA_gene2441
+NC_000913_3	Gmove	CDS	5833	7977	.	-	.	Parent=mRNA_gene2441
+NC_000913_3	Gmove	mRNA	7978	9288	.	-	.	ID=mRNA_gene2442;Name=mRNA_gene2442
+NC_000913_3	Gmove	CDS	7978	9288	.	-	.	Parent=mRNA_gene2442
+NC_000913_3	Gmove	mRNA	9289	10452	.	-	.	ID=mRNA_gene3987;Name=mRNA_gene3987
+NC_000913_3	Gmove	CDS	9289	10452	.	-	.	Parent=mRNA_gene3987
+NC_000913_3	Gmove	mRNA	10453	12642	.	-	.	ID=mRNA_gene3988;Name=mRNA_gene3988
+NC_000913_3	Gmove	CDS	10453	12642	.	-	.	Parent=mRNA_gene3988

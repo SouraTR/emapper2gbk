@@ -63,6 +63,10 @@ def gbk_creation(nucleic_fasta:str, protein_fasta:str, annot:str,
     elif all(types[input_file] == 'directory' for input_file in types if input_file != annot) and types[annot] == 'file':
         directory_mode = True
         one_annot_file = True
+    elif any(input_file is None for input_file in types.values()):
+        missing_files = [input_file for input_file in types if types[input_file] is None]
+        logger.critical(f"Missing input file or folder : "+' '.join(missing_files))
+        sys.exit(1)
     else:
         logger.critical(f"Invalid combinations of input, three are possible: all inputs (nucleic fasta, protein fasta, annotation, [gff]) are files, all inputs are directories or annotation is file and the other inputs are directories.")
         sys.exit(1)

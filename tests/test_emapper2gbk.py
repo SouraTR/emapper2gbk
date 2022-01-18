@@ -37,6 +37,11 @@ EXPECTED_GBK_NO_GFF = 'betaox_no_gff.gbk'
 EXPECTED_GBK_WITH_GFF = 'betaox_from_gff.gbk'
 EXPECTED_GBK_NO_GFF_MERGED = 'betaox_no_gff_merged.gbk'
 
+GMOVE_ANNOT = 'data_gmove/betaox_v2.emapper.annotations'
+GMOVE_FNA = 'data_gmove/betaox_genomes.fna'
+GMOVE_FAA = 'data_gmove/betaox_genomes.faa'
+GMOVE_GFF = 'data_gmove/betaox_genomes.gff'
+
 ANNOTATIONS_TYPES = ['go_function', 'go_process', 'go_component', 'EC_number', 'locus']
 
 ANNOTATIONS_BY_GENOME = {'gene1781':{'go_component':['GO:0005575', 'GO:0005623', 'GO:0005886',
@@ -541,6 +546,42 @@ def test_gbk_genes_mode_merge_fake_contig():
 
     return
 
+
+def test_gbk_genomes_mode_gmove_test():
+    """Test genomes mode with file as input.
+    """
+    print("*** Test genomes mode with file as input ***")
+    gbk_test = 'test_gff.gbk'
+
+    gbk_creation(nucleic_fasta=GMOVE_FNA,
+                protein_fasta=GMOVE_FAA,
+                annot=GMOVE_ANNOT,
+                gff=GMOVE_GFF,
+                gff_type='gmove',
+                org=ORG_NAME,
+                output_path=gbk_test,
+                gobasic=GO_FILE)
+
+    compare_two_gbks(EXPECTED_GBK_WITH_GFF, gbk_test)
+    os.remove(gbk_test)
+
+    return
+
+
+def test_gbk_genomes_mode_gmove_test_cli():
+    """Test genomes mode with file as input with cli
+    """
+    gbk_test = 'test_gff.gbk'
+    print("*** Test genomes mode with file as input with cli***")
+    subprocess.call(['emapper2gbk', 'genomes', '-fn', GMOVE_FNA, '-fp', GMOVE_FAA,
+                        '-a', GMOVE_ANNOT, '-g', GMOVE_GFF, '-o', gbk_test, '-go', GO_FILE,
+                        '-n', ORG_NAME, '-gt', 'gmove'])
+
+    compare_two_gbks(EXPECTED_GBK_WITH_GFF, gbk_test)
+    os.remove(gbk_test)
+
+    return
+
     
 if __name__ == "__main__":
     test_gbk_genes_mode_test()
@@ -556,3 +597,5 @@ if __name__ == "__main__":
     test_gbk_genes_mode_folder_one_annot_file()
     test_gbk_genes_mode_folder_one_annot_file_cli()
     test_gbk_genes_mode_merge_fake_contig()
+    test_gbk_genomes_mode_gmove_test()
+    test_gbk_genomes_mode_gmove_test_cli()

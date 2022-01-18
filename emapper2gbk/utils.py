@@ -389,7 +389,10 @@ def read_annotation(eggnog_outfile:str):
             yield key, annotation_dict[key]
 
 
-def create_cds_feature(id_gene, start_position, end_position, strand, annot, go_namespaces, go_alternatives, gene_protein_seq, gff_extracted_annotations=None):
+def create_cds_feature(id_gene, start_position, end_position,
+                        strand, annot, go_namespaces, go_alternatives,
+                        gene_protein_seq, gff_extracted_annotations=None,
+                        location_exons=None):
     """ Create Biopython CDS feature from gene ID, gene positions, gene sequecne and gene annotations.
 
     Args:
@@ -406,10 +409,15 @@ def create_cds_feature(id_gene, start_position, end_position, strand, annot, go_
     Returns:
         new_feature_cds (Bio.SeqFeature.SeqFeature): New SeqFeature containing the informations provided
     """
-    new_feature_cds = sf.SeqFeature(sf.FeatureLocation(start_position,
-                                                        end_position,
-                                                        strand),
-                                                    type="CDS")
+    if location_exons and len(location_exons)>=2:
+        exon_feature_locations = sf.CompoundLocation(location_exons, operator='join')
+
+        new_feature_cds = sf.SeqFeature(exon_feature_locations, type='CDS')
+    else:
+        new_feature_cds = sf.SeqFeature(sf.FeatureLocation(start_position,
+                                                            end_position,
+                                                            strand),
+                                                                    type="CDS")
 
     new_feature_cds.qualifiers['locus_tag'] = id_gene
 

@@ -101,7 +101,10 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
     # ':memory:' ask gffutils to keep database in memory instead of writting in a file.
     gff_database = gffutils.create_db(gff, ':memory:', force=True, keep_order=True, merge_strategy='merge', sort_attribute_values=True)
 
-    cds_ids = set([cds.id for cds in gff_database.features_of_type('CDS')])
+    if gff_type != 'gmove':
+        cds_ids = set([cds.id for cds in gff_database.features_of_type('CDS')])
+    else:
+        cds_ids = set([cds.id for cds in gff_database.features_of_type('mRNA')])
     cds_number = len(cds_ids)
 
     if cds_number == 0:
@@ -120,8 +123,12 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
     seq_protein_in_gff = 0
     for record in SeqIO.parse(protein_fasta, "fasta"):
         gene_protein_seqs[record.id] = record.seq
-        if record.id in cds_ids:
-            seq_protein_in_gff += 1
+        if gff_type != 'gmove':
+            if record.id in cds_ids:
+                seq_protein_in_gff += 1
+        else:
+            if record.id.replace('prot', 'mRNA') in cds_ids:
+                seq_protein_in_gff += 1
 
     if seq_protein_in_gff == 0:
         logger.critical('No corresponding protein ID between GFF {0} (-g/gff) and Fasta protein {1} (-fp/protein_fasta) sequence for {2}'.format(gff, protein_fasta, genome_id))
@@ -140,7 +147,10 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
     if not type(annot) is dict:
         annot = dict(read_annotation(annot))
 
-    annot_protein_in_gff = len([prot_id for prot_id in annot if prot_id in cds_ids])
+    if gff_type != 'gmove':
+        annot_protein_in_gff = len([prot_id for prot_id in annot if prot_id in cds_ids])
+    else:
+         annot_protein_in_gff = len([prot_id for prot_id in annot if prot_id.replace('prot', 'mRNA') in cds_ids])
 
     if annot_protein_in_gff == 0:
         logger.critical('No corresponding protein ID between GFF {0} (-g/gff) and annotation file (-a/annot) for {1}.'.format(gff, genome_id))
@@ -169,7 +179,7 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
     for region_id in genome_nucleic_sequence:
         record = record_info(region_id, genome_nucleic_sequence[region_id], species_informations)
         if gff_type == 'default':
-            gene_region_id = [gene for gene in gff_database.features_of_type('gene') if gene.chrom == region_id]
+            gene_region_id = gff_database.region(seqid=region_id, featuretype='gene')
             for gene in gene_region_id:
                 id_gene = gene.id
 
@@ -213,7 +223,7 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
                     record.features.append(new_cds_feature)
 
         elif gff_type == 'cds_only':
-            cds_region_id = [gene for gene in gff_database.features_of_type('CDS') if gene.chrom == region_id]
+            cds_region_id = gff_database.region(seqid=region_id, featuretype='CDS')
             for cds in cds_region_id:
                 id_cds = cds.id
 
@@ -236,6 +246,56 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
 
                 new_cds_feature = create_cds_feature(id_cds, start_position, end_position, strand, annot, go_namespaces, go_alternatives, gene_protein_seqs)
                 new_cds_feature.qualifiers['locus_tag'] = id_cds
+                # Add CDS information to contig record
+                record.features.append(new_cds_feature)
+
+        elif gff_type == 'gmove':
+            gene_region_id = gff_database.region(seqid=region_id, featuretype='mRNA')
+            for gene in gene_region_id:
+                id_gene = gene.id
+
+                # If id is numeric, change it
+                if id_gene.isnumeric():
+                    id_gene = f"gene_{id_gene}"
+                else:
+                    id_gene = id_gene
+
+                start_position = gene.start -1
+                end_position = gene.end
+                strand = strand_change(gene.strand)
+                new_feature_gene = sf.SeqFeature(sf.FeatureLocation(start_position,
+                                                                    end_position,
+                                                                    strand),
+                                                                    type="gene")
+                new_feature_gene.qualifiers['locus_tag'] = id_gene
+                # Add gene information to contig record.
+                record.features.append(new_feature_gene)
+
+                # Search for exon location associated to mRNA.
+                location_exons = []
+                for cds in gff_database.children(gene, featuretype="CDS", order_by='start'):
+                    start_position = cds.start - 1
+                    end_position = cds.end
+                    strand = strand_change(cds.strand)
+                    new_feature_location_exons = sf.FeatureLocation(start_position,
+                                                                    end_position,
+                                                                    strand)
+                    location_exons.append(new_feature_location_exons)
+
+                cds_id = id_gene.replace('mRNA', 'prot')
+
+                if keep_gff_annot:
+                    gff_extracted_annotations = {annotation: cds_object.attributes[annotation]
+                                                    for annotation in annotations_in_gff
+                                                    if annotation in cds_object.attributes}
+                else:
+                    gff_extracted_annotations = None
+
+
+                new_cds_feature = create_cds_feature(cds_id, start_position, end_position,
+                                                    strand, annot, go_namespaces, go_alternatives,
+                                                    gene_protein_seqs, gff_extracted_annotations, location_exons)
+                new_cds_feature.qualifiers['locus_tag'] = cds_id
                 # Add CDS information to contig record
                 record.features.append(new_cds_feature)
 
