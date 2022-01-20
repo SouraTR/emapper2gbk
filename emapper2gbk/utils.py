@@ -405,6 +405,7 @@ def create_cds_feature(id_gene, start_position, end_position,
         go_alternatives (dict): dictionary of GO terms alternatives ID (key: GO Term ID, value: alternatives GO Term associated to GO Term)
         gene_protein_seq (dict): dictionary of protein sequence associated to genes (key: gene id, value: sequence)
         gff_extracted_annotations (dict): dictionary of annotation to copy from the GFF file into the Genbank file.
+        location_exons (list): list of FeatureLocation containing exons positions for the CDS, None if no exon position or if not in gff type gmove.
 
     Returns:
         new_feature_cds (Bio.SeqFeature.SeqFeature): New SeqFeature containing the informations provided

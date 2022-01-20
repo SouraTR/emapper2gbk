@@ -131,13 +131,23 @@ A gene feature is required and the CDS feature must have the gene feature as a p
     region_1	RefSeq	gene	1	2445	.	-	.	ID=gene_1
     region_1	RefSeq	CDS	1	2445	.	-	0	ID=cds_1;Parent=gene_1
 
-But some GFF files can be formatted differently, so by using the argument ``-gt cds_only``, it is possible to use GFF file with only CDS, like:
+But some GFF files can be formatted differently with only CDS (such as in `Prodigal <https://github.com/hyattpd/Prodigal>`__ or `Prokka <https://github.com/tseemann/prokka>`__ GFF), it is possible to use them with ``-gt cds_only``.
+Here is an example of the format accepted by this command (with ID cds_1 being the same as the one in the faa and eggnogg-mapper files):
 
 .. code-block:: text
 
     ##gff file
-    region_1	RefSeq	region	1	12642	.	+	.	ID=region_1
     region_1	RefSeq	CDS	1	2445	.	-	0	ID=cds_1
+
+The tool can also handle GFF from `Gmove <https://www.genoscope.cns.fr/gmove/>`__ (with ``-gt gmove``) with the following format:
+
+.. code-block:: text
+
+    ##gff file
+    region_1	Gmove	mRNA	1	2445	.	+	.	ID=mRNA_gene_1;Name=mRNA_gene_1
+    region_1	Gmove	CDS	1	2445	.	-	0	Parent=mRNA_gene_1
+
+For gmove, the proteins in the faa and eggnogg-mapper files will be prefixed with ``prot_`` (like ``prot_gene_1`` for ``mRNA_gene_1``). Emapper2gbk should be able to handle these differences.
 
 Dependencies and installation
 -----------------------------
