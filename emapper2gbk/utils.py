@@ -23,6 +23,7 @@ import requests
 import simplejson
 import shutil
 import sys
+import traceback
 
 from Bio.SeqRecord import SeqRecord
 from Bio import SeqFeature as sf
@@ -155,16 +156,22 @@ def create_GO_namespaces_alternatives(gobasic_file=None):
     go_basic_obo_url = 'http://purl.obolibrary.org/obo/go/go-basic.obo'
 
     if gobasic_file:
-        if is_valid_file(gobasic_file):
-            go_ontology = pronto.Ontology(gobasic_file)
-        else:
+        if not is_valid_file(gobasic_file):
             logger.critical(gobasic_file + ' file is not available, emapper2gbk will download the GO ontology and create it.')
             response = requests.get(go_basic_obo_url, stream=True)
             with open(gobasic_file, 'wb') as go_basic_file_write:
                 shutil.copyfileobj(response.raw, go_basic_file_write)
-            go_ontology = pronto.Ontology(gobasic_file)
     else:
-        go_ontology = pronto.Ontology(go_basic_obo_url)
+        gobasic_file = go_basic_obo_url
+
+    try:
+        go_ontology = pronto.Ontology(gobasic_file)
+    except SyntaxError as syntax_error:
+        traceback.print_exc()
+        logger.critical('/!\\ It seems that the obo fie (' + gobasic_file + ') has a syntax error.')
+        logger.critical('You can try other obo file like the one from the github of gene Ontology (which can contains the fix for the syntax error): https://github.com/geneontology/go-ontology/blob/104252cc533a83248ed4df2caefd434e6eb8b531/src/ontology/go-edit.obo.')
+        logger.critical('Or the obo file from the test folder of emapper2gbk (https://github.com/AuReMe/emapper2gbk/blob/master/tests/go-basic.obo).')
+        sys.exit(1)
 
     # For each GO terms look to the namespaces associated with them.
     go_namespaces = {}
