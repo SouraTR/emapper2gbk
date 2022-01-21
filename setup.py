@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# Copyright (C) 2019-2021 Clémence Frioux & Arnaud Belcour - Inria Dyliss - Pleiade
+# Copyright (C) 2019-2022 Clémence Frioux & Arnaud Belcour - Inria Dyliss - Pleiade
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
@@ -39,13 +39,13 @@ description = "Build .gbk files starting from eggnog annotation files and genome
 # description +=
 
 setup(
-    author="Clémence Frioux",
-    author_email='clemence.frioux@inria.fr',
+    author="AuReMe",
+    author_email='gem-aureme@inria.fr',
     python_requires='>=3.6',
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
+        'License :: OSI Approved :: LGPLv3+',
         'Natural Language :: English',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
@@ -58,7 +58,7 @@ setup(
         ],
     },
     install_requires=requirements,
-    license="GNU General Public License v3",
+    license="LGPLv3+",
     long_description=readme,
     include_package_data=True,
     keywords='emapper2gbk',
