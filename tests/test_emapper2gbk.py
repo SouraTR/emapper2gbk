@@ -30,6 +30,11 @@ FNA_DIR = 'fna'
 GFF_DIR = 'gff'
 
 ORG_NAME = 'Escherichia coli'
+ORG_NAME_BACT = 'bacteria'
+ORG_NAME_ARCH = 'archaea'
+ORG_NAME_EUK = 'eukaryota'
+ORG_NAME_META = 'metagenome'
+ORG_NAME_CELL = 'cellular organisms'
 ORG_FILE = 'organism_names.tsv'
 GO_FILE = 'go-basic.obo'
 
@@ -286,7 +291,7 @@ def test_gbk_gene_mode_test_cli():
 
     print("*** Test genes mode with file as input with cli***")
     subprocess.call(['emapper2gbk', 'genes', '-fn', FNA_INPUT, '-fp', FAA_INPUT,
-                        '-a', ANNOT_INPUT, '-o', gbk_test, '-go', GO_FILE, '-n', ORG_NAME])
+                        '-a', ANNOT_INPUT, '-o', gbk_test, '-go', GO_FILE, '-n', ORG_NAME_BACT])
 
     compare_two_gbks(EXPECTED_GBK_NO_GFF, gbk_test)
     os.remove(gbk_test)
@@ -302,7 +307,7 @@ def test_gbk_genes_mode_annot_v2():
     gbk_creation(nucleic_fasta=FNA_INPUT,
                 protein_fasta=FAA_INPUT,
                 annot=ANNOT_INPUT_V2,
-                org=ORG_NAME,
+                org=ORG_NAME_ARCH,
                 output_path=gbk_test,
                 gff=None,
                 gobasic=GO_FILE)
@@ -319,7 +324,7 @@ def test_gbk_genes_mode_annot_v2_cli():
     gbk_test = 'test_no_gff.gbk'
     print("*** Test genes mode with file as input with v2 eggnog mapper annotation file with cli***")
     subprocess.call(['emapper2gbk', 'genes', '-fn', FNA_INPUT, '-fp', FAA_INPUT,
-                        '-a', ANNOT_INPUT_V2, '-o', gbk_test, '-go', GO_FILE, '-n', ORG_NAME])
+                        '-a', ANNOT_INPUT_V2, '-o', gbk_test, '-go', GO_FILE, '-n', ORG_NAME_BACT])
 
     compare_two_gbks(EXPECTED_GBK_NO_GFF, gbk_test)
     os.remove(gbk_test)
@@ -337,7 +342,7 @@ def test_gbk_genomes_mode_test():
                 protein_fasta=GENOME_FAA_INPUT,
                 annot=GENOME_ANNOT_INPUT,
                 gff=GENOME_GFF_INPUT,
-                org=ORG_NAME,
+                org=ORG_NAME_ARCH,
                 output_path=gbk_test,
                 gobasic=GO_FILE)
 
@@ -354,7 +359,7 @@ def test_gbk_genomes_mode_test_cli():
     print("*** Test genomes mode with file as input with cli***")
     subprocess.call(['emapper2gbk', 'genomes', '-fn', GENOME_FNA_INPUT, '-fp', GENOME_FAA_INPUT,
                         '-a', GENOME_ANNOT_INPUT, '-g', GENOME_GFF_INPUT, '-o', gbk_test, '-go', GO_FILE,
-                        '-n', ORG_NAME])
+                        '-n', ORG_NAME_EUK])
 
     compare_two_gbks(EXPECTED_GBK_WITH_GFF, gbk_test)
     os.remove(gbk_test)
@@ -373,7 +378,7 @@ def test_gbk_genomes_mode_cds_only_test():
                 annot=GENOME_ANNOT_INPUT,
                 gff=GENOME_GFF_INPUT,
                 gff_type='cds_only',
-                org=ORG_NAME,
+                org=ORG_NAME_EUK,
                 output_path=gbk_test,
                 gobasic=GO_FILE)
 
@@ -393,7 +398,7 @@ def test_gbk_genomes_mode_keep_gff_annot_test():
                 protein_fasta=GENOME_FAA_INPUT,
                 annot=GENOME_ANNOT_INPUT,
                 gff=GENOME_GFF_INPUT,
-                org=ORG_NAME,
+                org=ORG_NAME_META,
                 output_path=gbk_test,
                 gobasic=GO_FILE,
                 keep_gff_annot=True)
@@ -519,7 +524,7 @@ def test_gbk_genes_mode_merge_fake_contig():
     gbk_creation(nucleic_fasta=FNA_INPUT,
                 protein_fasta=FAA_INPUT,
                 annot=ANNOT_INPUT,
-                org=ORG_NAME,
+                org=ORG_NAME_BACT,
                 output_path=gbk_test,
                 gff=None,
                 gobasic=GO_FILE,
@@ -558,7 +563,7 @@ def test_gbk_genomes_mode_gmove_test():
                 annot=GMOVE_ANNOT,
                 gff=GMOVE_GFF,
                 gff_type='gmove',
-                org=ORG_NAME,
+                org=ORG_NAME_BACT,
                 output_path=gbk_test,
                 gobasic=GO_FILE)
 
@@ -575,7 +580,7 @@ def test_gbk_genomes_mode_gmove_test_cli():
     print("*** Test genomes mode with file as input with cli***")
     subprocess.call(['emapper2gbk', 'genomes', '-fn', GMOVE_FNA, '-fp', GMOVE_FAA,
                         '-a', GMOVE_ANNOT, '-g', GMOVE_GFF, '-o', gbk_test, '-go', GO_FILE,
-                        '-n', ORG_NAME, '-gt', 'gmove'])
+                        '-n', ORG_NAME_BACT, '-gt', 'gmove'])
 
     compare_two_gbks(EXPECTED_GBK_WITH_GFF, gbk_test)
     os.remove(gbk_test)
