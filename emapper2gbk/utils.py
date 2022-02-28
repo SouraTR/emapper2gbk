@@ -220,22 +220,28 @@ def create_taxonomic_data(species_name):
     elif species_name == 'cellular organisms':
         species_informations = {'db_xref': 'taxon:131567', 'scientificName': 'cellular organisms', 'formalName': 'false', 'rank': 'no rank', 'division': 'UNC', 'geneticCode': '1', 'submittable': 'false'}
     else:
-        url = 'https://www.ebi.ac.uk/ena/data/taxonomy/v1/taxon/scientific-name/' + species_name_url
+        taxons = species_name.split(";")
+        for index, taxon in reversed(list(enumerate(taxons))):
+            url = 'https://www.ebi.ac.uk/ena/data/taxonomy/v1/taxon/scientific-name/' + taxon
 
-        try:
-            response = requests.get(url)
-        except requests.exceptions.ConnectionError:
-            logger.critical('/!\\ No internet connection, check the connection or use the --ete option (if you have the NCBITaxa database already downloaded).')
-            return None
+            try:
+                response = requests.get(url)
+            except requests.exceptions.ConnectionError:
+                logger.critical('/!\\ No internet connection, check the connection or use the --ete option (if you have the NCBITaxa database already downloaded).')
+                return None
 
-        # Check if there is taxonomy information in the EBI response JSON.
-        try:
-            temp_species_informations = response.json()[0]
-        except simplejson.errors.JSONDecodeError:
-            logger.critical('/!\\ Error with {} this taxa has not been found in https://www.ebi.ac.uk/ena/data/taxonomy/v1/taxon/scientific-name/'.format(species_name))
-            logger.critical('/!\\ Check the name of the taxa and its presence in the EBI taxonomy database.')
-            logger.critical('/!\\ No genbank will be created for {}.'.format(species_name))
-            return None
+            # Check if there is taxonomy information in the EBI response JSON.
+            try:
+                temp_species_informations = response.json()[0]
+                break
+            except simplejson.errors.JSONDecodeError:
+                if index ==0:
+                    logger.critical('/!\\ Error with {} this taxa has not been found in https://www.ebi.ac.uk/ena/data/taxonomy/v1/taxon/scientific-name/'.format(species_name))
+                    logger.critical('/!\\ Check the name of the taxa and its presence in the EBI taxonomy database.')
+                    logger.critical('/!\\ No genbank will be created for {}.'.format(species_name))
+                    return None
+                else:
+                    continue            
 
         for temp_species_information in temp_species_informations:
             if temp_species_information == 'lineage':
