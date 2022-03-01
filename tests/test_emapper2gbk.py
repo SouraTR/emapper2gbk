@@ -35,6 +35,7 @@ ORG_NAME_ARCH = 'archaea'
 ORG_NAME_EUK = 'eukaryota'
 ORG_NAME_META = 'metagenome'
 ORG_NAME_CELL = 'cellular organisms'
+ORG_FULL_TAX = 'cellular organisms;Bacteria;Proteobacteria;Gammaproteobacteria;Enterobacterales;Enterobacteriaceae;Escherichia;Escherichia coli'
 ORG_FILE = 'organism_names.tsv'
 GO_FILE = 'go-basic.obo'
 
@@ -283,6 +284,24 @@ def test_gbk_genes_mode_test():
 
     return
 
+def test_gbk_genes_mode_lineage_test():
+    """Test genes mode with file as input and full lineage taxonomy.
+    """
+    print("*** Test genes mode with file as input and full lineage taxonomy ***")
+    gbk_test = 'test_no_gff.gbk'
+    gbk_creation(nucleic_fasta=FNA_INPUT,
+                protein_fasta=FAA_INPUT,
+                annot=ANNOT_INPUT,
+                org=ORG_FULL_TAX,
+                output_path=gbk_test,
+                gff=None,
+                gobasic=GO_FILE)
+
+    compare_two_gbks(EXPECTED_GBK_NO_GFF, gbk_test)
+    os.remove(gbk_test)
+
+    return
+
 
 def test_gbk_gene_mode_test_cli():
     """Test genes mode  with file as input.
@@ -343,6 +362,25 @@ def test_gbk_genomes_mode_test():
                 annot=GENOME_ANNOT_INPUT,
                 gff=GENOME_GFF_INPUT,
                 org=ORG_NAME_ARCH,
+                output_path=gbk_test,
+                gobasic=GO_FILE)
+
+    compare_two_gbks(EXPECTED_GBK_WITH_GFF, gbk_test)
+    os.remove(gbk_test)
+
+    return
+
+def test_gbk_genomes_mode_lineage_test():
+    """Test genomes mode with file as input and full lineage taxonomy.
+    """
+    print("*** Test genomes mode with file as input and full lineage taxonomy ***")
+    gbk_test = 'test_gff.gbk'
+
+    gbk_creation(nucleic_fasta=GENOME_FNA_INPUT,
+                protein_fasta=GENOME_FAA_INPUT,
+                annot=GENOME_ANNOT_INPUT,
+                gff=GENOME_GFF_INPUT,
+                org=ORG_FULL_TAX,
                 output_path=gbk_test,
                 gobasic=GO_FILE)
 
@@ -590,10 +628,12 @@ def test_gbk_genomes_mode_gmove_test_cli():
     
 if __name__ == "__main__":
     test_gbk_genes_mode_test()
+    test_gbk_genes_mode_lineage_test()
     test_gbk_gene_mode_test_cli()
     test_gbk_genes_mode_annot_v2()
     test_gbk_genes_mode_annot_v2_cli()
     test_gbk_genomes_mode_test()
+    test_gbk_genomes_mode_lineage_test()
     test_gbk_genomes_mode_test_cli()
     test_gbk_genomes_mode_folder()
     test_gbk_genomes_mode_folder_cli()
