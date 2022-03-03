@@ -222,7 +222,6 @@ def create_taxonomic_data(species_name):
         for index, taxon in reversed(list(enumerate(taxons))):
             if not taxon:
                 continue
-            
             compatible_species_name = taxon.replace('/', '_')
             species_name_url = taxon.replace(' ', '%20')
             url = 'https://www.ebi.ac.uk/ena/data/taxonomy/v1/taxon/scientific-name/' + species_name_url
@@ -278,6 +277,8 @@ def create_taxonomic_data_ete(species_name):
     species_informations = {}
     taxons = species_name.split(";")
     for index, taxon in reversed(list(enumerate(taxons))):
+        if not taxon:
+                continue
         compatible_species_name = taxon.replace('/', '_')
         species_informations['description'] = compatible_species_name + ' genome'
         species_informations['organism'] = compatible_species_name
