@@ -1,4 +1,4 @@
-gene_1781	Bacteria;Proteobacteria
-gene_1887	metagenome
-gene_2441	Archaea;Euryarchaeota;Archaeoglobi
-genes_3987_3988	cellular organisms
+gene_1781	Bacteria;Proteobacteria;;
+gene_1887	metagenome;
+gene_2441	Archaea;Euryarchaeota;Archaeoglobi;;
+genes_3987_3988	cellular organisms;
