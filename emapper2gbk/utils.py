@@ -278,7 +278,7 @@ def create_taxonomic_data_ete(species_name):
     taxons = species_name.split(";")
     for index, taxon in reversed(list(enumerate(taxons))):
         if not taxon:
-                continue
+            continue
         compatible_species_name = taxon.replace('/', '_')
         species_informations['description'] = compatible_species_name + ' genome'
         species_informations['organism'] = compatible_species_name
