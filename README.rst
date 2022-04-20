@@ -77,8 +77,8 @@ emapper2gbk genomes
 For each genomes, inputs are:
 
 * a nucleotide fasta file containing the sequence of each contigs/chromosomes for the genome or a folder containing multiple nucleotide fasta files.
-* the proteome corresponding to the genome or a folder containing the corresponding protein sequences to the nucleotide sequences (must be the same name).
-* the GFF file corresponding to the genome or a folder containing multiple GFF files (must be the same name as the nucleotide folder).
+* the proteome corresponding to the genome or a folder containing the corresponding protein sequences to the nucleotide sequences (having the same name as the nucleotides files).
+* the GFF file corresponding to the genome or a folder containing multiple GFF files (each GFF files must have the same name as the corresponding nucleotide files).
 * the annotation file obtained after Eggnog-mapper annotation (usually ``xxx.emapper.annotation``) or a folder with multiple annotation files (must be the same name as nucleotide fasta file and ends with '.tsv' extension)
 
 In addition, as optional files:
