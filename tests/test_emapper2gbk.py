@@ -47,6 +47,12 @@ GMOVE_FNA = 'data_gmove/betaox_genomes.fna'
 GMOVE_FAA = 'data_gmove/betaox_genomes.faa'
 GMOVE_GFF = 'data_gmove/betaox_genomes.gff'
 
+EGGNOG_ANNOT = 'data_eggnog/out.emapper.annotations'
+EGGNOG_FNA = 'data_eggnog/queries.fasta'
+EGGNOG_FAA = 'data_eggnog/out.emapper.genepred.fasta'
+EGGNOG_GFF = 'data_eggnog/out.emapper.genepred.gff'
+EGGNOG_GBK = 'data_eggnog/eggnog_expected.gbk'
+
 ANNOTATIONS_TYPES = ['go_function', 'go_process', 'go_component', 'EC_number', 'locus']
 
 ANNOTATIONS_BY_GENOME = {'gene1781':{'go_component':['GO:0005575', 'GO:0005623', 'GO:0005886',
@@ -587,7 +593,42 @@ def test_gbk_genomes_mode_gmove_test_cli():
 
     return
 
-    
+def test_gbk_genomes_mode_eggnog_test():
+    """Test genomes mode with file as input.
+    """
+    print("*** Test genomes mode eggnog with file as input ***")
+    gbk_test = 'test_gff.gbk'
+
+    gbk_creation(nucleic_fasta=EGGNOG_FNA,
+                protein_fasta=EGGNOG_FAA,
+                annot=EGGNOG_ANNOT,
+                gff=EGGNOG_GFF,
+                gff_type='eggnog',
+                org=ORG_NAME_BACT,
+                output_path=gbk_test,
+                gobasic=GO_FILE)
+
+    compare_two_gbks(EGGNOG_GBK, gbk_test)
+    os.remove(gbk_test)
+
+    return
+
+
+def test_gbk_genomes_mode_eggnog_test_cli():
+    """Test genomes mode with file as input with cli
+    """
+    gbk_test = 'test_gff.gbk'
+    print("*** Test genomes mode eggnog with file as input with cli***")
+    subprocess.call(['emapper2gbk', 'genomes', '-fn', EGGNOG_FNA, '-fp', EGGNOG_FAA,
+                        '-a', EGGNOG_ANNOT, '-g', EGGNOG_GFF, '-o', gbk_test, '-go', GO_FILE,
+                        '-n', ORG_NAME_BACT, '-gt', 'eggnog'])
+
+    compare_two_gbks(EGGNOG_GBK, gbk_test)
+    os.remove(gbk_test)
+
+    return
+
+
 if __name__ == "__main__":
     test_gbk_genes_mode_test()
     test_gbk_gene_mode_test_cli()

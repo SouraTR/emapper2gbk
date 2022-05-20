@@ -137,7 +137,7 @@ def cli():
     parent_parser_gff_type.add_argument(
         "-gt",
         "--gff-type",
-        help="gff type, by default emapper2gbk search for CDS with gene as Parent in the GFF, but by using the '-gt cds_only' option emapper2gbk will only use the CDS information from the genome, by using '-gt gmove' emapper2gbk will use mRNA to find CDS",
+        help="gff type, by default emapper2gbk search for CDS with gene as Parent in the GFF, but by using the '-gt cds_only' option emapper2gbk will only use the CDS information from the genome, by using '-gt gmove' emapper2gbk will use mRNA to find CDS, by using 'eggnog' emapper2gbk will use the output ifles of eggnog-mapper",
         required=False,
         type=str
     )

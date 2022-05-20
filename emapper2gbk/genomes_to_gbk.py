@@ -91,8 +91,8 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
         keep_gff_annot (bool): copy the annotation present in the GFF file into the Genbank file.
         ete_option (bool): to use ete3 NCBITaxa database for taxonomic ID assignation instead of request on the EBI taxonomy database.
     """
-    if gff_type not in ['default', 'cds_only',  'gmove']:
-        logger.critical('gff_type must be defined either: default, cds_only (for Prodigal/Prokka GFF) or gmove.')
+    if gff_type not in ['default', 'cds_only',  'gmove', 'eggnog']:
+        logger.critical('gff_type must be defined either: default, cds_only (for Prodigal/Prokka GFF), gmove or eggnog (for eggnog-mapper output).')
         return
     check_valid_path([nucleic_fasta, protein_fasta, gff])
 
@@ -108,6 +108,8 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
         cds_ids = set([cds.id for cds in gff_database.features_of_type('CDS')])
     elif gff_type == 'gmove':
         cds_ids = set([cds.id for cds in gff_database.features_of_type('mRNA')])
+    elif gff_type == 'eggnog':
+        cds_ids = set([cds.chrom + '_' + cds.id.split('_')[1] for cds in gff_database.features_of_type('CDS')])
 
     cds_number = len(cds_ids)
 
@@ -127,7 +129,7 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
     seq_protein_in_gff = 0
     for record in SeqIO.parse(protein_fasta, "fasta"):
         gene_protein_seqs[record.id] = record.seq
-        if gff_type in ['default', 'cds_only']:
+        if gff_type in ['default', 'cds_only', 'eggnog']:
             if record.id in cds_ids:
                 seq_protein_in_gff += 1
         elif gff_type == 'gmove':
@@ -151,7 +153,7 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
     if not type(annot) is dict:
         annot = dict(read_annotation(annot))
 
-    if gff_type in ['default', 'cds_only']:
+    if gff_type in ['default', 'cds_only', 'eggnog']:
         annot_protein_in_gff = len([prot_id for prot_id in annot if prot_id in cds_ids])
     elif gff_type == 'gmove':
         annot_protein_in_gff = len([prot_id for prot_id in annot if prot_id.replace('prot', 'mRNA') in cds_ids])
@@ -312,6 +314,44 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
                 new_cds_feature.qualifiers['locus_tag'] = cds_id
                 # Add CDS information to contig record
                 record.features.append(new_cds_feature)
+
+        elif gff_type == 'eggnog':
+            cds_region_id = gff_database.region(seqid=region_id, featuretype='CDS')
+            for cds in cds_region_id:
+                id_cds = cds.chrom + '_' + cds.id.split('_')[1]
+
+                # If id is numeric, change it
+                if id_cds.isnumeric():
+                    id_cds = f"gene_{id_cds}"
+                else:
+                    id_cds = id_cds
+
+                start_position = cds.start -1
+                end_position = cds.end
+                strand = strand_change(cds.strand)
+                new_feature_gene = sf.SeqFeature(sf.FeatureLocation(start_position,
+                                                                    end_position,
+                                                                    strand),
+                                                                    type="gene")
+                new_feature_gene.qualifiers['locus_tag'] = id_cds
+                # Add gene information to contig record.
+                record.features.append(new_feature_gene)
+
+                if keep_gff_annot:
+                    gff_extracted_annotations = {annotation: cds.attributes[annotation]
+                                                    for annotation in annotations_in_gff
+                                                    if annotation in cds.attributes}
+                else:
+                    gff_extracted_annotations = None
+
+                new_cds_feature = create_cds_feature(id_cds, start_position, end_position,
+                                                    strand, annot, go_namespaces, go_alternatives,
+                                                    gene_protein_seqs, gff_extracted_annotations)
+
+                new_cds_feature.qualifiers['locus_tag'] = id_cds
+                # Add CDS information to contig record
+                record.features.append(new_cds_feature)
+
 
         seq_objects.append(record)
 
