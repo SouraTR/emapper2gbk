@@ -207,8 +207,6 @@ def create_taxonomic_data(species_name):
 
     compatible_species_name = species_name.replace('/', '_')
 
-    species_name_url = species_name.replace(' ', '%20')
-
     if species_name == "bacteria":
         species_informations = {'db_xref': 'taxon:2', 'scientificName': 'Bacteria', 'commonName': 'eubacteria', 'formalName': 'false', 'rank': 'superkingdom', 'data_file_division': 'PRO', 'geneticCode': '11', 'submittable': 'false', 'description': 'bacteria genome', 'organism': 'bacteria', 'keywords': ['bacteria']} 
     elif species_name == "archaea":
@@ -220,22 +218,32 @@ def create_taxonomic_data(species_name):
     elif species_name == 'cellular organisms':
         species_informations = {'db_xref': 'taxon:131567', 'scientificName': 'cellular organisms', 'formalName': 'false', 'rank': 'no rank', 'division': 'UNC', 'geneticCode': '1', 'submittable': 'false'}
     else:
-        url = 'https://www.ebi.ac.uk/ena/data/taxonomy/v1/taxon/scientific-name/' + species_name_url
+        taxons = species_name.split(";")
+        for index, taxon in reversed(list(enumerate(taxons))):
+            if not taxon:
+                continue
+            compatible_species_name = taxon.replace('/', '_')
+            species_name_url = taxon.replace(' ', '%20')
+            url = 'https://www.ebi.ac.uk/ena/data/taxonomy/v1/taxon/scientific-name/' + species_name_url
 
-        try:
-            response = requests.get(url)
-        except requests.exceptions.ConnectionError:
-            logger.critical('/!\\ No internet connection, check the connection or use the --ete option (if you have the NCBITaxa database already downloaded).')
-            return None
+            try:
+                response = requests.get(url)
+            except requests.exceptions.ConnectionError:
+                logger.critical('/!\\ No internet connection, check the connection or use the --ete option (if you have the NCBITaxa database already downloaded).')
+                return None
 
-        # Check if there is taxonomy information in the EBI response JSON.
-        try:
-            temp_species_informations = response.json()[0]
-        except simplejson.errors.JSONDecodeError:
-            logger.critical('/!\\ Error with {} this taxa has not been found in https://www.ebi.ac.uk/ena/data/taxonomy/v1/taxon/scientific-name/'.format(species_name))
-            logger.critical('/!\\ Check the name of the taxa and its presence in the EBI taxonomy database.')
-            logger.critical('/!\\ No genbank will be created for {}.'.format(species_name))
-            return None
+            # Check if there is taxonomy information in the EBI response JSON.
+            try:
+                temp_species_informations = response.json()[0]
+                break
+            except simplejson.errors.JSONDecodeError:
+                if index ==0:
+                    logger.critical('/!\\ Error with {} this taxa has not been found in https://www.ebi.ac.uk/ena/data/taxonomy/v1/taxon/scientific-name/'.format(species_name))
+                    logger.critical('/!\\ Check the name of the taxa and its presence in the EBI taxonomy database.')
+                    logger.critical('/!\\ No genbank will be created for {}.'.format(taxon))
+                    return None
+                else:
+                    continue            
 
         for temp_species_information in temp_species_informations:
             if temp_species_information == 'lineage':
@@ -267,22 +275,29 @@ def create_taxonomic_data_ete(species_name):
         species_informations (dict): dictionary containing information about species
     """
     species_informations = {}
+    taxons = species_name.split(";")
+    for index, taxon in reversed(list(enumerate(taxons))):
+        if not taxon:
+            continue
+        compatible_species_name = taxon.replace('/', '_')
+        species_informations['description'] = compatible_species_name + ' genome'
+        species_informations['organism'] = compatible_species_name
+        species_informations['keywords'] = [compatible_species_name]
 
-    compatible_species_name = species_name.replace('/', '_')
-    species_informations['description'] = compatible_species_name + ' genome'
-    species_informations['organism'] = compatible_species_name
-    species_informations['keywords'] = [compatible_species_name]
-
-    ncbi = NCBITaxa()
-    species_taxids = ncbi.get_name_translator([species_name])
-    if species_name in species_taxids:
-        species_taxid = species_taxids[species_name][-1]
-        species_informations['db_xref'] = 'taxon:' + str(species_taxid)
-    else:
-        logger.critical('/!\\ Error with {} this taxa has not been found in ete3 NCBITaxa Database'.format(species_name))
-        logger.critical('/!\\ Check the name of the taxa and its presence in the NCBITaxa database.')
-        logger.critical('/!\\ No genbank will be created for {}.'.format(species_name))
-        return None
+        ncbi = NCBITaxa()
+        species_taxids = ncbi.get_name_translator([taxon])
+        if taxon in species_taxids:
+            species_taxid = species_taxids[taxon][-1]
+            species_informations['db_xref'] = 'taxon:' + str(species_taxid)
+            break
+        else:
+            if index ==0:
+                logger.critical('/!\\ Error with {} this taxa has not been found in ete3 NCBITaxa Database'.format(taxon))
+                logger.critical('/!\\ Check the name of the taxa and its presence in the NCBITaxa database.')
+                logger.critical('/!\\ No genbank will be created for {}.'.format(taxon))
+                return None
+            else:
+                continue
 
     return species_informations
 
