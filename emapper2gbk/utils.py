@@ -219,8 +219,10 @@ def create_taxonomic_data(species_name):
         species_informations = {'db_xref': 'taxon:131567', 'scientificName': 'cellular organisms', 'formalName': 'false', 'rank': 'no rank', 'division': 'UNC', 'geneticCode': '1', 'submittable': 'false'}
     else:
         taxons = species_name.split(";")
+        taxon_found = False
+
         for index, taxon in reversed(list(enumerate(taxons))):
-            if not taxon:
+            if not taxon or taxon == '':
                 continue
             compatible_species_name = taxon.replace('/', '_')
             species_name_url = taxon.replace(' ', '%20')
@@ -234,16 +236,24 @@ def create_taxonomic_data(species_name):
 
             # Check if there is taxonomy information in the EBI response JSON.
             try:
-                temp_species_informations = response.json()[0]
-                break
+                temp_species_informations = response.json()
+                taxon_found = True
             except simplejson.errors.JSONDecodeError:
-                if index ==0:
-                    logger.critical('/!\\ Error with {} this taxa has not been found in https://www.ebi.ac.uk/ena/data/taxonomy/v1/taxon/scientific-name/'.format(species_name))
+                if index==len(taxons):
+                    logger.critical('/!\\ Error with {0} this taxa has not been found in https://www.ebi.ac.uk/ena/data/taxonomy/v1/taxon/scientific-name/'.format(species_name))
                     logger.critical('/!\\ Check the name of the taxa and its presence in the EBI taxonomy database.')
-                    logger.critical('/!\\ No genbank will be created for {}.'.format(taxon))
+                    logger.critical('/!\\ No genbank will be created for {0}.'.format(taxon))
                     return None
                 else:
-                    continue            
+                    continue
+
+            if temp_species_informations == []:
+                logger.critical('/!\\ Error with {0} this taxa has not been found in https://www.ebi.ac.uk/ena/data/taxonomy/v1/taxon/scientific-name/'.format(taxon))
+                continue
+            if taxon_found is True:
+                break
+
+        temp_species_informations = temp_species_informations[0]
 
         for temp_species_information in temp_species_informations:
             if temp_species_information == 'lineage':
