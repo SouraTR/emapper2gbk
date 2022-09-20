@@ -68,7 +68,10 @@ def faa_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
     gene_protein_seqs = OrderedDict()
 
     for record in SeqIO.parse(protein_fasta, "fasta"):
-        gene_protein_seqs[record.id] = record.seq
+        protein_id = record.id
+        if protein_id.isnumeric():
+            protein_id = f"gene_{protein_id}"
+        gene_protein_seqs[protein_id] = record.seq
 
     # Create a taxonomy dictionary querying the EBI.
     if ete_option:

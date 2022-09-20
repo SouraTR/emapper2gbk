@@ -12,6 +12,8 @@ from emapper2gbk.emapper2gbk import gbk_creation
 
 FAA_INPUT = 'betaox_genes.faa'
 FNA_INPUT = 'betaox_genes.fna'
+NUMERIC_FNA_INPUT = os.path.join('numeric', 'betaox_genes.fna')
+NUMERIC_FAA_INPUT = os.path.join('numeric', 'betaox_genes.faa')
 
 GENOME_FNA_DIR = 'fna_genomes_mode'
 GENOME_FNA_INPUT = 'betaox_genomes.fna'
@@ -19,6 +21,7 @@ GENOME_FAA_INPUT = 'betaox_genomes.faa'
 GENOME_GFF_INPUT = 'betaox_genomes.gff'
 
 ANNOT_INPUT = 'betaox_annotation.tsv'
+NUMERIC_ANNOT_INPUT = os.path.join('numeric', 'betaox_annotation.tsv')
 GENOME_ANNOT_INPUT = 'betaox_annotation_genomes.tsv'
 ANNOT_INPUT_V2 = 'betaox_v2.emapper.annotations'
 ANNOT_DIR = 'ann'
@@ -42,17 +45,18 @@ GO_FILE = 'go-basic.obo'
 EXPECTED_GBK_NO_GFF = 'betaox_no_gff.gbk'
 EXPECTED_GBK_WITH_GFF = 'betaox_from_gff.gbk'
 EXPECTED_GBK_NO_GFF_MERGED = 'betaox_no_gff_merged.gbk'
+EXPECTED_GBK_NUMERIC = os.path.join('numeric', 'betaox.gbk')
 
-GMOVE_ANNOT = 'data_gmove/betaox_v2.emapper.annotations'
-GMOVE_FNA = 'data_gmove/betaox_genomes.fna'
-GMOVE_FAA = 'data_gmove/betaox_genomes.faa'
-GMOVE_GFF = 'data_gmove/betaox_genomes.gff'
+GMOVE_ANNOT = os.path.join('data_gmove', 'betaox_v2.emapper.annotations')
+GMOVE_FNA = os.path.join('data_gmove', 'betaox_genomes.fna')
+GMOVE_FAA = os.path.join('data_gmove', 'betaox_genomes.faa')
+GMOVE_GFF = os.path.join('data_gmove', 'betaox_genomes.gff')
 
-EGGNOG_ANNOT = 'data_eggnog/out.emapper.annotations'
-EGGNOG_FNA = 'data_eggnog/queries.fasta'
-EGGNOG_FAA = 'data_eggnog/out.emapper.genepred.fasta'
-EGGNOG_GFF = 'data_eggnog/out.emapper.genepred.gff'
-EGGNOG_GBK = 'data_eggnog/eggnog_expected.gbk'
+EGGNOG_ANNOT = os.path.join('data_eggnog', 'out.emapper.annotations')
+EGGNOG_FNA = os.path.join('data_eggnog', 'queries.fasta')
+EGGNOG_FAA = os.path.join('data_eggnog', 'out.emapper.genepred.fasta')
+EGGNOG_GFF = os.path.join('data_eggnog', 'out.emapper.genepred.gff')
+EGGNOG_GBK = os.path.join('data_eggnog', 'eggnog_expected.gbk')
 
 ANNOTATIONS_TYPES = ['go_function', 'go_process', 'go_component', 'EC_number', 'locus']
 
@@ -666,6 +670,24 @@ def test_gbk_genomes_mode_eggnog_test_cli():
 
     return
 
+def test_gbk_genes_mode_numeric_test():
+    """Test genes mode with file as input.
+    """
+    print("*** Test genes mode with file as input ***")
+    gbk_test = 'test_no_gff.gbk'
+
+    gbk_creation(nucleic_fasta=NUMERIC_FNA_INPUT,
+                protein_fasta=NUMERIC_FAA_INPUT,
+                annot=NUMERIC_ANNOT_INPUT,
+                org=ORG_NAME,
+                output_path=gbk_test,
+                gff=None,
+                gobasic=GO_FILE)
+
+    compare_two_gbks(EXPECTED_GBK_NUMERIC, gbk_test)
+    os.remove(gbk_test)
+
+    return
 
 if __name__ == "__main__":
     test_gbk_genes_mode_test()
@@ -685,3 +707,4 @@ if __name__ == "__main__":
     test_gbk_genes_mode_merge_fake_contig()
     test_gbk_genomes_mode_gmove_test()
     test_gbk_genomes_mode_gmove_test_cli()
+    test_gbk_genes_mode_numeric_test()
