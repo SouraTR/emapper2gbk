@@ -111,6 +111,9 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
     elif gff_type == 'eggnog':
         cds_ids = set([cds.chrom + '_' + cds.id.split('_')[1] for cds in gff_database.features_of_type('CDS')])
 
+    # If cds IDs are numeric add 'gene_' as a prefix
+    cds_ids = [f"gene_{cds_id}" if cds_id.isnumeric() else cds_id for cds_id in cds_ids]
+
     cds_number = len(cds_ids)
 
     if cds_number == 0:
@@ -128,12 +131,15 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
 
     seq_protein_in_gff = 0
     for record in SeqIO.parse(protein_fasta, "fasta"):
-        gene_protein_seqs[record.id] = record.seq
+        protein_id = record.id
+        if protein_id.isnumeric():
+            protein_id = f"gene_{protein_id}"
+        gene_protein_seqs[protein_id] = record.seq
         if gff_type in ['default', 'cds_only', 'eggnog']:
-            if record.id in cds_ids:
+            if protein_id in cds_ids:
                 seq_protein_in_gff += 1
         elif gff_type == 'gmove':
-            if record.id.replace('prot', 'mRNA') in cds_ids:
+            if protein_id.replace('prot', 'mRNA') in cds_ids:
                 seq_protein_in_gff += 1
 
     if seq_protein_in_gff == 0:
@@ -210,6 +216,11 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
                 # For each CDS in the GFF add a CDS in the genbank.
                 for cds_object in gff_database.children(gene, featuretype="CDS", order_by='start'):
                     cds_id = cds_object.id
+                    # If id is numeric, change it
+                    if cds_id.isnumeric():
+                        cds_id = f"gene_{cds_id}"
+                    else:
+                        cds_id = cds_id
                     start_position = cds_object.start - 1
                     end_position = cds_object.end
                     strand = strand_change(cds_object.strand)

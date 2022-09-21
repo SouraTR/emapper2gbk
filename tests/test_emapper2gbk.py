@@ -19,6 +19,7 @@ GENOME_FNA_DIR = 'fna_genomes_mode'
 GENOME_FNA_INPUT = 'betaox_genomes.fna'
 GENOME_FAA_INPUT = 'betaox_genomes.faa'
 GENOME_GFF_INPUT = 'betaox_genomes.gff'
+NUMERIC_ANNOT_GFF = os.path.join('numeric', 'betaox_genomes.gff')
 
 ANNOT_INPUT = 'betaox_annotation.tsv'
 NUMERIC_ANNOT_INPUT = os.path.join('numeric', 'betaox_annotation.tsv')
@@ -46,6 +47,7 @@ EXPECTED_GBK_NO_GFF = 'betaox_no_gff.gbk'
 EXPECTED_GBK_WITH_GFF = 'betaox_from_gff.gbk'
 EXPECTED_GBK_NO_GFF_MERGED = 'betaox_no_gff_merged.gbk'
 EXPECTED_GBK_NUMERIC = os.path.join('numeric', 'betaox.gbk')
+EXPECTED_GBK_GFF_NUMERIC = os.path.join('numeric', 'betaox_genomes.gbk')
 
 GMOVE_ANNOT = os.path.join('data_gmove', 'betaox_v2.emapper.annotations')
 GMOVE_FNA = os.path.join('data_gmove', 'betaox_genomes.fna')
@@ -689,6 +691,25 @@ def test_gbk_genes_mode_numeric_test():
 
     return
 
+def test_gbk_genomes_numeric_test():
+    """Test genomes mode with file as input.
+    """
+    print("*** Test genomes mode eggnog with file as input ***")
+    gbk_test = 'test_gff.gbk'
+
+    gbk_creation(nucleic_fasta=GENOME_FNA_INPUT,
+                protein_fasta=NUMERIC_FAA_INPUT,
+                annot=NUMERIC_ANNOT_INPUT,
+                gff=NUMERIC_ANNOT_GFF,
+                org=ORG_NAME_BACT,
+                output_path=gbk_test,
+                gobasic=GO_FILE)
+
+    compare_two_gbks(EXPECTED_GBK_GFF_NUMERIC, gbk_test)
+    os.remove(gbk_test)
+
+    return
+
 if __name__ == "__main__":
     test_gbk_genes_mode_test()
     test_gbk_genes_mode_lineage_test()
@@ -708,3 +729,4 @@ if __name__ == "__main__":
     test_gbk_genomes_mode_gmove_test()
     test_gbk_genomes_mode_gmove_test_cli()
     test_gbk_genes_mode_numeric_test()
+    test_gbk_genomes_numeric_test()
