@@ -1,5 +1,27 @@
 # Changelog
 
+# emapper2gbk v0.2.0 (2022-09-21)
+
+## Add
+
+* support for `gmove` and `eggnog` GFF format.
+* error messages if GFF is empty or if there is not overlap between IDs contained in fastas, GFF and eggnog-mapper annotation files.
+* error message when having a syntax issue with the obo file.
+* the possibility to give as input a full taxonomic affiliations instead of only an organism name (issue #9).
+* changelog.
+* comments and update readme.
+
+## Modify
+
+* use gffutils `region` to speed up emapper2gbk.
+
+## Fix
+
+* an issue related to allowed abbreviated option in command line arguments.
+* issue when gene IDs were only numeric (issue #10).
+* use gobasic_file after downloading it.
+* numerous typos.
+
 # emapper2gbk v0.1.0 (2021-06-29)
 
 This release modifies heavily `emapper2gbk`. The `genomic` and `metagenomic` subcommands have been removed. From this release, emapper2gbk is divided in two subcommands: `genes` and `genomes`.
@@ -15,7 +37,7 @@ The scripts files of emapper2gbk have been renamed according to these changes.
 * New subcommand `emapper2gbk genomes`: subcommand to use for genomes (with four inputs: fasta of nucleic sequences of genomes (chromosomes sequences), fasta of amino acids sequences of proteins, the eggnog-mapper annotation file and a GFF file).
 * New option `-gt` for `emapper2gbk genomes`: `-gt cds_only` if the GFF file contains only CDS information.
 * New option `--ete` for `emapper2gbk genomes`: when searching for taxonomic ID instead of requesting the EBI, use the package `ete3`.
-*  New option `--keep-gff-annotation`  for `emapper2gbk genomes`: keep the `product` field of the CDS in the GFF file into the genbank file.
+* New option `--keep-gff-annotation`  for `emapper2gbk genomes`: keep the `product` field of the CDS in the GFF file into the genbank file.
 * Add dbxref (Kegg, Bigg, Pfam and CAZ) to genbank.
 
 ## Modify
