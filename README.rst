@@ -149,6 +149,9 @@ The tool can also handle GFF from `Gmove <https://www.genoscope.cns.fr/gmove/>`_
 
 For gmove, the proteins in the faa and eggnogg-mapper files will be prefixed with ``prot_`` (like ``prot_gene_1`` for ``mRNA_gene_1``). Emapper2gbk should be able to handle these differences.
 
+It is also possible to use the GFF created by eggnog-mapper (if a fasta genome was given as input to eggnog-mapper) with ``-gt eggnog``.
+An example of such use can be seen in the `test folder <https://github.com/AuReMe/emapper2gbk/tree/master/tests/data_eggnog>`__ 
+
 Dependencies and installation
 -----------------------------
 

@@ -10,28 +10,28 @@ from Bio import SeqIO
 from emapper2gbk.emapper2gbk import gbk_creation
 
 
-FAA_INPUT = 'betaox_genes.faa'
-FNA_INPUT = 'betaox_genes.fna'
-NUMERIC_FNA_INPUT = os.path.join('numeric', 'betaox_genes.fna')
-NUMERIC_FAA_INPUT = os.path.join('numeric', 'betaox_genes.faa')
+FAA_INPUT = os.path.join('test_data', 'betaox_genes.faa')
+FNA_INPUT = os.path.join('test_data', 'betaox_genes.fna')
+NUMERIC_FNA_INPUT = os.path.join('test_data', 'numeric', 'betaox_genes.fna')
+NUMERIC_FAA_INPUT = os.path.join('test_data', 'numeric', 'betaox_genes.faa')
 
-GENOME_FNA_DIR = 'fna_genomes_mode'
-GENOME_FNA_INPUT = 'betaox_genomes.fna'
-GENOME_FAA_INPUT = 'betaox_genomes.faa'
-GENOME_GFF_INPUT = 'betaox_genomes.gff'
-NUMERIC_ANNOT_GFF = os.path.join('numeric', 'betaox_genomes.gff')
+GENOME_FNA_DIR = os.path.join('test_data', 'fna_genomes_mode')
+GENOME_FNA_INPUT = os.path.join('test_data', 'betaox_genomes.fna')
+GENOME_FAA_INPUT = os.path.join('test_data', 'betaox_genomes.faa')
+GENOME_GFF_INPUT = os.path.join('test_data', 'betaox_genomes.gff')
+NUMERIC_ANNOT_GFF = os.path.join('test_data', 'numeric', 'betaox_genomes.gff')
 
-ANNOT_INPUT = 'betaox_annotation.tsv'
-NUMERIC_ANNOT_INPUT = os.path.join('numeric', 'betaox_annotation.tsv')
-GENOME_ANNOT_INPUT = 'betaox_annotation_genomes.tsv'
-ANNOT_INPUT_V2 = 'betaox_v2.emapper.annotations'
-ANNOT_DIR = 'ann'
-ANNOT_DIR_GENOME = 'ann_genomes'
+ANNOT_INPUT = os.path.join('test_data', 'betaox_annotation.tsv')
+NUMERIC_ANNOT_INPUT = os.path.join('test_data', 'numeric', 'betaox_annotation.tsv')
+GENOME_ANNOT_INPUT = os.path.join('test_data', 'betaox_annotation_genomes.tsv')
+ANNOT_INPUT_V2 = os.path.join('test_data', 'betaox_v2.emapper.annotations')
+ANNOT_DIR = os.path.join('test_data', 'ann')
+ANNOT_DIR_GENOME = os.path.join('test_data', 'ann_genomes')
 
-FAA_DIR = 'faa'
-FAA_DIR_GENOMES = 'faa_genomes'
-FNA_DIR = 'fna'
-GFF_DIR = 'gff'
+FAA_DIR = os.path.join('test_data', 'faa')
+FAA_DIR_GENOMES = os.path.join('test_data', 'faa_genomes')
+FNA_DIR = os.path.join('test_data', 'fna')
+GFF_DIR = os.path.join('test_data', 'gff')
 
 ORG_NAME = 'Escherichia coli'
 ORG_NAME_BACT = 'bacteria'
@@ -40,25 +40,25 @@ ORG_NAME_EUK = 'eukaryota'
 ORG_NAME_META = 'metagenome'
 ORG_NAME_CELL = 'cellular organisms'
 ORG_FULL_TAX = 'cellular organisms;Bacteria;Proteobacteria;Gammaproteobacteria;Enterobacterales;Enterobacteriaceae;Escherichia;Escherichia coli'
-ORG_FILE = 'organism_names.tsv'
+ORG_FILE = os.path.join('test_data', 'organism_names.tsv')
 GO_FILE = 'go-basic.obo'
 
-EXPECTED_GBK_NO_GFF = 'betaox_no_gff.gbk'
-EXPECTED_GBK_WITH_GFF = 'betaox_from_gff.gbk'
-EXPECTED_GBK_NO_GFF_MERGED = 'betaox_no_gff_merged.gbk'
-EXPECTED_GBK_NUMERIC = os.path.join('numeric', 'betaox.gbk')
-EXPECTED_GBK_GFF_NUMERIC = os.path.join('numeric', 'betaox_genomes.gbk')
+EXPECTED_GBK_NO_GFF = os.path.join('test_data', 'betaox_no_gff.gbk')
+EXPECTED_GBK_WITH_GFF = os.path.join('test_data', 'betaox_from_gff.gbk')
+EXPECTED_GBK_NO_GFF_MERGED = os.path.join('test_data', 'betaox_no_gff_merged.gbk')
+EXPECTED_GBK_NUMERIC = os.path.join('test_data', 'numeric', 'betaox.gbk')
+EXPECTED_GBK_GFF_NUMERIC = os.path.join('test_data', 'numeric', 'betaox_genomes.gbk')
 
-GMOVE_ANNOT = os.path.join('data_gmove', 'betaox_v2.emapper.annotations')
-GMOVE_FNA = os.path.join('data_gmove', 'betaox_genomes.fna')
-GMOVE_FAA = os.path.join('data_gmove', 'betaox_genomes.faa')
-GMOVE_GFF = os.path.join('data_gmove', 'betaox_genomes.gff')
+GMOVE_ANNOT = os.path.join('test_data', 'data_gmove', 'betaox_v2.emapper.annotations')
+GMOVE_FNA = os.path.join('test_data', 'data_gmove', 'betaox_genomes.fna')
+GMOVE_FAA = os.path.join('test_data', 'data_gmove', 'betaox_genomes.faa')
+GMOVE_GFF = os.path.join('test_data', 'data_gmove', 'betaox_genomes.gff')
 
-EGGNOG_ANNOT = os.path.join('data_eggnog', 'out.emapper.annotations')
-EGGNOG_FNA = os.path.join('data_eggnog', 'queries.fasta')
-EGGNOG_FAA = os.path.join('data_eggnog', 'out.emapper.genepred.fasta')
-EGGNOG_GFF = os.path.join('data_eggnog', 'out.emapper.genepred.gff')
-EGGNOG_GBK = os.path.join('data_eggnog', 'eggnog_expected.gbk')
+EGGNOG_ANNOT = os.path.join('test_data', 'data_eggnog', 'out.emapper.annotations')
+EGGNOG_FNA = os.path.join('test_data', 'data_eggnog', 'queries.fasta')
+EGGNOG_FAA = os.path.join('test_data', 'data_eggnog', 'out.emapper.genepred.fasta')
+EGGNOG_GFF = os.path.join('test_data', 'data_eggnog', 'out.emapper.genepred.gff')
+EGGNOG_GBK = os.path.join('test_data', 'data_eggnog', 'eggnog_expected.gbk')
 
 ANNOTATIONS_TYPES = ['go_function', 'go_process', 'go_component', 'EC_number', 'locus']
 
@@ -691,6 +691,25 @@ def test_gbk_genes_mode_numeric_test():
 
     return
 
+def test_gbk_genes_mode_numeric_ete_test():
+    """Test genes mode with file as input.
+    """
+    print("*** Test genes mode with file as input ***")
+    gbk_test = 'test_no_gff.gbk'
+
+    gbk_creation(nucleic_fasta=NUMERIC_FNA_INPUT,
+                protein_fasta=NUMERIC_FAA_INPUT,
+                annot=NUMERIC_ANNOT_INPUT,
+                org=ORG_NAME,
+                output_path=gbk_test,
+                gff=None,
+                gobasic=GO_FILE)
+
+    compare_two_gbks(EXPECTED_GBK_NUMERIC, gbk_test)
+    os.remove(gbk_test)
+
+    return
+
 def test_gbk_genomes_numeric_test():
     """Test genomes mode with file as input.
     """
@@ -703,6 +722,7 @@ def test_gbk_genomes_numeric_test():
                 gff=NUMERIC_ANNOT_GFF,
                 org=ORG_NAME_BACT,
                 output_path=gbk_test,
+                ete_option=True,
                 gobasic=GO_FILE)
 
     compare_two_gbks(EXPECTED_GBK_GFF_NUMERIC, gbk_test)

@@ -10,30 +10,30 @@ from Bio import SeqIO
 from emapper2gbk.emapper2gbk import gbk_creation
 
 
-FAA_INPUT = 'betaox_genes.faa'
-FNA_INPUT = 'betaox_genes.fna'
+FAA_INPUT = os.path.join('test_data', 'betaox_genes.faa')
+FNA_INPUT = os.path.join('test_data', 'betaox_genes.fna')
 
-GENOME_FNA_DIR = 'fna_genomes_mode'
-GENOME_FNA_INPUT = 'betaox_genomes.fna'
-GENOME_FAA_INPUT = 'betaox_genomes.faa'
-GENOME_GFF_INPUT = 'betaox_genomes.gff'
+GENOME_FNA_DIR = os.path.join('test_data', 'fna_genomes_mode')
+GENOME_FNA_INPUT = os.path.join('test_data', 'betaox_genomes.fna')
+GENOME_FAA_INPUT = os.path.join('test_data', 'betaox_genomes.faa')
+GENOME_GFF_INPUT = os.path.join('test_data', 'betaox_genomes.gff')
 
-ANNOT_INPUT = 'betaox_annotation.tsv'
-GENOME_ANNOT_INPUT = 'betaox_annotation_genomes.tsv'
-ANNOT_INPUT_V2 = 'betaox_v2.emapper.annotations'
-ANNOT_DIR = 'ann'
+ANNOT_INPUT = os.path.join('test_data', 'betaox_annotation.tsv')
+GENOME_ANNOT_INPUT = os.path.join('test_data', 'betaox_annotation_genomes.tsv')
+ANNOT_INPUT_V2 = os.path.join('test_data', 'betaox_v2.emapper.annotations')
+ANNOT_DIR = os.path.join('test_data', 'ann')
 
-FAA_DIR = 'faa'
-FNA_DIR = 'fna'
-GFF_DIR = 'gff'
+FAA_DIR = os.path.join('test_data', 'faa')
+FNA_DIR = os.path.join('test_data', 'fna')
+GFF_DIR = os.path.join('test_data', 'gff')
 
 ORG_NAME = 'Escherichia coli'
-ORG_FILE = 'organism_names.tsv'
+ORG_FILE = os.path.join('test_data', 'organism_names.tsv')
 GO_FILE = 'go-basic.obo'
 
-EXPECTED_GBK_NO_GFF = 'betaox_no_gff.gbk'
-EXPECTED_GBK_WITH_GFF = 'betaox_from_gff.gbk'
-EXPECTED_GBK_NO_GFF_MERGED = 'betaox_no_gff_merged.gbk'
+EXPECTED_GBK_NO_GFF = os.path.join('test_data', 'betaox_no_gff.gbk')
+EXPECTED_GBK_WITH_GFF = os.path.join('test_data', 'betaox_from_gff.gbk')
+EXPECTED_GBK_NO_GFF_MERGED = os.path.join('test_data', 'betaox_no_gff_merged.gbk')
 
 ANNOTATIONS_TYPES = ['go_function', 'go_process', 'go_component', 'EC_number']
 
