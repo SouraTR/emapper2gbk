@@ -1,11 +1,11 @@
 # Changelog
 
-# emapper2gbk v0.2.0 (2022-09-21)
+# emapper2gbk v0.2.0 (2022-09-29)
 
 ## Add
 
 * support for `gmove` and `eggnog` GFF format.
-* error messages if GFF is empty or if there is not overlap between IDs contained in fastas, GFF and eggnog-mapper annotation files.
+* error messages if GFF is empty or if there is no overlap between IDs contained in fastas, GFF and eggnog-mapper annotation files.
 * error message when having a syntax issue with the obo file.
 * the possibility to give as input a full taxonomic affiliations instead of only an organism name (issue #9).
 * changelog.
@@ -17,7 +17,7 @@
 
 ## Fix
 
-* an issue related to allowed abbreviated option in command line arguments.
+* an issue allowing abbreviated option in command line arguments.
 * issue when gene IDs were only numeric (issue #10).
 * use gobasic_file after downloading it.
 * numerous typos.
