@@ -1,5 +1,11 @@
 # Changelog
 
+# emapper2gbk v0.2.1 (2022-09-29)
+
+## Fix
+
+* issue with pypi classifiers.
+
 # emapper2gbk v0.2.0 (2022-09-29)
 
 ## Add
