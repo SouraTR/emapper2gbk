@@ -14,7 +14,7 @@
 
 """
 Description:
-Using fasta files (scaffold/chromosme/contig file, protein file), gff file, annotation tsv file and the species name
+Using fasta files (scaffold/chromosome/contig file, protein file), gff file, annotation tsv file and the species name
 this script writes a genbank file with EC number and Go annotations.
 
 The annotation tsv file contains association between gene and annotation (EC number, GO term)
@@ -22,14 +22,14 @@ to add information to the genbank.
 
 The species name needs to be compatible with the taxonomy of the EBI.
 
-Informations need a good formating:
+Information need a good formatting:
 gene ID should be correctly written (like XXX_001 and no XXX_1 if you got more thant 100 genes).
-Currently when there is multiple GO terms/EC the script split them when they are separated by ";" or by "," like GO:0006979;GO:0020037;GO:0004601,
+Currently, when there is multiple GO terms/EC the script split them when they are separated by ";" or by "," like GO:0006979;GO:0020037;GO:0004601,
 if you use another separator add to the re.split(',|;').
 For the gff file ensure that the element start position is at least 1.
 If it's 0 gffutils will return an error (source : https://github.com/daler/gffutils/issues/104).
 
-Other informations can be added by adding a dictionary with gene ID as key and the information
+Other information can be added by adding a dictionary with gene ID as key and the information
 as value and adapt the condition used for the others annotations (EC, Go term).
 
 """
