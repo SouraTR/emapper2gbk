@@ -14,7 +14,7 @@
 
 """
 Description:
-Using fasta files (scaffold/chromosme/contig file, protein file), gff file, annotation tsv file and the species name
+Using fasta files (scaffold/chromosome/contig file, protein file), gff file, annotation tsv file and the species name
 this script writes a genbank file with EC number and Go annotations.
 
 The annotation tsv file contains association between gene and annotation (EC number, GO term)
@@ -22,14 +22,14 @@ to add information to the genbank.
 
 The species name needs to be compatible with the taxonomy of the EBI.
 
-Informations need a good formating:
+Information need a good formatting:
 gene ID should be correctly written (like XXX_001 and no XXX_1 if you got more thant 100 genes).
-Currently when there is multiple GO terms/EC the script split them when they are separated by ";" or by "," like GO:0006979;GO:0020037;GO:0004601,
+Currently, when there is multiple GO terms/EC the script split them when they are separated by ";" or by "," like GO:0006979;GO:0020037;GO:0004601,
 if you use another separator add to the re.split(',|;').
 For the gff file ensure that the element start position is at least 1.
 If it's 0 gffutils will return an error (source : https://github.com/daler/gffutils/issues/104).
 
-Other informations can be added by adding a dictionary with gene ID as key and the information
+Other information can be added by adding a dictionary with gene ID as key and the information
 as value and adapt the condition used for the others annotations (EC, Go term).
 
 """
@@ -42,7 +42,8 @@ import sys
 from Bio import SeqFeature as sf
 from Bio import SeqIO
 from collections import OrderedDict
-from emapper2gbk.utils import check_valid_path, create_GO_namespaces_alternatives, read_annotation, create_taxonomic_data, create_taxonomic_data_ete, get_basename, record_info, create_cds_feature
+from emapper2gbk.utils import check_valid_path, create_GO_namespaces_alternatives, read_annotation, \
+    create_taxonomic_data, create_taxonomic_data_ete, get_basename, record_info, create_cds_feature
 from typing import Union
 
 logger = logging.getLogger(__name__)
@@ -74,9 +75,9 @@ def strand_change(input_strand):
     return new_strand
 
 
-def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
-                gff:str, gff_type:str, org:str, output_path:str, gobasic:Union[None, str, dict],
-                keep_gff_annot:Union[None,bool], ete_option:bool):
+def gff_to_gbk(nucleic_fasta: str, protein_fasta: str, annot: Union[str, dict],
+               gff: str, gff_type: str, org: str, output_path: str, gobasic: Union[None, str, dict],
+               keep_gff_annot: Union[None, bool], ete_option: bool):
     """ Create genbank file from nucleic, protein fasta and a gff file plus eggnog mapper annotation file.
 
     Args:
@@ -84,15 +85,15 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
         protein_fasta (str): protein fasta file
         annot (str): annotation file or dictionary
         gff (str): gff file
-        gff_type (str): format of the gff file (default, cds_only, gmove)
-        org (str): organims name or mapping file
+        gff_type (str): format of the gff file (default, CDS, mRNA, gene, gmove, eggnog)
+        org (str): organism name or mapping file
         output_path (str): output file or directory
         gobasic (str, dict): path to go-basic.obo file or dictionary
         keep_gff_annot (bool): copy the annotation present in the GFF file into the Genbank file.
         ete_option (bool): to use ete3 NCBITaxa database for taxonomic ID assignation instead of request on the EBI taxonomy database.
     """
-    if gff_type not in ['default', 'cds_only',  'gmove', 'eggnog']:
-        logger.critical('gff_type must be defined either: default, cds_only (for Prodigal/Prokka GFF), gmove or eggnog (for eggnog-mapper output).')
+    if gff_type not in ['default', 'CDS', 'mRNA', 'gene', 'gmove', 'eggnog']:
+        logger.critical('gff_type must be defined either: default, CDS (for Prodigal/Prokka GFF), mRNA, gene, gmove or eggnog (for eggnog-mapper output).')
         return
     check_valid_path([nucleic_fasta, protein_fasta, gff])
 
@@ -102,12 +103,15 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
     # Create the gff database file.
     # gffutils use sqlite3 file-based database to access data inside GFF.
     # ':memory:' ask gffutils to keep database in memory instead of writting in a file.
-    gff_database = gffutils.create_db(gff, ':memory:', force=True, keep_order=True, merge_strategy='merge', sort_attribute_values=True)
+    gff_database = gffutils.create_db(gff, ':memory:', force=True, keep_order=True, merge_strategy='merge',
+                                      sort_attribute_values=True)
 
-    if gff_type in ['default', 'cds_only']:
+    if gff_type in ['default', 'CDS']:
         cds_ids = set([cds.id for cds in gff_database.features_of_type('CDS')])
-    elif gff_type == 'gmove':
+    elif gff_type in ['gmove', 'mRNA']:
         cds_ids = set([cds.id for cds in gff_database.features_of_type('mRNA')])
+    elif gff_type == 'gene':
+        cds_ids = set([cds.id for cds in gff_database.features_of_type('gene')])
     elif gff_type == 'eggnog':
         cds_ids = set([cds.chrom + '_' + cds.id.split('_')[1] for cds in gff_database.features_of_type('CDS')])
 
@@ -135,7 +139,7 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
         if protein_id.isnumeric():
             protein_id = f"gene_{protein_id}"
         gene_protein_seqs[protein_id] = record.seq
-        if gff_type in ['default', 'cds_only', 'eggnog']:
+        if gff_type in ['default', 'CDS', 'mRNA', 'gene', 'eggnog']:
             if protein_id in cds_ids:
                 seq_protein_in_gff += 1
         elif gff_type == 'gmove':
@@ -159,7 +163,7 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
     if not type(annot) is dict:
         annot = dict(read_annotation(annot))
 
-    if gff_type in ['default', 'cds_only', 'eggnog']:
+    if gff_type in ['default', 'CDS', 'mRNA', 'gene', 'eggnog']:
         annot_protein_in_gff = len([prot_id for prot_id in annot if prot_id in cds_ids])
     elif gff_type == 'gmove':
         annot_protein_in_gff = len([prot_id for prot_id in annot if prot_id.replace('prot', 'mRNA') in cds_ids])
@@ -182,12 +186,12 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
     # All SeqRecord objects will be stored in a list and then give to the SeqIO writer to create the genbank.
     seq_objects = []
 
-    logger.info('Assembling Genbank informations for ' + genome_id)
+    logger.info('Assembling Genbank information for ' + genome_id)
 
     annotations_in_gff = ['product']
     # Iterate through each contig.
-    # Then iterate through gene and throug RNA linked with the gene.
-    # Then look if protein informations are available.
+    #   Then iterate through gene and through RNA linked with the gene.
+    # Then look if protein information are available.
     for region_id in genome_nucleic_sequence:
         record = record_info(region_id, genome_nucleic_sequence[region_id], species_informations)
         if gff_type == 'default':
@@ -201,13 +205,13 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
                 else:
                     id_gene = id_gene
 
-                start_position = gene.start -1
+                start_position = gene.start - 1
                 end_position = gene.end
                 strand = strand_change(gene.strand)
                 new_feature_gene = sf.SeqFeature(sf.FeatureLocation(start_position,
                                                                     end_position,
                                                                     strand),
-                                                                    type="gene")
+                                                 type="gene")
                 new_feature_gene.qualifiers['locus_tag'] = id_gene
                 # Add gene information to contig record.
                 record.features.append(new_feature_gene)
@@ -227,20 +231,20 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
 
                     if keep_gff_annot:
                         gff_extracted_annotations = {annotation: cds_object.attributes[annotation]
-                                                        for annotation in annotations_in_gff
-                                                        if annotation in cds_object.attributes}
+                                                     for annotation in annotations_in_gff
+                                                     if annotation in cds_object.attributes}
                     else:
                         gff_extracted_annotations = None
 
                     new_cds_feature = create_cds_feature(cds_id, start_position, end_position,
-                                                        strand, annot, go_namespaces, go_alternatives,
-                                                        gene_protein_seqs, gff_extracted_annotations)
+                                                         strand, annot, go_namespaces, go_alternatives,
+                                                         gene_protein_seqs, gff_extracted_annotations)
                     new_cds_feature.qualifiers['locus_tag'] = cds_id
                     # Add CDS information to contig record
                     record.features.append(new_cds_feature)
 
-        elif gff_type == 'cds_only':
-            cds_region_id = gff_database.region(seqid=region_id, featuretype='CDS')
+        elif gff_type in ('CDS', 'mRNA', 'gene'):
+            cds_region_id = gff_database.region(seqid=region_id, featuretype=gff_type)
             for cds in cds_region_id:
                 id_cds = cds.id
 
@@ -250,27 +254,27 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
                 else:
                     id_cds = id_cds
 
-                start_position = cds.start -1
+                start_position = cds.start - 1
                 end_position = cds.end
                 strand = strand_change(cds.strand)
                 new_feature_gene = sf.SeqFeature(sf.FeatureLocation(start_position,
                                                                     end_position,
                                                                     strand),
-                                                                    type="gene")
+                                                 type="gene")
                 new_feature_gene.qualifiers['locus_tag'] = id_cds
                 # Add gene information to contig record.
                 record.features.append(new_feature_gene)
 
                 if keep_gff_annot:
                     gff_extracted_annotations = {annotation: cds.attributes[annotation]
-                                                    for annotation in annotations_in_gff
-                                                    if annotation in cds.attributes}
+                                                 for annotation in annotations_in_gff
+                                                 if annotation in cds.attributes}
                 else:
                     gff_extracted_annotations = None
 
                 new_cds_feature = create_cds_feature(id_cds, start_position, end_position,
-                                                    strand, annot, go_namespaces, go_alternatives,
-                                                    gene_protein_seqs, gff_extracted_annotations)
+                                                     strand, annot, go_namespaces, go_alternatives,
+                                                     gene_protein_seqs, gff_extracted_annotations)
 
                 new_cds_feature.qualifiers['locus_tag'] = id_cds
                 # Add CDS information to contig record
@@ -287,13 +291,13 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
                 else:
                     id_gene = id_gene
 
-                start_position = gene.start -1
+                start_position = gene.start - 1
                 end_position = gene.end
                 strand = strand_change(gene.strand)
                 new_feature_gene = sf.SeqFeature(sf.FeatureLocation(start_position,
                                                                     end_position,
                                                                     strand),
-                                                                    type="gene")
+                                                 type="gene")
                 new_feature_gene.qualifiers['locus_tag'] = id_gene
                 # Add gene information to contig record.
                 record.features.append(new_feature_gene)
@@ -313,15 +317,14 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
 
                 if keep_gff_annot:
                     gff_extracted_annotations = {annotation: gene.attributes[annotation]
-                                                    for annotation in annotations_in_gff
-                                                    if annotation in gene.attributes}
+                                                 for annotation in annotations_in_gff
+                                                 if annotation in gene.attributes}
                 else:
                     gff_extracted_annotations = None
 
-
                 new_cds_feature = create_cds_feature(cds_id, start_position, end_position,
-                                                    strand, annot, go_namespaces, go_alternatives,
-                                                    gene_protein_seqs, gff_extracted_annotations, location_exons)
+                                                     strand, annot, go_namespaces, go_alternatives,
+                                                     gene_protein_seqs, gff_extracted_annotations, location_exons)
                 new_cds_feature.qualifiers['locus_tag'] = cds_id
                 # Add CDS information to contig record
                 record.features.append(new_cds_feature)
@@ -337,32 +340,31 @@ def gff_to_gbk(nucleic_fasta:str, protein_fasta:str, annot:Union[str, dict],
                 else:
                     id_cds = id_cds
 
-                start_position = cds.start -1
+                start_position = cds.start - 1
                 end_position = cds.end
                 strand = strand_change(cds.strand)
                 new_feature_gene = sf.SeqFeature(sf.FeatureLocation(start_position,
                                                                     end_position,
                                                                     strand),
-                                                                    type="gene")
+                                                 type="gene")
                 new_feature_gene.qualifiers['locus_tag'] = id_cds
                 # Add gene information to contig record.
                 record.features.append(new_feature_gene)
 
                 if keep_gff_annot:
                     gff_extracted_annotations = {annotation: cds.attributes[annotation]
-                                                    for annotation in annotations_in_gff
-                                                    if annotation in cds.attributes}
+                                                 for annotation in annotations_in_gff
+                                                 if annotation in cds.attributes}
                 else:
                     gff_extracted_annotations = None
 
                 new_cds_feature = create_cds_feature(id_cds, start_position, end_position,
-                                                    strand, annot, go_namespaces, go_alternatives,
-                                                    gene_protein_seqs, gff_extracted_annotations)
+                                                     strand, annot, go_namespaces, go_alternatives,
+                                                     gene_protein_seqs, gff_extracted_annotations)
 
                 new_cds_feature.qualifiers['locus_tag'] = id_cds
                 # Add CDS information to contig record
                 record.features.append(new_cds_feature)
-
 
         seq_objects.append(record)
 

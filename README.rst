@@ -121,6 +121,7 @@ The ID in the chromosome/contigs/scaffolds fasta file (``-fn``) must correspond 
 Then the genes in the region will be found and the child CDS associated to the genes wil be extracted.
 The CDS ID must be the same than the ID in the protein fasta file (``-fp``) and the ID in the eggnog-mapper annotation file (``-a``).
 
+
 By default emapper2gbk searches for inheritance between genes and CDS in the GFF files.
 A gene feature is required and the CDS feature must have the gene feature as a parent, like in this example:
 
@@ -131,7 +132,12 @@ A gene feature is required and the CDS feature must have the gene feature as a p
     region_1	RefSeq	gene	1	2445	.	-	.	ID=gene_1
     region_1	RefSeq	CDS	1	2445	.	-	0	ID=cds_1;Parent=gene_1
 
-But some GFF files can be formatted differently with only CDS (such as in `Prodigal <https://github.com/hyattpd/Prodigal>`__ or `Prokka <https://github.com/tseemann/prokka>`__ GFF), it is possible to use them with ``-gt cds_only``.
+Depending on which field (CDS, mRNA or gene) of the gff is associated with the proteome IDs in faa file, the gff-type (``-gt``) option can take into account these 3 parameters (``CDS``, ``mRNA``, ``gene``).
+The tool also takes into account particular gff formats (Gmove and eggnog) and the gff-type option (``-gt``) can take these 2 parameters (``gmove``, ``eggnog``).
+
+**CDS gff type**
+
+For example, some GFF files can be formatted differently with only CDS (such as in `Prodigal <https://github.com/hyattpd/Prodigal>`__ or `Prokka <https://github.com/tseemann/prokka>`__ GFF), it is possible to use them with ``-gt CDS`` (case sensitive).
 Here is an example of the format accepted by this command (with ID cds_1 being the same as the one in the faa and eggnogg-mapper files):
 
 .. code-block:: text
@@ -139,7 +145,33 @@ Here is an example of the format accepted by this command (with ID cds_1 being t
     ##gff file
     region_1	RefSeq	CDS	1	2445	.	-	0	ID=cds_1
 
-The tool can also handle GFF from `Gmove <https://www.genoscope.cns.fr/gmove/>`__ (with ``-gt gmove``) with the following format:
+**mRNA gff type**
+
+The ``-gt mRNA`` option (case sensitive) is to be used in case the protein identifiers in the faa file match the identifiers in the "mRNA" field of the gff.
+Here is an example of the format accepted by this command (with ID cds_1 being the same as the one in the faa and eggnogg-mapper files):
+
+.. code-block:: text
+
+    ##gff file
+    region_1	RefSeq	mRNA	1	2445	.	-	0	ID=cds_1
+
+
+It is useful for gff formats containing multiple "CDS" fields associated with 1 gene and/or 1 mRNA and a single sequence in the faa file.
+
+**gene gff type**
+
+The ``-gt gene`` option is to be used in case the protein identifiers in the faa file match the identifiers in the "gene" field of the gff.
+Here is an example of the format accepted by this command (with ID cds_1 being the same as the one in the faa and eggnogg-mapper files):
+
+.. code-block:: text
+
+    ##gff file
+    region_1	RefSeq	gene	1	2445	.	-	0	ID=cds_1
+
+
+**Gmove gff type**
+
+The tool handle GFF from `Gmove <https://www.genoscope.cns.fr/gmove/>`__ (with ``-gt gmove``) with the following format:
 
 .. code-block:: text
 
@@ -148,6 +180,8 @@ The tool can also handle GFF from `Gmove <https://www.genoscope.cns.fr/gmove/>`_
     region_1	Gmove	CDS	1	2445	.	-	0	Parent=mRNA_gene_1
 
 For gmove, the proteins in the faa and eggnogg-mapper files will be prefixed with ``prot_`` (like ``prot_gene_1`` for ``mRNA_gene_1``). Emapper2gbk should be able to handle these differences.
+
+**EggNog gff type**
 
 It is also possible to use the GFF created by eggnog-mapper (if a fasta genome was given as input to eggnog-mapper) with ``-gt eggnog``.
 An example of such use can be seen in the `test folder <https://github.com/AuReMe/emapper2gbk/tree/master/tests/data_eggnog>`__ 
