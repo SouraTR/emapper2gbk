@@ -795,3 +795,7 @@ if __name__ == "__main__":
     test_gbk_genomes_mode_gmove_test_cli()
     test_gbk_genes_mode_numeric_test()
     test_gbk_genomes_numeric_test()
+    test_gbk_genomes_mode_CDS_test()
+    test_gbk_genomes_mode_mRNA_test()
+    test_gbk_genomes_mode_gene_test()
+
