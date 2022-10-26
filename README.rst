@@ -132,8 +132,8 @@ A gene feature is required and the CDS feature must have the gene feature as a p
     region_1	RefSeq	gene	1	2445	.	-	.	ID=gene_1
     region_1	RefSeq	CDS	1	2445	.	-	0	ID=cds_1;Parent=gene_1
 
-Depending on which field (CDS, mRNA or gene) of the gff is associated with the proteome IDs in faa file, the gff-type (``-gt``) option can take into account these 3 parameters (CDS, mRNA, gene).
-The tool also takes into account particular gff formats (Gmove and eggnog) and the gff-type option (``-gt``) can take these 2 parameters (gmove, eggnog).
+Depending on which field (CDS, mRNA or gene) of the gff is associated with the proteome IDs in faa file, the gff-type (``-gt``) option can take into account these 3 parameters (``'CDS'``, ``'mRNA'``, ``'gene'``).
+The tool also takes into account particular gff formats (Gmove and eggnog) and the gff-type option (``-gt``) can take these 2 parameters (``'gmove'``, ``'eggnog'``).
 
 **CDS gff type**
 
