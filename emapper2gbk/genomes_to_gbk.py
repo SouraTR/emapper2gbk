@@ -93,8 +93,7 @@ def gff_to_gbk(nucleic_fasta: str, protein_fasta: str, annot: Union[str, dict],
         ete_option (bool): to use ete3 NCBITaxa database for taxonomic ID assignation instead of request on the EBI taxonomy database.
     """
     if gff_type not in ['default', 'CDS', 'mRNA', 'gene', 'gmove', 'eggnog']:
-        logger.critical(
-            'gff_type must be defined either: default, CDS (for Prodigal/Prokka GFF), mRNA, gene, gmove or eggnog (for eggnog-mapper output).')
+        logger.critical('gff_type must be defined either: default, CDS (for Prodigal/Prokka GFF), mRNA, gene, gmove or eggnog (for eggnog-mapper output).')
         return
     check_valid_path([nucleic_fasta, protein_fasta, gff])
 

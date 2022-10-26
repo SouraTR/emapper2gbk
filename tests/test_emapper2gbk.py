@@ -60,6 +60,10 @@ EGGNOG_FAA = os.path.join('test_data', 'data_eggnog', 'out.emapper.genepred.fast
 EGGNOG_GFF = os.path.join('test_data', 'data_eggnog', 'out.emapper.genepred.gff')
 EGGNOG_GBK = os.path.join('test_data', 'data_eggnog', 'eggnog_expected.gbk')
 
+TYPE_CDS_GFF = os.path.join('test_data', 'data_gff_type_accession', 'betaox_genomes_CDS.gff')
+TYPE_MRNA_GFF = os.path.join('test_data', 'data_gff_type_accession', 'betaox_genomes_mRNA.gff')
+TYPE_GENE_GFF = os.path.join('test_data', 'data_gff_type_accession', 'betaox_genomes_gene.gff')
+
 ANNOTATIONS_TYPES = ['go_function', 'go_process', 'go_component', 'EC_number', 'locus']
 
 ANNOTATIONS_BY_GENOME = {'gene1781':{'go_component':['GO:0005575', 'GO:0005623', 'GO:0005886',
@@ -417,17 +421,17 @@ def test_gbk_genomes_mode_test_cli():
     return
 
 
-def test_gbk_genomes_mode_cds_only_test():
+def test_gbk_genomes_mode_CDS_test():
     """Test genomes mode with file as input.
     """
-    print("*** Test genomes mode with file as input and using cds_only option ***")
+    print("*** Test genomes mode with file as input and using CDS option ***")
     gbk_test = 'test_gff.gbk'
 
     gbk_creation(nucleic_fasta=GENOME_FNA_INPUT,
                 protein_fasta=GENOME_FAA_INPUT,
                 annot=GENOME_ANNOT_INPUT,
-                gff=GENOME_GFF_INPUT,
-                gff_type='cds_only',
+                gff=TYPE_CDS_GFF,
+                gff_type='CDS',
                 org=ORG_NAME_EUK,
                 output_path=gbk_test,
                 gobasic=GO_FILE)
@@ -437,6 +441,47 @@ def test_gbk_genomes_mode_cds_only_test():
 
     return
 
+
+def test_gbk_genomes_mode_mRNA_test():
+    """Test genomes mode with file as input.
+    """
+    print("*** Test genomes mode with file as input and using mRNA option ***")
+    gbk_test = 'test_gff.gbk'
+
+    gbk_creation(nucleic_fasta=GENOME_FNA_INPUT,
+                protein_fasta=GENOME_FAA_INPUT,
+                annot=GENOME_ANNOT_INPUT,
+                gff=TYPE_MRNA_GFF,
+                gff_type='mRNA',
+                org=ORG_NAME_EUK,
+                output_path=gbk_test,
+                gobasic=GO_FILE)
+
+    compare_two_gbks(EXPECTED_GBK_WITH_GFF, gbk_test)
+    os.remove(gbk_test)
+
+    return
+
+
+def test_gbk_genomes_mode_gene_test():
+    """Test genomes mode with file as input.
+    """
+    print("*** Test genomes mode with file as input and using gene option ***")
+    gbk_test = 'test_gff.gbk'
+
+    gbk_creation(nucleic_fasta=GENOME_FNA_INPUT,
+                protein_fasta=GENOME_FAA_INPUT,
+                annot=GENOME_ANNOT_INPUT,
+                gff=TYPE_GENE_GFF,
+                gff_type='gene',
+                org=ORG_NAME_EUK,
+                output_path=gbk_test,
+                gobasic=GO_FILE)
+
+    compare_two_gbks(EXPECTED_GBK_WITH_GFF, gbk_test)
+    os.remove(gbk_test)
+
+    return
 
 def test_gbk_genomes_mode_keep_gff_annot_test():
     """Test genomes mode with file as input.
