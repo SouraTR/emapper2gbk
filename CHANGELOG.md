@@ -1,5 +1,17 @@
 # Changelog
 
+# emapper2gbk v0.3.0 (2022-10-27)
+
+## Modify
+
+* gff-type option `-gt cds_only`  modify to `-gt CDS`
+* function gff_to_gbk in genomes_to_gbk.py : replace gff-type = cds_only case to gff-type = CDS or mRNA or gene
+
+## Add
+
+* gff-type option (`-gt`): add `mRNA` and `gene` parameters. Allows the tool to use the IDs in "mRNA" or "gene" field in the gff to match the faa file IDs. To do so with the "CDS" field the parameter `cds-only` has been replaced by `CDS`.
+
+
 # emapper2gbk v0.2.1 (2022-09-29)
 
 ## Fix
