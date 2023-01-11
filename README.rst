@@ -184,7 +184,7 @@ For gmove, the proteins in the faa and eggnogg-mapper files will be prefixed wit
 **EggNog gff type**
 
 It is also possible to use the GFF created by eggnog-mapper (if a fasta genome was given as input to eggnog-mapper) with ``-gt eggnog``.
-An example of such use can be seen in the `test folder <https://github.com/AuReMe/emapper2gbk/tree/master/tests/data_eggnog>`__ 
+An example of such use can be seen in the `test folder <https://github.com/AuReMe/emapper2gbk/tree/master/tests/test_data/data_eggnog>`__.
 
 Dependencies and installation
 -----------------------------
