@@ -117,9 +117,6 @@ def gff_to_gbk(nucleic_fasta: str, protein_fasta: str, annot: Union[str, dict],
         #cds_ids = set([cds.chrom for cds in gff_database.features_of_type('CDS')])
         cds_ids = set([cds.id for cds in gff_database.features_of_type('CDS')])
 
-        
-    print("______cds_ids______\n", cds_ids)
-    # If cds IDs are numeric add 'gene_' as a prefix
     cds_ids = [f"gene_{cds_id}" if cds_id.isnumeric() else cds_id for cds_id in cds_ids]
 
     cds_number = len(cds_ids)
@@ -140,7 +137,6 @@ def gff_to_gbk(nucleic_fasta: str, protein_fasta: str, annot: Union[str, dict],
     seq_protein_in_gff = 0
     for record in SeqIO.parse(protein_fasta, "fasta"):
         protein_id = record.id
-        print("\n\n_______protein_fasta_record_______\n", record, "\n__________protein_id__________\n", protein_id)
         if protein_id.isnumeric():
             protein_id = f"gene_{protein_id}"
         gene_protein_seqs[protein_id] = record.seq
@@ -197,7 +193,6 @@ def gff_to_gbk(nucleic_fasta: str, protein_fasta: str, annot: Union[str, dict],
     # Iterate through each contig.
     #   Then iterate through gene and through RNA linked with the gene.
     # Then look if protein information are available.
-    print("________genome_nucleic_sequence_________\n", genome_nucleic_sequence)
     for region_id in genome_nucleic_sequence:
         record = record_info(region_id, genome_nucleic_sequence[region_id], species_informations)
         if gff_type == 'default':
@@ -338,6 +333,7 @@ def gff_to_gbk(nucleic_fasta: str, protein_fasta: str, annot: Union[str, dict],
         elif gff_type == 'eggnog':
             cds_region_id = gff_database.region(seqid=region_id, featuretype='CDS')
             for cds in cds_region_id:
+                # id_cds = cds.chrom + '_' + cds.id.split('_')[1]
                 id_cds = cds.chrom + '_' + cds.id.rsplit('_', 1)[1]
 
                 # If id is numeric, change it
