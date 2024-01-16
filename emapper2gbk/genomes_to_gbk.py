@@ -135,14 +135,19 @@ def gff_to_gbk(nucleic_fasta: str, protein_fasta: str, annot: Union[str, dict],
     gene_protein_seqs = {}
 
     seq_protein_in_gff = 0
+
+    protein_fasta_position_info = dict()
+
     for record in SeqIO.parse(protein_fasta, "fasta"):
         protein_id = record.id
         if protein_id.isnumeric():
             protein_id = f"gene_{protein_id}"
-        gene_protein_seqs[protein_id] = record.seq
+        gene_protein_seqs[protein_id] = record.seq.replace("*", "")
         if gff_type in ['default', 'CDS', 'mRNA', 'gene', 'eggnog']:
             if protein_id in cds_ids:
                 seq_protein_in_gff += 1
+                data_list = str(record.description).split(" # ", 4)
+                protein_fasta_position_info[protein_id] = (int(data_list[1]), int(data_list[2]), int(data_list[3]))
         elif gff_type == 'gmove':
             if protein_id.replace('prot', 'mRNA') in cds_ids:
                 seq_protein_in_gff += 1
@@ -341,10 +346,13 @@ def gff_to_gbk(nucleic_fasta: str, protein_fasta: str, annot: Union[str, dict],
                     id_cds = f"gene_{id_cds}"
                 else:
                     id_cds = id_cds
-
-                start_position = cds.start - 1
-                end_position = cds.end
-                strand = strand_change(cds.strand)
+                
+                start_position = protein_fasta_position_info[id_cds][0] - 1
+                end_position = protein_fasta_position_info[id_cds][1]
+                strand = protein_fasta_position_info[id_cds][2]
+                # start_position = cds.start - 1
+                # end_position = cds.end
+                # strand = strand_change(cds.strand)
                 new_feature_gene = sf.SeqFeature(sf.FeatureLocation(start_position,
                                                                     end_position,
                                                                     strand),
